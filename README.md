@@ -41,7 +41,7 @@
   </li>
   <li><h4>Chatbot</h4>
     <ol>
-      <li>Interação orgânica com o usuário para realizar todas as operações do sistema;</li>
+      <li>Interação orgânica com o usuário para realizar as operações do sistema;</li>
       <li>Identificar erros (sem quebrar o sistema) ao usar o sistema;</li>
       <li>Dar detalhes ao usuário sobre os erros em ii;</li>
       <li>Permitir ao usuário escolher outras opções quando identificar erros como em ii ou digitar opções inválidas;</li>
