@@ -1,6 +1,5 @@
 module Handlers.RoomsHandler where
 
+import Manager
 
-data Room = Room {
 
-}

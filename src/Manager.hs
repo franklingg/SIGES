@@ -10,6 +10,7 @@ module Manager(
    ,module Text.Email.Validate
    ,module Datatypes
    ,module Data.Time
+   ,module Data.Dates
 ) where
 
 import Data.Maybe
@@ -22,5 +23,6 @@ import System.IO
 import System.Exit
 import Text.Email.Validate
 import Data.Time
+import Data.Dates
 
 import Datatypes
