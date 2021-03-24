@@ -6,33 +6,33 @@ spec :: Spec
 spec = do 
     describe "checkNewEmail" $ do
         it "Quando o usuário insere a tecla de retornar" $
-            checkNewEmail "r" `shouldBe` Right "Retornar"
+            checkNewEmail "r" `shouldReturn` Right "Retornar"
         it "Erro quando o usuário insere e-mail vazio" $
-            checkNewEmail "" `shouldBe` Left "Email inválido. Tente novamente."
+            checkNewEmail "" `shouldReturn` Left "Email inválido. Tente novamente."
         it "Erro quando o usuário insere e-mail sem @" $
-            checkNewEmail "teste.bol.com" `shouldBe` Left "Email inválido. Tente novamente."
+            checkNewEmail "teste.bol.com" `shouldReturn` Left "Email inválido. Tente novamente."
         it "Erro quando o usuário insere e-mail com espaços" $
-            checkNewEmail "teste.  e s@bol.com" `shouldBe` Left "Email inválido. Tente novamente."
+            checkNewEmail "teste.  e s@bol.com" `shouldReturn` Left "Email inválido. Tente novamente."
         it "Quando o usuário insere um e-mail correto" $
-            checkNewEmail "teste.unit@bol.com" `shouldBe` Right "teste.unit@bol.com"
+            checkNewEmail "teste.unit@bol.com" `shouldReturn` Right "teste.unit@bol.com"
     describe "checkEmail" $ do
         it "Wrong email" $ 
             checkEmail "naoexisto@gmail.com" `shouldReturn` Left "Email não cadastrado. Tente novamente."
-        {-FIXME: it "Right email" $ 
-            pendingWith "Change when UserHandler is implemented"-}
+        it "Right email" $ 
+            checkEmail "admin@admin" `shouldReturn` Right "admin@admin"
 
-    describe "checkNewPassword" $ do
+    describe "checkNewPass" $ do
         it "Erro quando o usuário digita uma senha pequena" $
-            checkNewPassword "1234567" `shouldBe` Left "A senha deve ter mais de 8 caracteres. Tente novamente."
+            checkNewPass "1234567" `shouldReturn` Left "A senha deve ter mais de 8 caracteres. Tente novamente."
         it "Erro quando o usuário digita uma senha vazia" $
-            checkNewPassword "" `shouldBe` Left "A senha deve ter mais de 8 caracteres. Tente novamente."
+            checkNewPass "" `shouldReturn` Left "A senha deve ter mais de 8 caracteres. Tente novamente."
         it "Quando o usuário digita uma senha correta" $
-            checkNewPassword "eutenhomaisde8caracteres" `shouldBe` Right "eutenhomaisde8caracteres"
-    describe "checkPassword" $ do
+            checkNewPass "eutenhomaisde8caracteres" `shouldReturn` Right "eutenhomaisde8caracteres"
+    describe "checkPass" $ do
         it "Wrong password" $
-            pendingWith "Change when UserHandler is implemented"
+            checkPass "admin@admin" "senhaincorreta" `shouldReturn` Left "Senha incorreta. Tente novamente."
         it "Right password" $
-            pendingWith "Change when UserHandler is implemented"
+            checkPass "admin@admin" "adminadmin" `shouldReturn` Right "adminadmin"
 
 
 main = hspec spec

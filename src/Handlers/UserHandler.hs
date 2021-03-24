@@ -34,10 +34,10 @@ retrieveUser emailStr = do
 
 registerNewUser :: String -> String -> String -> Bool -> IO ()
 registerNewUser emailStr passwordStr nameStr isAdm = do
-    c <- getCurrentTime
+    timenow <- getCurrentTime
     passHash <- hashPassword $ makePass passwordStr
     let passwordText = unPasswordHash passHash
-        newUser = UserFull {email=emailStr, password=passwordText, name=nameStr, isAdmin=isAdm, registrationDate=c}
+        newUser = UserFull {email=emailStr, password=passwordText, name=nameStr, isAdmin=isAdm, registrationDate=(show timenow)}
     saveUser newUser
     return ()
 

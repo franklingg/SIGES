@@ -2,9 +2,7 @@
 module Datatypes where
 
 import Data.ByteString
-import Data.Time
 import Data.Text
-import Data.Dates
 import GHC.Generics
 
 {-         USER HANDLER        -}
@@ -12,13 +10,13 @@ data User = User {
     nameUser :: String
    ,emailUser :: String
    ,isAdminUser :: Bool
-} deriving(Eq)
+} deriving(Eq, Generic)
 
 data UserFull = UserFull {
     name :: String
    ,email :: String
    ,password :: Text
-   ,registrationDate :: UTCTime
+   ,registrationDate :: String
    ,isAdmin :: Bool
 } deriving(Eq, Show, Generic)
 
@@ -45,21 +43,21 @@ data Room = Room {
    ,localization :: String
    ,category :: RoomCategory
 
-} deriving (Eq)
+} deriving (Eq, Generic)
 
 data Appointment = Appointment {
     requester :: User
    ,description :: String 
-   ,time :: DateTime
+   ,time :: String
 
-} deriving (Eq)
+} deriving (Eq, Generic)
 
 data RoomCategory = Laboratory
                   | Auditorium
                   | Classroom
                   | Office
                   | ConferenceRoom
-                  deriving (Eq)
+                  deriving (Eq, Generic)
 
 data Resource = StudentDesk Int
               | Projector Int
@@ -69,4 +67,4 @@ data Resource = StudentDesk Int
               | Board Int
               | LabBench Int
               | AirConditioner Int
-              deriving (Eq)
+              deriving (Eq, Generic)

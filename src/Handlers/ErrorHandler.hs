@@ -29,16 +29,16 @@ checkNewEmail emailString = do
     checkedEmail <- checkEmail emailString
     return (case checkedEmail of 
                 (Right "Retornar") -> checkedEmail
-                (Left "Email inválido. Tente novamente") -> Left "Email inválido. Tente novamente"
+                (Left "Email inválido. Tente novamente.") -> Left "Email inválido. Tente novamente."
                 (Left notRegistered) -> Right emailString
-                _ -> Left "Este e-mail já pertence a uma conta no SIGES. Tente novamente")
+                _ -> Left "Este e-mail já pertence a uma conta no SIGES. Tente novamente.")
 
 checkEmail :: String -> IO (Either ErrorLog String)
 checkEmail emailString = do
     if singleCharIsR emailString
         then return (Right "Retornar")
         else if not $ isValid (BS.pack emailString)
-            then return (Left "Email inválido. Tente novamente")
+            then return (Left "Email inválido. Tente novamente.")
             else (do
                 checkedUser <- userExists emailString
                 case checkedUser of
@@ -57,20 +57,20 @@ checkPass emailString passwordString = do
     possiblePassword <- correctPassword emailString passwordString
     case possiblePassword of
         True -> return (Right passwordString)
-        False -> return (Left "Senha incorreta. Tente novamente")
+        False -> return (Left "Senha incorreta. Tente novamente.")
 
 checkName :: String -> IO (Either ErrorLog String)
 checkName str = do
     if all (\c -> isAlpha c || isSpace c) str
         then return (Right str)
-        else return (Left "Apenas letras são permitidas. Tente novamente")
+        else return (Left "Apenas letras são permitidas. Tente novamente.")
 
 yesOrNo :: String -> IO (Either ErrorLog Bool)
 yesOrNo str = do
     let firstChar = toUpper $ head str
     if (length str /= 1)
-        then return (Left "Resposta inválida (apenas S/N). Tente novamente")
+        then return (Left "Resposta inválida (apenas S/N). Tente novamente.")
         else return (case firstChar of
                         'S' -> Right True
                         'N' -> Right False
-                        _ -> Left "Resposta inválida (apenas S/N). Tente novamente")
+                        _ -> Left "Resposta inválida (apenas S/N). Tente novamente.")

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 87f357d3056b721c46c5296bd4b0853837b9924fe65ecce44748abece4de07aa
+-- hash: c84215940dbdab69fcdfb57b6f5a040b0951d626425348ce64b79ec29c41cf98
 
 name:           SIGES
 version:        0.1.0.0
@@ -77,6 +77,8 @@ test-suite SIGES-test
   other-modules:
       Handlers.DataHandlerSpec
       Handlers.ErrorHandlerSpec
+      Handlers.RoomsHandlerSpec
+      Handlers.UserHandlerSpec
       SpecHelper
       Paths_SIGES
   hs-source-dirs:

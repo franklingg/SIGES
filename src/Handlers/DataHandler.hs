@@ -8,6 +8,9 @@ import Manager
 userJSON :: FilePath
 userJSON = "data/userData.json"
 
+instance FromJSON User where
+instance ToJSON User where
+
 instance FromJSON UserFull where
 instance ToJSON UserFull where
 
@@ -40,10 +43,24 @@ getUser emailStr = do
       else return $ Just (head correspondingUsers)
 
 
+
 roomsJSON :: FilePath
 roomsJSON = "data/roomsData.json"
 
+instance FromJSON Resource where
+instance ToJSON Resource where
+
+instance FromJSON RoomCategory where
+instance ToJSON RoomCategory where
+
+instance FromJSON Appointment where
+instance ToJSON Appointment where
+
+instance FromJSON Room where
+instance ToJSON Room where
+
+
 noRoomsYet :: IO Bool
 noRoomsYet = do
-   (Just existingRooms) <- decode <$> BL.readFile roomsJSON :: IO (Maybe [UserFull]) -- FIXME:
+   (Just existingRooms) <- decode <$> BL.readFile roomsJSON :: IO (Maybe [Room])
    return $ null existingRooms
