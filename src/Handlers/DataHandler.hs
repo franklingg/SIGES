@@ -59,8 +59,36 @@ instance ToJSON Appointment where
 instance FromJSON Room where
 instance ToJSON Room where
 
+fetchRooms :: IO (Maybe [Room])
+fetchRooms = do
+   (Just allRooms) <- decode <$> BL.readFile roomsJSON :: IO (Maybe [Room])
+   return allRooms
 
 noRoomsYet :: IO Bool
 noRoomsYet = do
-   (Just existingRooms) <- decode <$> BL.readFile roomsJSON :: IO (Maybe [Room])
+   existingRooms = fetchRooms
    return $ null existingRooms
+
+saveRoom :: Room -> IO Bool
+saveRoom newRoom = do
+   allRooms = fetchRooms
+   let correspondingRooms = filter (\room -> code room == code newRoom) allRooms
+   if null correspondingRooms
+      then do {BL.writeFile roomsJSON $ encode (allRooms ++ [newRoom]); return True}
+      else return False
+   
+deleteRoom :: String -> IO Bool
+deleteRoom codeStr = do
+   allRooms = fetchRooms
+   let removed = filter (\room -> code room /= codeStr) allRooms
+   if (allusers /= removed)
+      then do {BL.writeFile roomsJSON $ encode removed; return True}
+      else return False
+
+getRoom :: String -> IO (Maybe Room)
+getRoom codeStr = do
+   allRooms = fetchRooms
+   let corresponding = fillter (\room -> code room == codeStr) allRooms
+   if null corresponding
+      then return Nothing
+      else return $ head corresponding
