@@ -14,6 +14,15 @@ isUser mUser = do
     let newUsr = UserFull{email=email usr, registrationDate= registrationDate usr, name=name usr, password= password usr, isAdmin= isAdmin usr}
     return $ usr == newUsr
 
+createNewRoom :: Room
+createNewRoom = Room{code="SalaTeste", schedule=[], resources=[], capacity=1, localization="Bloco BL", category = Classroom}
+
+isRoom :: IO (Maybe Room) -> IO Bool
+isRoom tstroom = do
+    (Just room) <- tstroom
+    let newRoom = Room{code=code room, schedule=schedule room, resources=resources room, capacity=capacity room, localization=localization room, category =category room}
+    return $ room == newRoom
+
 spec :: Spec
 spec = do
     describe "getUser" $ do
@@ -39,6 +48,23 @@ spec = do
         it "Quando não se tem salas cadastradas ainda" $
             noRoomsYet `shouldReturn` True
 
+    describe "saveRoom" $ do
+        it "Ao se adicionar uma sala" $
+            saveRoom (createNewRoom) `shouldReturn` True
+        it "Ao se adicionar uma sala que já existe" $
+            saveRoom (createNewRoom) `shouldReturn` False
 
+    describe "getRoom" $ do
+        it "Ao se tentar acessar uma sala que não existe" $
+            getRoom "LCC-2" `shouldReturn` Nothing
+        it "Ao se acessar uma sala que existe" $
+            isRoom (getRoom "SalaTeste") `shouldReturn` True
+    
+    describe "deleteRoom" $ do
+        it "Ao se remover uma sala que existe" $
+            deleteRoom "SalaTeste" `shouldReturn` True
+        it "Ao se remover uma sala que não existe" $
+            deleteRoom "SalaTeste" `shouldReturn` False
 
+        
 main = hspec spec

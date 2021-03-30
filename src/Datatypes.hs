@@ -4,6 +4,7 @@ module Datatypes where
 import Data.ByteString
 import Data.Text
 import GHC.Generics
+import Data.Time
 
 {-         USER HANDLER        -}
 data User = User {
@@ -37,7 +38,7 @@ data Screen = ExitScreen
 {-         ROOMS HANDLER         -}
 data Room = Room {
     code :: String
-   ,schedule :: [Appointment]
+   ,schedule :: [Reservation]
    ,resources :: [Resource]
    ,capacity :: Int
    ,localization :: String
@@ -45,10 +46,10 @@ data Room = Room {
 
 } deriving (Eq, Generic)
 
-data Appointment = Appointment {
-    requester :: User
+data Reservation = Reservation {
+    requester :: String
    ,description :: String 
-   ,time :: String
+   ,time :: LocalTime
 
 } deriving (Eq, Generic)
 
@@ -57,7 +58,7 @@ data RoomCategory = Laboratory
                   | Classroom
                   | Office
                   | ConferenceRoom
-                  deriving (Eq, Generic)
+                  deriving (Eq, Show, Generic)
 
 data Resource = StudentDesk Int
               | Projector Int
@@ -68,3 +69,5 @@ data Resource = StudentDesk Int
               | LabBench Int
               | AirConditioner Int
               deriving (Eq, Generic)
+
+
