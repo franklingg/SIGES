@@ -2,77 +2,163 @@ module Handlers.RoomsHandler where
 
 import Manager
 import Handlers.DataHandler
+import Data.List
 
-instance Show Room where
+{-instance Show Room where
     show(Room codeRoom _ _ capRoom localRoom catRoom) = "Dados da sala:                   \n\
                                                         \Código: "++ codeRoom ++         "\n\
                                                         \Capacidade: "++ show capRoom
 
 instance Show Reservation where
-    show(Reservation requester description time) = "Dados da reserva:                 \n\
-                                                   \Data e horário: "++ show time ++ "\n\
-                                                   \Responsável: "++ requester ++    "\n\
-                                                   \Motivo: "++ description 
+    show(Reservation requester description startTime finishTime) = "Dados da reserva:                 \n\
+                                                                   \Início: "++ show startTime ++    "\n\
+                                                                   \Fim: "++ show finishTime ++      "\n\
+                                                                   \Responsável: " ++ requester ++   "\n\
+                                                                   \Motivo: "++ description
+-}
+instance Ord Reservation where
+    compare res1 res2 = if startTime res1 <= startTime res2 then LT else GT
 
-makeTime :: (Integer, Int, Int, Int) -> IO LocalTime
-makeTime (a, m, d, h) = do
-    let (Just clock) = makeTimeOfDayValid h 00 00
-        calendar = fromGregorian a m d
-        time = LocalTime calendar clock
-    return time
+makeTime :: (Integer, Int, Int, Int, Int) -> LocalTime
+makeTime (a, m, d, h, min) = time
+    where (Just clock) = makeTimeOfDayValid h min 00
+          calendar = fromGregorian a m d
+          time = LocalTime calendar clock
 
-isFree :: String -> LocalTime -> IO Bool
-isFree codeRoom newTime = do
+isFree :: Room -> LocalTime -> Bool
+isFree room newTime = not $ any (\reservation -> (startTime reservation <= newTime) && (finishTime reservation >= newTime)) (schedule room)
+
+makeReservation :: String -> String -> String -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> IO Bool
+makeReservation codeRoom userName descriptionStr startTimeTuple finishTimeTuple = do
+    let startTimeReservation = makeTime startTimeTuple
+        finishTimeReservation = makeTime finishTimeTuple
     (Just room) <- getRoom codeRoom
-    let corresponding = filter (\reservation -> time reservation == newTime) (schedule room)
-    return $ null corresponding
+    
+    if isFree room startTimeReservation && isFree room finishTimeReservation 
+        then do
+            let newReservation = Reservation{requester=userName, description=descriptionStr, startTime=startTimeReservation, finishTime=finishTimeReservation}
+                newSchedule = insert newReservation (schedule room)
+                newRoom = Room{code=code room, schedule=newSchedule, resources=resources room, capacity=capacity room, localization=localization room, category =category room}
+            
+            updateRoom codeRoom newRoom
+            return True
+        else
+            return False
 
-makeReservation :: String -> String -> String -> (Integer, Int, Int, Int) -> IO Bool
-makeReservation codeRoom userName descriptionStr timeTuple = do
-    timeReservation <- makeTime timeTuple
-    free <- isFree codeRoom timeReservation
-    if free then do
-        (Just room) <- getRoom codeRoom
-        let newReservation = Reservation{requester=userName, description=descriptionStr, time=timeReservation}
-            newSchedule = newReservation:(schedule room)
-            newRoom = Room{code=code room, schedule=newSchedule, resources=resources room, capacity=capacity room, localization=localization room, category =category room}
-        operate <- deleteRoom codeRoom
-        saveRoom newRoom
-    else
-        return False
-
-deleteReservation :: String -> (Integer, Int, Int, Int) -> IO Bool
-deleteReservation codeRoom timeTuple = do
-    timeReservation <- makeTime timeTuple
+deleteReservation :: String -> String -> (Integer, Int, Int, Int, Int) -> IO Bool
+deleteReservation codeRoom userName startTimeTuple = do
+    let timeReservation = makeTime startTimeTuple
     (Just room) <- getRoom codeRoom
-    let newSchedule = filter (\reservation -> time reservation /= timeReservation) (schedule room)
-        newRoom = Room{code=code room, schedule=newSchedule, resources=resources room, capacity=capacity room, localization=localization room, category=category room}
-    operate <- deleteRoom codeRoom
-    saveRoom newRoom
+    
+    if any (\reservation -> (startTime reservation == timeReservation) && (requester reservation == userName)) (schedule room)
+        then do 
+            let newSchedule = filter (\reservation -> startTime reservation /= timeReservation) (schedule room)
+                newRoom = Room{code=code room, schedule=newSchedule, resources=resources room, capacity=capacity room, localization=localization room, category=category room}
+            
+            updateRoom codeRoom newRoom
+            return True
 
-editReservation :: String -> (Integer, Int, Int, Int) -> (Integer, Int, Int, Int) -> IO Bool
-editReservation codeRoom currentTimeTuple newTimeTuple = do
-    currentTime <- makeTime currentTimeTuple
-    newTime <- makeTime newTimeTuple
+        else return False
+
+editReservation :: String -> String -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> IO Bool
+editReservation codeRoom userName currentStartTimeTuple newStartTimeTuple newFinishTimeTuple = do
     (Just room) <- getRoom codeRoom
-    let current = head $ filter (\reservation -> time reservation == newTime) (schedule room)
-        newReservation = Reservation{requester=requester current, description=description current, time=newTime}
-        deletedSchedule = filter (\reservation -> time reservation /= currentTime) (schedule room)
-        newSchedule = newReservation:deletedSchedule
-        newRoom = Room{code=code room, schedule=newSchedule, resources=resources room, capacity=capacity room, localization=localization room, category=category room}
-    operate <- deleteRoom codeRoom
-    saveRoom newRoom
+    let currentStartTime = makeTime currentStartTimeTuple
+        newStartTime = makeTime newStartTimeTuple
+        newFinishTime = makeTime newFinishTimeTuple
+        reservationExists = any (\reservation -> startTime reservation == currentStartTime && requester reservation == userName) (schedule room)
+        newTimeIsFree = isFree room newStartTime && isFree room newFinishTime
+
+    if reservationExists && newTimeIsFree
+        then do
+            let currentReservation = head $ filter (\reservation -> startTime reservation == currentStartTime) (schedule room)
+                newReservation = Reservation{requester = userName, description = description currentReservation, startTime = newStartTime, finishTime = newFinishTime}
+                newSchedule = insert newReservation (filter (\reservation -> startTime reservation /= currentStartTime) (schedule room))
+                newRoom = Room{code=code room, schedule=newSchedule, resources=resources room, capacity=capacity room, localization=localization room, category=category room}
+            
+            updateRoom codeRoom newRoom
+            return True
+
+        else do
+            return False
 
 cleanReservations :: LocalTime -> Room -> Room
 cleanReservations timeNow room = Room{code=code room, schedule=newSchedule, resources=resources room, capacity=capacity room, localization=localization room, category=category room}
-    where newSchedule = filter (\reservation -> time reservation > timeNow) (schedule room)
+    where newSchedule = filter (\reservation -> finishTime reservation > timeNow) (schedule room)
 
 cleanAllReservations :: IO Bool
 cleanAllReservations = do
     utcTimeNow <- getCurrentTime
     timeZone <- getTimeZone utcTimeNow
-    (Just allRooms) <- fetchRooms
     let timeNow = utcToLocalTime timeZone utcTimeNow
-        updated = map (cleanReservations timeNow) allRooms
-    updateAllRooms updated        
+    updateAllRooms (cleanReservations timeNow)        
 
+createReportForTheRoom :: (Integer, Int, Int) -> Room -> String
+createReportForTheRoom (a, m, d) room = result
+    where calendar = fromGregorian a m d
+          reservations = filter (\reservation -> localDay (startTime reservation) == calendar) (schedule room)
+          reservationsList = ("Relatório de ocupação para a sala " ++ code room ++ " no dia: " ++ show calendar ++ ":\n\n"): map show reservations
+          result = intercalate "\n" reservationsList
+
+createReportForTheDay :: (Integer, Int, Int) -> IO String
+createReportForTheDay calendarTuple = do
+    allRooms <- fetchRooms
+    let reportsList = map (createReportForTheRoom calendarTuple) allRooms
+        result = "Relatório de ocupação de salas:\n\n" ++ intercalate "\n\n===========\\===========\n\n" reportsList
+
+    return result
+
+searchRoomsCategory :: Maybe RoomCategory -> IO [Room]
+searchRoomsCategory catRoom = do
+    allRooms <- fetchRooms
+    if isJust catRoom  then do
+        let filtered = filter (\room -> category room == fromJust catRoom) allRooms
+        return filtered
+    else do
+        return allRooms
+
+searchRoomsCapacity :: Maybe Int -> IO [Room]
+searchRoomsCapacity capRoom = do
+    allRooms <- fetchRooms
+    if isJust capRoom then do
+        let filtered = filter (\room -> capacity room >= fromJust capRoom) allRooms
+        return filtered
+    else do
+        return allRooms
+
+searchRoomsTime :: Maybe (Integer, Int, Int, Int, Int) -> Maybe (Integer, Int, Int, Int, Int) -> IO [Room]
+searchRoomsTime startTimeTuple finishTimeTuple = do
+    allRooms <- fetchRooms
+    if isJust startTimeTuple && isJust finishTimeTuple then do
+        let startTime = makeTime (fromJust startTimeTuple)
+            finishTime = makeTime (fromJust finishTimeTuple)
+            filtered = filter (\room -> isFree room startTime && isFree room finishTime) allRooms
+        return filtered
+    else do
+        return allRooms
+
+resourceIsEnough :: Room -> Resource -> Bool
+resourceIsEnough room r | any (\roomResource -> (resourceKind roomResource == resourceKind r) && (resourceQuantity roomResource >= resourceQuantity r)) (resources room) = True
+                        | otherwise = False
+
+containsResources :: [Resource] -> Room -> Bool
+containsResources [] _ = True
+containsResources rs room = all (resourceIsEnough room) rs
+
+searchRoomsResources :: Maybe [Resource] -> IO [Room]
+searchRoomsResources resourcesNeeded = do
+    allRooms <- fetchRooms
+    if isJust resourcesNeeded then do
+        let filtered = filter (containsResources (fromJust resourcesNeeded)) allRooms
+        return filtered
+    else do
+        return allRooms
+
+searchRoomsCombined :: Maybe RoomCategory -> Maybe Int -> Maybe (Integer, Int, Int, Int, Int) -> Maybe (Integer, Int, Int, Int, Int) -> Maybe [Resource] -> IO [Room]
+searchRoomsCombined catRoom capRoom startTimeTuple finishTimeTuple resourcesNeeded = do
+    filteredCategory <- searchRoomsCategory catRoom
+    filteredCapacity <- searchRoomsCapacity capRoom
+    filteredTime <- searchRoomsTime startTimeTuple finishTimeTuple
+    filteredResources <- searchRoomsResources resourcesNeeded
+    let filtered = filteredCategory `intersect` filteredCapacity `intersect` filteredTime `intersect` filteredResources
+    return filtered

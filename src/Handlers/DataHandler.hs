@@ -47,6 +47,9 @@ getUser emailStr = do
 roomsJSON :: FilePath
 roomsJSON = "data/roomsData.json"
 
+instance FromJSON ResourceKind where
+instance ToJSON ResourceKind where
+
 instance FromJSON Resource where
 instance ToJSON Resource where
 
@@ -59,40 +62,45 @@ instance ToJSON Reservation where
 instance FromJSON Room where
 instance ToJSON Room where
 
-fetchRooms :: IO (Maybe [Room])
+fetchRooms :: IO [Room]
 fetchRooms = do
    (Just allRooms) <- decode <$> BL.readFile roomsJSON :: IO (Maybe [Room])
-   return (Just allRooms)
+   return allRooms
 
 noRoomsYet :: IO Bool
-noRoomsYet = do
-   (Just existingRooms) <- fetchRooms
-   return $ null existingRooms
+noRoomsYet = do null <$> fetchRooms
 
 saveRoom :: Room -> IO Bool
 saveRoom newRoom = do
-   (Just allRooms) <- fetchRooms
+   allRooms <- fetchRooms
    let correspondingRooms = filter (\room -> code room == code newRoom) allRooms
    if null correspondingRooms
       then do {BL.writeFile roomsJSON $ encode (allRooms ++ [newRoom]); return True}
       else return False
- 
-updateAllRooms :: [Room] -> IO Bool
-updateAllRooms allRooms = do
-   BL.writeFile roomsJSON $ encode allRooms
+
+updateRoom :: String -> Room -> IO Bool
+updateRoom codeRoom newRoom = do
+   operate <- deleteRoom codeRoom
+   saveRoom newRoom
+      
+updateAllRooms :: (Room -> Room) -> IO Bool
+updateAllRooms function = do
+   allRooms <- fetchRooms
+   let updated = map function allRooms
+   BL.writeFile roomsJSON $ encode updated
    return True
 
 deleteRoom :: String -> IO Bool
 deleteRoom codeStr = do
-   (Just allRooms) <- fetchRooms
+   allRooms <- fetchRooms
    let removed = filter (\room -> code room /= codeStr) allRooms
-   if (allRooms /= removed)
+   if allRooms /= removed
       then do {BL.writeFile roomsJSON $ encode removed; return True}
       else return False
 
 getRoom :: String -> IO (Maybe Room)
 getRoom codeStr = do
-   (Just allRooms) <- fetchRooms
+   allRooms <- fetchRooms
    let corresponding = filter (\room -> code room == codeStr) allRooms
    if null corresponding
       then return Nothing

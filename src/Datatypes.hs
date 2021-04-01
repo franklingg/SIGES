@@ -44,14 +44,15 @@ data Room = Room {
    ,localization :: String
    ,category :: RoomCategory
 
-} deriving (Eq, Generic)
+} deriving (Eq, Show, Generic)
 
 data Reservation = Reservation {
     requester :: String
    ,description :: String 
-   ,time :: LocalTime
+   ,startTime :: LocalTime
+   ,finishTime :: LocalTime
 
-} deriving (Eq, Generic)
+} deriving (Eq, Show, Generic)
 
 data RoomCategory = Laboratory
                   | Auditorium
@@ -60,14 +61,18 @@ data RoomCategory = Laboratory
                   | ConferenceRoom
                   deriving (Eq, Show, Generic)
 
-data Resource = StudentDesk Int
-              | Projector Int
-              | Microscope Int
-              | Desk Int
-              | Computador Int
-              | Board Int
-              | LabBench Int
-              | AirConditioner Int
-              deriving (Eq, Generic)
+data ResourceKind = StudentDesk
+              | Projector
+              | Microscope
+              | Desk
+              | Computer
+              | Board
+              | LabBench
+              | AirConditioner
+              deriving (Eq, Show, Generic)
 
+data Resource = Resource {
+    resourceKind :: ResourceKind
+   ,resourceQuantity :: Int 
+}deriving (Eq, Show, Generic)
 
