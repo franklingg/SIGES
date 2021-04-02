@@ -4,7 +4,7 @@ import Manager
 import Handlers.DataHandler
 import Data.List
 
-{-instance Show Room where
+instance Show Room where
     show(Room codeRoom _ _ capRoom localRoom catRoom) = "Dados da sala:                   \n\
                                                         \Código: "++ codeRoom ++         "\n\
                                                         \Capacidade: "++ show capRoom
@@ -15,7 +15,7 @@ instance Show Reservation where
                                                                    \Fim: "++ show finishTime ++      "\n\
                                                                    \Responsável: " ++ requester ++   "\n\
                                                                    \Motivo: "++ description
--}
+
 instance Ord Reservation where
     compare res1 res2 = if startTime res1 <= startTime res2 then LT else GT
 
