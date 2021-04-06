@@ -36,7 +36,6 @@ library:
 executables:
   SIGES-exe:
     main:                Main.hs
-    source-dirs:         app
     ghc-options:
     - -threaded
     - -rtsopts

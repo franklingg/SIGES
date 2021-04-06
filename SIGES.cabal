@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c84215940dbdab69fcdfb57b6f5a040b0951d626425348ce64b79ec29c41cf98
+-- hash: 5eb50132f659c6d0d3046dbd3a73be4627868e9d02744b848aa872ebcd21e49a
 
 name:           SIGES
 version:        0.1.0.0
@@ -55,8 +55,6 @@ executable SIGES-exe
   main-is: Main.hs
   other-modules:
       Paths_SIGES
-  hs-source-dirs:
-      app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       SIGES
