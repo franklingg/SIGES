@@ -42,10 +42,10 @@ instance Action Screen where
                 putStrLn "Qual o nome do novo usuário?"
                 name <- getInputData getAnswer checkName
                 registerNewUser email password name True
-                currentUser <- retrieveUser email
-                return $ AdminScreen currentUser
+                return AdminScreen
 
     useContent StartScreen = do
+        signOutUser
         putStrLn $ getContent StartScreen
         getInputData getAnswer (validScreen StartScreen)
 
@@ -58,28 +58,23 @@ instance Action Screen where
             else do 
                 putStrLn "Qual é a sua senha?"
                 password <- getInputData getPassword (checkPass email)
-                user <- retrieveUser email
-                return (LoggedScreen user)
+                signUser email
+                return LoggedScreen
     
-    useContent (LoggedScreen user) = do
-        if isAdminUser user then return (AdminScreen user) 
-            else do
-                let userScreen = (LoggedScreen user)
-                putStrLn $ getContent userScreen
-                getInputData getAnswer (validScreen userScreen)
+    useContent LoggedScreen  = do
+        user <- getLoggedUser
+        let userScreen = if isAdminUser user then AdminScreen else LoggedScreen
+        putStrLn $ getContent userScreen
+        getInputData getAnswer (validScreen userScreen)
+    
+    useContent AdminScreen = useContent LoggedScreen
 
-
-    useContent (AdminScreen user) = do
-        let admScreen = (AdminScreen user)
-        putStrLn $ getContent admScreen
-        getInputData getAnswer (validScreen admScreen)
-
-    useContent (SignUpScreen user) = do
-        putStrLn $ getContent (SignUpScreen user)
+    useContent SignUpScreen = do
+        putStrLn $ getContent SignUpScreen
         putStrLn "Qual o e-mail do novo usuário?"
         email <- getInputData getAnswer checkNewEmail
         if email == "Retornar"
-            then return (LoggedScreen user)
+            then return LoggedScreen
             else do 
                 putStrLn "Qual é a senha do novo usuário?"
                 password <- getInputData getPassword checkNewPass
@@ -88,11 +83,11 @@ instance Action Screen where
                 putStrLn "Este usuário é administrador (S/N)?"
                 isAdm <- getInputData getAnswer yesOrNo
                 registerNewUser email password name isAdm
-                currentUser <- retrieveUser email
-                return $ (LoggedScreen user)
+                return $ LoggedScreen
     
-    useContent (RemoveUserScreen user) = do
-        putStrLn $ getContent (RemoveUserScreen user)
+    useContent RemoveUserScreen = do
+        admUser <- getLoggedUser
+        putStrLn $ getContent RemoveUserScreen
         putStrLn "Qual o e-mail do usuário a ser deletado?"
         email <- getInputData getAnswer checkEmail
         if email == "Retornar" then return ()
@@ -100,10 +95,10 @@ instance Action Screen where
                 currentUser <- retrieveUser email
                 putStrLn $ show currentUser
                 putStrLn "Insira sua senha para confirmar:"
-                admPassword <- getInputData getPassword $ checkPass (emailUser user)
+                admPassword <- getInputData getPassword $ checkPass (emailUser admUser)
                 removeUser currentUser
                 putStrLn "Usuário removido!"
-        return (LoggedScreen user)
+        return LoggedScreen
 
 {-
    Funcao para interacao com o usuario.

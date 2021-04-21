@@ -10,6 +10,10 @@ module Manager(
    ,module Text.Email.Validate
    ,module Datatypes
    ,module Data.Time
+   ,module System.Console.ANSI
+   ,module Control.Monad    
+   ,module System.Directory
+   ,module System.Environment
 ) where
 
 -- importa Maybe
@@ -34,3 +38,7 @@ import Text.Email.Validate
 import Data.Time
 -- importa Datatypes
 import Datatypes
+import System.Console.ANSI
+import Control.Monad    
+import System.Directory
+import System.Environment

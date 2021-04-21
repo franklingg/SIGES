@@ -7,11 +7,16 @@ import qualified Data.ByteString.Lazy as BL
 -- importa a entidade Manager
 import Manager
 
+userTmpJSON :: FilePath
+userTmpJSON = "data/userTemp.json"
 {-
    Funcao para carregar os dados dos usuarios cadastrados.
 -}
 userJSON :: FilePath
 userJSON = "data/userData.json"
+
+fileExists :: String -> IO ()
+fileExists << doesFileExist
 
 -- User e uma instancia da classe de tipo FromJSON
 instance FromJSON User where
@@ -62,6 +67,24 @@ getUser emailStr = do
    if null correspondingUsers
       then return Nothing
       else return $ Just (head correspondingUsers)
+
+signUser :: String -> IO ()
+signUser emailStr = do
+   (Just userfull) <- getUser emailStr
+   let user = User (name userfull) (email userfull) (isAdmin userfull)
+   BL.writeFile userTmpJSON $ encode user
+
+getLoggedUser :: IO (User)
+getLoggedUser = do
+   tmpUser <- decode <$> BL.readFile userTmpJSON
+   if isJust tmpUser
+      then return (fromJust tmpUser)
+      else getLoggedUser
+
+signOutUser :: IO ()
+signOutUser = do
+   fileExists <- doesFileExist userTmpJSON
+   when fileExists $ removeFile userTmpJSON
 
 {-
    Funcao para carregar os dados das salas cadastradas.

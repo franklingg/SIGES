@@ -34,10 +34,10 @@ data Screen = ExitScreen
             | FirstScreen
             | StartScreen 
             | LoginScreen 
-            | LoggedScreen User
-            | AdminScreen User
-            | SignUpScreen User
-            | RemoveUserScreen User
+            | LoggedScreen
+            | AdminScreen 
+            | SignUpScreen
+            | RemoveUserScreen
             deriving (Eq)
 
 -- Dados das Salas

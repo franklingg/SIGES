@@ -29,6 +29,9 @@ dependencies:
 - text
 - aeson
 - time
+- ansi-terminal
+- process
+- directory
 
 library:
   source-dirs: src
