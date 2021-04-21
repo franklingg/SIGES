@@ -1,7 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
--- importa a entidade ScreenListeners
 import TUI.ScreenListeners (userInteraction)
--- importa a entidade Manager
 import Manager (Screen (StartScreen))
 
  {-

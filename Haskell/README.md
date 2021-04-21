@@ -8,6 +8,8 @@ No local de sua escolha, clone o repositório Git do SIGES com o comando:
 Entre na pasta do SIGES e faça o build do projeto:
 > `cd SIGES/Haskell`
 >
+> `stack upgrade`
+> 
 > `stack build`
 
 Por fim, só resta rodar o programa ou testá-lo:

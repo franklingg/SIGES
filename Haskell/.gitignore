@@ -1,4 +1,3 @@
 .stack-work/
 *~
-SIGES.code-workspace
-stack.yaml.lock
+SIGES.cabal
