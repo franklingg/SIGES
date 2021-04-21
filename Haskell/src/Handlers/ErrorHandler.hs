@@ -132,7 +132,7 @@ checkTime timeStr
     | minutes >= 60 || minutes < 0 = return (Left "Formato inválido (apenas HH:MM). Tente novamente.")
     | otherwise = return $ Right timeList
     where timeRemovedWs = foldr (\c acc -> if c /= ' ' then c:acc else acc) "" timeStr
-          timeList@[hours, minutes] = map read $ splitOn ':' timeRemovedWs
+          timeList@[hours, minutes] = map read $ splitOn ":" timeRemovedWs
 
 checkDescription :: String -> IO (Either ErrorLog String)
 checkDescription str = do

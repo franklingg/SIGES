@@ -111,7 +111,7 @@ editReservation codeStr userName currentStartTimeTuple newStartTimeTuple newFini
 -}
 cleanReservations :: LocalTime -> Room -> Room
 cleanReservations timeNow room = Room{code=code room, schedule=newSchedule, resources=resources room, capacity=capacity room, localization=localization room, category=category room}
-    where newSchedule = filter (\reservation -> finishTime reservation > timeNow) (schedule room)
+    where newSchedule = filter (\reservation -> finishTime reservation < timeNow) (schedule room)
 
 {-
    Funcao para retirar todas as reservas que ja passaram do tempo.

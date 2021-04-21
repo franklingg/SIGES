@@ -47,10 +47,7 @@ instance Action Screen where
 
     useContent StartScreen = do
         signOutUser
-<<<<<<< Updated upstream
-=======
         cleanAllReservations
->>>>>>> Stashed changes
         putStrLn $ getContent StartScreen
         getInputData getAnswer (validScreen StartScreen)
 
@@ -104,8 +101,6 @@ instance Action Screen where
                 removeUser currentUser
                 putStrLn "Usuário removido!"
         return LoggedScreen
-<<<<<<< Updated upstream
-=======
 
     useContent ViewScreen = return ViewScreen
 
@@ -131,9 +126,30 @@ instance Action Screen where
         return LoggedScreen
 
 
-
     useContent EditReservationScreen = return EditReservationScreen
->>>>>>> Stashed changes
+
+    useContent EditReservationScreen = do
+        putStrLn $ getContent EditReservationScreen
+        putStrLn "Qual o código/nome da sala que você quer editar a reserva?"
+        roomCode <- getInputData getAnswer checkRoomCode
+        putStrLn "Qual o dia da reserva feita [DD-MM-AAAA]?"
+        [yOld,mOld,dOld] <- getInputData getAnswer checkDay
+        putStrLn "Qual o horário de início da reserva feita [HH:MM]?"
+        [hOldStart, minOldStart] <- getInputData getAnswer checkTime
+        putStrLn "Qual o novo dia da reserva [DD-MM-AAAA]?"
+        [yNew,mNew,dNew] <- getInputData getAnswer checkDay
+        putStrLn "Qual o novo horário de início da reserva [HH:MM]?"
+        [hNewStart, minNewStart] <- getInputData getAnswer checkTime
+        putStrLn "Qual o novo horário de término da reserva [HH:MM]?"
+        [hNewEnd, minNewEnd] <- getInputData getAnswer checkTime
+
+        user <- getLoggedUser
+        edited <- editReservation roomCode (nameUser user) (toInteger yOld,mOld,dOld,hOldStart,minOldStart) (toInteger yNew,mNew,dNew,hNewStart,minNewStart) (toInteger yNew,mNew,dNew,hNewEnd,minNewEnd)
+        if edited 
+            then putStrLn "Reserva editada! Aperte qualquer tecla para continuar."
+            else putStrLn "A reserva não existe ou já está ocupada no novo horário. Aperte qualquer tecla para continuar."
+        getLine
+        return LoggedScreen
 
 {-
    Funcao para interacao com o usuario.

@@ -83,13 +83,8 @@ getLoggedUser = do
 
 signOutUser :: IO ()
 signOutUser = do
-<<<<<<< Updated upstream
-   fileExists <- doesFileExist userTmpJSON
-   when fileExists $ removeFile userTmpJSON
-=======
    existsTmp <- fileExists userTmpJSON
    when existsTmp $ removeFile userTmpJSON
->>>>>>> Stashed changes
 
 {-
    Funcao para carregar os dados das salas cadastradas.
