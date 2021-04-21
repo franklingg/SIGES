@@ -17,6 +17,7 @@ import Handlers.ErrorHandler
 import Handlers.UserHandler
 -- importa a entidade DataHandler
 import Handlers.DataHandler
+import Handlers.RoomsHandler
 
 {-
    Classe Action.
@@ -46,6 +47,10 @@ instance Action Screen where
 
     useContent StartScreen = do
         signOutUser
+<<<<<<< Updated upstream
+=======
+        cleanAllReservations
+>>>>>>> Stashed changes
         putStrLn $ getContent StartScreen
         getInputData getAnswer (validScreen StartScreen)
 
@@ -99,6 +104,36 @@ instance Action Screen where
                 removeUser currentUser
                 putStrLn "Usuário removido!"
         return LoggedScreen
+<<<<<<< Updated upstream
+=======
+
+    useContent ViewScreen = return ViewScreen
+
+    useContent CreateReservationScreen = do
+        putStrLn $ getContent CreateReservationScreen
+        putStrLn "Qual o código/nome da sala que você quer reservar?"
+        roomCode <- getInputData getAnswer checkRoomCode
+        putStrLn "Qual o dia da reserva [DD-MM-AAAA]?"
+        [y,m,d] <- getInputData getAnswer checkDay
+        putStrLn "Qual o horário de início [HH:MM]?"
+        [hStart, mStart] <- getInputData getAnswer checkTime
+        putStrLn "Qual o horário de término [HH:MM]?"
+        [hEnd, mEnd] <- getInputData getAnswer checkTime
+        putStrLn "Dê uma breve descrição sobre a reserva"
+        description <- getInputData getAnswer checkDescription
+
+        user <- getLoggedUser
+        created <- makeReservation roomCode (nameUser user) description (toInteger y,m,d,hStart,mStart) (toInteger y,m,d,hEnd,mEnd)
+        if created 
+            then putStrLn "Reserva criada! Aperte qualquer tecla para continuar."
+            else putStrLn "Sala já ocupada neste horário. Aperte qualquer tecla para continuar."
+        getLine
+        return LoggedScreen
+
+
+
+    useContent EditReservationScreen = return EditReservationScreen
+>>>>>>> Stashed changes
 
 {-
    Funcao para interacao com o usuario.

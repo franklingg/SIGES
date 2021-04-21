@@ -61,8 +61,28 @@ instance Content Screen where
                              \=========================\n\
                              \[R]etornar (menu anterior)"
 
+    getContent ViewScreen = "\n\
+                             \=========================\n\
+                             \  VISUALIZAÇÃO DE SALAS  \n\
+                             \=========================\n"
+    getContent CreateReservationScreen = "\n\
+                             \=========================\n\
+                             \    CADASTRAR RESERVAS   \n\
+                             \=========================\n"
+    getContent EditReservationScreen = "\n\
+                             \=========================\n\
+                             \     EDITAR RESERVAS     \n\
+                             \=========================\n"
+
     nextScreens StartScreen = Map.fromList [('L', LoginScreen),('D', ExitScreen)]
     nextScreens LoginScreen = Map.fromList [('R', StartScreen)]
+<<<<<<< Updated upstream
     nextScreens LoggedScreen = Map.fromList [('D', StartScreen)]
     nextScreens AdminScreen = Map.fromList [('R', SignUpScreen), ('E', RemoveUserScreen), ('D', StartScreen)]
+=======
+    nextScreens LoggedScreen = Map.fromList [('C', CreateReservationScreen), ('V', ViewScreen), ('E',EditReservationScreen), ('D', StartScreen)]
+    nextScreens AdminScreen = Map.fromList [('C', CreateReservationScreen), ('V', ViewScreen), ('A',EditReservationScreen), ('R', SignUpScreen), ('E', RemoveUserScreen), ('D', StartScreen)]
+    nextScreens SignUpScreen = Map.fromList [('R', StartScreen)]
+    nextScreens RemoveUserScreen = Map.fromList [('R', StartScreen)]
+>>>>>>> Stashed changes
     nextScreens _ = Map.empty

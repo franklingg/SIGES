@@ -32,6 +32,7 @@ dependencies:
 - ansi-terminal
 - process
 - directory
+- split
 
 library:
   source-dirs: src

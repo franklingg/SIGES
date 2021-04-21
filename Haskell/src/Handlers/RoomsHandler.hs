@@ -44,8 +44,9 @@ isFree room newTime = not $ any (\reservation -> (startTime reservation <= newTi
    Funcao para realizar uma reserva.
 -}
 makeReservation :: String -> String -> String -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> IO Bool
-makeReservation codeRoom userName descriptionStr startTimeTuple finishTimeTuple = do
-    let startTimeReservation = makeTime startTimeTuple
+makeReservation codeStr userName descriptionStr startTimeTuple finishTimeTuple = do
+    let codeRoom = map toUpper codeStr
+        startTimeReservation = makeTime startTimeTuple
         finishTimeReservation = makeTime finishTimeTuple
     (Just room) <- getRoom codeRoom
     
@@ -64,8 +65,9 @@ makeReservation codeRoom userName descriptionStr startTimeTuple finishTimeTuple 
    Funcao para deletar uma reserva.
 -}
 deleteReservation :: String -> String -> (Integer, Int, Int, Int, Int) -> IO Bool
-deleteReservation codeRoom userName startTimeTuple = do
-    let timeReservation = makeTime startTimeTuple
+deleteReservation codeStr userName startTimeTuple = do
+    let codeRoom = map toUpper codeStr
+        timeReservation = makeTime startTimeTuple
     (Just room) <- getRoom codeRoom
     
     if any (\reservation -> (startTime reservation == timeReservation) && (requester reservation == userName)) (schedule room)
@@ -82,7 +84,8 @@ deleteReservation codeRoom userName startTimeTuple = do
    Funcao para editar uma reserva.
 -}
 editReservation :: String -> String -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> IO Bool
-editReservation codeRoom userName currentStartTimeTuple newStartTimeTuple newFinishTimeTuple = do
+editReservation codeStr userName currentStartTimeTuple newStartTimeTuple newFinishTimeTuple = do
+    let codeRoom = map toUpper codeStr    
     (Just room) <- getRoom codeRoom
     let currentStartTime = makeTime currentStartTimeTuple
         newStartTime = makeTime newStartTimeTuple

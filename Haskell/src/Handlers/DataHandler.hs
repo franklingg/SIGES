@@ -15,8 +15,8 @@ userTmpJSON = "data/userTemp.json"
 userJSON :: FilePath
 userJSON = "data/userData.json"
 
-fileExists :: String -> IO ()
-fileExists << doesFileExist
+fileExists :: FilePath -> IO (Bool)
+fileExists path = do doesFileExist path
 
 -- User e uma instancia da classe de tipo FromJSON
 instance FromJSON User where
@@ -83,8 +83,13 @@ getLoggedUser = do
 
 signOutUser :: IO ()
 signOutUser = do
+<<<<<<< Updated upstream
    fileExists <- doesFileExist userTmpJSON
    when fileExists $ removeFile userTmpJSON
+=======
+   existsTmp <- fileExists userTmpJSON
+   when existsTmp $ removeFile userTmpJSON
+>>>>>>> Stashed changes
 
 {-
    Funcao para carregar os dados das salas cadastradas.

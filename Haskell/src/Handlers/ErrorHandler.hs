@@ -12,6 +12,7 @@ import qualified Data.Text as T
 import Manager
 -- importa a entidade UserHandler
 import Handlers.UserHandler
+import Handlers.DataHandler
 -- importa a entidade OutputScreens
 import TUI.OutputScreens
 
@@ -104,3 +105,37 @@ yesOrNo str = do
                         'S' -> Right True
                         'N' -> Right False
                         _ -> Left "Resposta inválida (apenas S/N). Tente novamente.")
+
+
+checkRoomCode :: String -> IO (Either ErrorLog String)
+checkRoomCode codeStr = do
+    let codeRoom = map toUpper codeStr
+    possibleRoom <- getRoom codeRoom
+    if isJust possibleRoom
+        then return (Right codeRoom)
+        else return (Left "Sala não cadastrada. Tente novamente.")
+
+
+checkDay :: String -> IO (Either ErrorLog [Int])
+checkDay dayStr
+    | length dayRemovedWs /= 10 = return (Left "Formato inválido (apenas DD-MM-AAAA). Tente novamente.")
+    | day > 31 || day <= 0 = return (Left "Formato inválido (apenas DD-MM-AAAA). Tente novamente.")
+    | month > 12 || month <= 0 = return (Left "Formato inválido (apenas DD-MM-AAAA). Tente novamente.")
+    | otherwise = return $ Right dayList
+    where dayRemovedWs = foldr (\c acc -> if c /= ' ' then c:acc else acc) "" dayStr
+          dayList@[day, month, year] = map read $ splitOn "-" dayRemovedWs
+
+checkTime :: String -> IO (Either ErrorLog [Int])
+checkTime timeStr
+    | length timeRemovedWs /= 5 = return (Left "Formato inválido (apenas HH:MM). Tente novamente.")
+    | hours >= 24 || hours < 0 = return (Left "Formato inválido (apenas HH:MM). Tente novamente.")
+    | minutes >= 60 || minutes < 0 = return (Left "Formato inválido (apenas HH:MM). Tente novamente.")
+    | otherwise = return $ Right timeList
+    where timeRemovedWs = foldr (\c acc -> if c /= ' ' then c:acc else acc) "" timeStr
+          timeList@[hours, minutes] = map read $ splitOn ':' timeRemovedWs
+
+checkDescription :: String -> IO (Either ErrorLog String)
+checkDescription str = do
+    if all (\c -> isPrint c) str && length str > 5
+        then return (Right str)
+        else return (Left "Apenas letras são permitidas. Tente novamente.")
