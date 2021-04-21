@@ -1,18 +1,23 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Datatypes where
 
+-- importa ByteString
 import Data.ByteString
+-- importa Text
 import Data.Text
+-- importa Generics
 import GHC.Generics
+-- importa Time
 import Data.Time
 
-{-         USER HANDLER        -}
+{-         Usuario Administrador        -}
 data User = User {
     nameUser :: String
    ,emailUser :: String
    ,isAdminUser :: Bool
 } deriving(Eq, Generic)
 
+-- Dados do Administrador
 data UserFull = UserFull {
     name :: String
    ,email :: String
@@ -24,7 +29,7 @@ data UserFull = UserFull {
 {-         ERROR HANDLER         -}
 type ErrorLog = String
 
-{-         OUTPUT SCREENS        -}
+-- Dados das Telas de saida
 data Screen = ExitScreen
             | FirstScreen
             | StartScreen 
@@ -35,7 +40,7 @@ data Screen = ExitScreen
             | RemoveUserScreen User
             deriving (Eq)
 
-{-         ROOMS HANDLER         -}
+-- Dados das Salas
 data Room = Room {
     code :: String
    ,schedule :: [Reservation]
@@ -46,6 +51,7 @@ data Room = Room {
 
 } deriving (Eq, Generic)
 
+-- Dados das reservas
 data Reservation = Reservation {
     requester :: String
    ,description :: String 
@@ -54,6 +60,7 @@ data Reservation = Reservation {
 
 } deriving (Eq, Generic)
 
+-- Dados das categorias das salas
 data RoomCategory = Laboratory
                   | Auditorium
                   | Classroom
@@ -61,6 +68,7 @@ data RoomCategory = Laboratory
                   | ConferenceRoom
                   deriving (Eq, Generic)
 
+-- Dados dos tipos de recursos
 data ResourceKind = StudentDesk
               | Projector
               | Microscope
@@ -71,6 +79,7 @@ data ResourceKind = StudentDesk
               | AirConditioner
               deriving (Eq, Show, Generic)
 
+-- Dados dos recursos
 data Resource = Resource {
     resourceKind :: ResourceKind
    ,resourceQuantity :: Int 

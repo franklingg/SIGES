@@ -2,17 +2,23 @@ module TUI.OutputScreens
 ( module TUI.OutputScreens
 ) where
 
+-- importa Map
 import qualified Data.Map as Map
+-- importa a entidade Manager
 import Manager
 
+{-
+   Classe Content.
+-}
 class Content a where
     getContent :: a -> String
     nextScreens :: a -> Map.Map Char Screen
 
+-- Content e uma instancia da classe de tipo Screen
 instance Content Screen where
     getContent ExitScreen = "\nAté a próxima \n\
                              \e obrigado pelos peixes!\n"
-    getContent FirstScreen = "\nBEM-VINDO(A) AO SIGES! PARA COMEÇAR, VAMOS CADASRTRAR\n\
+    getContent FirstScreen = "\nBEM-VINDO(A) AO SIGES! PARA COMEÇAR, VAMOS CADASTRAR\n\
                               \O PRIMEIRO USUÁRIO (ADMINISTRADOR) DO SISTEMA!\n"
     getContent StartScreen ="\n=========================\n\
                             \  BEM-VINDO(A) AO SIGES  \n\

@@ -12,15 +12,25 @@ module Manager(
    ,module Data.Time
 ) where
 
+-- importa Maybe
 import Data.Maybe
+-- importa Char
 import Data.Char
+-- importa Either
 import Data.Either
+-- importa Password.Validate
 import Data.Password.Validate (isValidPassword, defaultPasswordPolicy_)
+-- importa Password.Bcrypt
 import Data.Password.Bcrypt
+-- importa Aeson
 import Data.Aeson
+-- importa IO
 import System.IO
+-- importa Exit
 import System.Exit
+-- importa Email.Validate
 import Text.Email.Validate
+-- importa Time
 import Data.Time
-
+-- importa Datatypes
 import Datatypes
