@@ -4,7 +4,7 @@ module Handlers.RoomsHandler where
 import Manager
 -- importa a entidade DataHandler
 import Handlers.DataHandler
--- importa a entidade List
+-- importa List
 import Data.List
 
 -- Room e uma instancia da classe de tipo Show
