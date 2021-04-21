@@ -1,10 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Handlers.DataHandler where
 
--- importar o ByteStrings
+-- importa o ByteStrings
 import qualified Data.ByteString.Lazy as BL
 
--- importar a entidade Manager
+-- importa a entidade Manager
 import Manager
 
 {-
@@ -62,7 +62,6 @@ getUser emailStr = do
    if null correspondingUsers
       then return Nothing
       else return $ Just (head correspondingUsers)
-
 
 {-
    Funcao para carregar os dados das salas cadastradas.
