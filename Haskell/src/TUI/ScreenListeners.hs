@@ -2,18 +2,29 @@ module TUI.ScreenListeners(
     module TUI.ScreenListeners
 ) where
 
+-- importa Haskeline
 import qualified System.Console.Haskeline as Hkl
+-- importa Map
 import qualified Data.Map as Map
 
+-- importa a entidade Manager
 import Manager
+-- importa a entidade OutputScreens
 import TUI.OutputScreens
+-- importa a entidade ErrorHandler
 import Handlers.ErrorHandler
+-- importa a entidade UserHandler
 import Handlers.UserHandler
+-- importa a entidade DataHandler
 import Handlers.DataHandler
 
+{-
+   Classe Action.
+-}
 class Action a where
     useContent :: a -> IO Screen
 
+-- Action e uma instancia da classe de tipo Screen
 instance Action Screen where
     useContent ExitScreen = do 
         putStrLn $ getContent ExitScreen    
@@ -94,6 +105,9 @@ instance Action Screen where
                 putStrLn "Usuário removido!"
         return (LoggedScreen user)
 
+{-
+   Funcao para interacao com o usuario.
+-}
 userInteraction :: Screen -> IO Screen
 userInteraction screen = do
     firstAccess <- noUsersYet
@@ -102,15 +116,24 @@ userInteraction screen = do
     nextScreen <- useContent currentScreen
     return nextScreen
 
+{-
+   Funcao para obter resposta do usuario.
+-}
 getAnswer :: IO String
 getAnswer = do
     putStr ">> "
     hFlush (stdout)
     getLine
 
+{-
+   Funcao para obter a senha do usuario.
+-}
 getPassword :: IO String
 getPassword = Hkl.runInputT Hkl.defaultSettings $ do {p <- Hkl.getPassword (Just '*') ">> "; return $ fromJust p}
 
+{-
+   Funcao para obter os dados de entrada.
+-}
 getInputData :: IO String -> (String -> IO (Either ErrorLog a)) -> IO a
 getInputData getter checker = do
     input <- getter
