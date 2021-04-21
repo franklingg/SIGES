@@ -125,9 +125,6 @@ instance Action Screen where
         getLine
         return LoggedScreen
 
-
-    useContent EditReservationScreen = return EditReservationScreen
-
     useContent EditReservationScreen = do
         putStrLn $ getContent EditReservationScreen
         putStrLn "Qual o código/nome da sala que você quer editar a reserva?"
@@ -149,6 +146,26 @@ instance Action Screen where
             then putStrLn "Reserva editada! Aperte qualquer tecla para continuar."
             else putStrLn "A reserva não existe ou já está ocupada no novo horário. Aperte qualquer tecla para continuar."
         getLine
+        return LoggedScreen
+    
+    useContent RemoveReservationScreen = do
+        putStrLn $ getContent RemoveReservationScreen
+        putStrLn "Qual o código/nome da sala que você quer remover a reserva?"
+        roomCode <- getInputData getAnswer checkRoomCode
+        putStrLn "Qual o dia da reserva feita [DD-MM-AAAA]?"
+        [y,m,d] <- getInputData getAnswer checkDay
+        putStrLn "Qual o horário de início da reserva feita [HH:MM]?"
+        [hStart, minStart] <- getInputData getAnswer checkTime
+
+        user <- getLoggedUser
+        reservation <- findReservation roomCode (toInteger y,m,d,hStart,minStart) (nameUser user)
+        putStrLn $ show reservation
+        putStrLn "Confirma a deleção da reserva acima [S/N]?"
+        toDelete <- getInputData getAnswer yesOrNo
+        when toDelete (do 
+                deleteReservation roomCode (nameUser user) (toInteger y,m,d,hStart,minStart)
+                putStrLn "Reserva deletada. Aperte qualquer tecla para continuar."
+                getLine)
         return LoggedScreen
 
 {-

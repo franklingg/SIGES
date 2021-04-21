@@ -38,9 +38,10 @@ data Screen = ExitScreen
             | AdminScreen 
             | SignUpScreen
             | RemoveUserScreen
-            | ViewScreen 
+            | ViewScreen
             | CreateReservationScreen
             | EditReservationScreen
+            | RemoveReservationScreen
             deriving (Eq)
 
 -- Dados das Salas

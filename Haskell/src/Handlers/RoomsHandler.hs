@@ -80,6 +80,14 @@ deleteReservation codeStr userName startTimeTuple = do
 
         else return False
 
+findReservation :: String -> (Integer,Int,Int,Int,Int)-> String -> IO Reservation
+findReservation codeRoom startTimeTuple userName = do
+    (Just room) <- getRoom codeRoom
+    let reservations = schedule room
+        matching = filter (\reservation -> (startTime reservation == makeTime startTimeTuple) && (requester reservation == userName)) reservations
+    return $ head matching
+
+
 {-
    Funcao para editar uma reserva.
 -}
