@@ -102,7 +102,26 @@ instance Action Screen where
                 putStrLn "Usuário removido!"
         return LoggedScreen
 
-    useContent ViewScreen = return ViewScreen
+    useContent ViewScreen = do
+        putStrLn $ getContent ViewScreen
+        getInputData getAnswer (validScreen ViewScreen)
+
+    useContent ViewSpecificScreen = do
+        putStrLn $ getContent ViewSpecificScreen
+        putStrLn "Qual o código/nome da sala que você quer visualizar?"
+        roomCode <- getInputData getAnswer checkRoomCode
+        (Just room) <- getRoom roomCode
+        putStrLn $ show room
+        putStrLn "Deseja visualizar alguma reserva da sala acima [S/N]?"
+        viewReservation <- getInputData getAnswer yesOrNo
+        when viewReservation (do
+                putStrLn "Qual o dia da reserva [DD-MM-AAAA]?"
+                [y,m,d] <- getInputData getAnswer checkDay
+                putStrLn "Qual o horário de início [HH:MM]?"
+                [hStart, minStart] <- getInputData getAnswer checkTime
+                reservation <- findReservationEasy roomCode (toInteger y,m,d,hStart,minStart)
+                putStrLn $ show reservation)
+        return StartScreen
 
     useContent CreateReservationScreen = do
         putStrLn $ getContent CreateReservationScreen
@@ -165,7 +184,8 @@ instance Action Screen where
         when toDelete (do 
                 deleteReservation roomCode (nameUser user) (toInteger y,m,d,hStart,minStart)
                 putStrLn "Reserva deletada. Aperte qualquer tecla para continuar."
-                getLine)
+                getLine
+                return())
         return LoggedScreen
 
 {-

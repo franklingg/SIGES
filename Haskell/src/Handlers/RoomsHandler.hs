@@ -9,9 +9,12 @@ import Data.List
 
 -- Room e uma instancia da classe de tipo Show
 instance Show Room where
-    show(Room codeRoom _ _ capRoom localRoom catRoom) = "Dados da sala:                   \n\
-                                                        \Código: "++ codeRoom ++         "\n\
-                                                        \Capacidade: "++ show capRoom
+    show(Room codeRoom _ resRoom capRoom localRoom catRoom) =   "Dados da sala:                   \n\
+                                                                \Código: "++ codeRoom ++         "\n\
+                                                                \Categoria: "++ show catRoom ++  "\n\
+                                                                \Capacidade: "++ show capRoom ++ "\n\
+                                                                \Localização: "++ localRoom ++   "\n\
+                                                                \Recursos: "++ show resRoom
 
 -- Reservation e uma instancia da classe de tipo Show
 instance Show Reservation where
@@ -20,10 +23,13 @@ instance Show Reservation where
                                                                    \Fim: "++ show finishTime ++      "\n\
                                                                    \Responsável: " ++ requester ++   "\n\
                                                                    \Motivo: "++ description
-
+                                                                
 -- Reservation e uma instancia da classe de tipo Ord
 instance Ord Reservation where
     compare res1 res2 = if startTime res1 <= startTime res2 then LT else GT
+
+instance Show Resource where
+    show(Resource kind quantity) = " " ++ show kind ++ ": " ++ show quantity
 
 {-
    Funcao para arranjar o tempo.
@@ -85,6 +91,13 @@ findReservation codeRoom startTimeTuple userName = do
     (Just room) <- getRoom codeRoom
     let reservations = schedule room
         matching = filter (\reservation -> (startTime reservation == makeTime startTimeTuple) && (requester reservation == userName)) reservations
+    return $ head matching
+
+findReservationEasy :: String -> (Integer,Int,Int,Int,Int) -> IO Reservation
+findReservationEasy codeRoom startTimeTuple = do
+    (Just room) <- getRoom codeRoom
+    let reservations = schedule room
+        matching = filter (\reservation -> (startTime reservation == makeTime startTimeTuple)) reservations
     return $ head matching
 
 

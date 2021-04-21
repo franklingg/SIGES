@@ -64,9 +64,20 @@ instance Content Screen where
                              \[R]etornar (menu anterior)"
 
     getContent ViewScreen = "\n\
-                             \=========================\n\
-                             \  VISUALIZAÇÃO DE SALAS  \n\
-                             \=========================\n"
+                             \==========================  \n\
+                             \  VISUALIZAÇÃO DE SALAS     \n\
+                             \==========================  \n\
+                             \[S]ala específica           \n\
+                             \[F]iltrar salas por atributo\n\   
+                             \[R]etornar (menu principal)"
+    getContent ViewSpecificScreen = "\n\
+                            \=============================\n\
+                            \  VISUALIZAR SALA ESPECÍFICA   \n\
+                            \=============================\n"
+    getContent ViewFilterScreen = "\n\
+                            \==========================\n\
+                            \  VISUALIZAR POR FILTROS    \n\
+                            \==========================\n"
     getContent CreateReservationScreen = "\n\
                              \=========================\n\
                              \    CADASTRAR RESERVAS   \n\
@@ -80,10 +91,11 @@ instance Content Screen where
                             \     REMOVER RESERVAS    \n\
                             \=========================\n"
 
-    nextScreens StartScreen = Map.fromList [('L', LoginScreen),('D', ExitScreen)]
+    nextScreens StartScreen = Map.fromList [('L', LoginScreen),('V', ViewScreen), ('D', ExitScreen)]
     nextScreens LoginScreen = Map.fromList [('R', StartScreen)]
     nextScreens LoggedScreen = Map.fromList [('C', CreateReservationScreen), ('V', ViewScreen), ('E',EditReservationScreen), ('R', RemoveReservationScreen), ('D', StartScreen)]
     nextScreens AdminScreen = Map.fromList [('C', CreateReservationScreen), ('V', ViewScreen), ('A',EditReservationScreen), ('D',RemoveReservationScreen),('R', SignUpScreen), ('E', RemoveUserScreen), ('F', StartScreen)]
     nextScreens SignUpScreen = Map.fromList [('R', StartScreen)]
     nextScreens RemoveUserScreen = Map.fromList [('R', StartScreen)]
+    nextScreens ViewScreen = Map.fromList [('S', ViewSpecificScreen), ('F',ViewFilterScreen), ('R', StartScreen)]
     nextScreens _ = Map.empty

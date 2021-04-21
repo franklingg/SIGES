@@ -39,6 +39,8 @@ data Screen = ExitScreen
             | SignUpScreen
             | RemoveUserScreen
             | ViewScreen
+            | ViewSpecificScreen
+            | ViewFilterScreen
             | CreateReservationScreen
             | EditReservationScreen
             | RemoveReservationScreen
@@ -70,7 +72,7 @@ data RoomCategory = Laboratory
                   | Classroom
                   | Office
                   | ConferenceRoom
-                  deriving (Eq, Generic)
+                  deriving (Eq, Show, Generic)
 
 -- Dados dos tipos de recursos
 data ResourceKind = StudentDesk
@@ -87,5 +89,5 @@ data ResourceKind = StudentDesk
 data Resource = Resource {
     resourceKind :: ResourceKind
    ,resourceQuantity :: Int 
-}deriving (Eq, Show, Generic)
+}deriving (Eq, Generic)
 
