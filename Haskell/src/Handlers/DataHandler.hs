@@ -74,6 +74,9 @@ signUser emailStr = do
    let user = User (name userfull) (email userfull) (isAdmin userfull)
    BL.writeFile userTmpJSON $ encode user
 
+hasLoggedUser :: IO Bool
+hasLoggedUser = do fileExists userTmpJSON
+
 getLoggedUser :: IO (User)
 getLoggedUser = do
    tmpUser <- decode <$> BL.readFile userTmpJSON
@@ -83,7 +86,7 @@ getLoggedUser = do
 
 signOutUser :: IO ()
 signOutUser = do
-   existsTmp <- fileExists userTmpJSON
+   existsTmp <- hasLoggedUser
    when existsTmp $ removeFile userTmpJSON
 
 {-

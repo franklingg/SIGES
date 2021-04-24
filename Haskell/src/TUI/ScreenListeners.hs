@@ -104,25 +104,46 @@ instance Action Screen where
 
     useContent ViewScreen = do
         putStrLn $ getContent ViewScreen
-        getInputData getAnswer (validScreen ViewScreen)
+        screen <- getInputData getAnswer (validScreen ViewScreen)
+        loggedUser <- hasLoggedUser
+        return $ if screen == StartScreen && loggedUser then LoggedScreen else screen
 
-    useContent ViewSpecificScreen = do
-        putStrLn $ getContent ViewSpecificScreen
+    useContent ViewRoomScreen = do
+        putStrLn $ getContent ViewRoomScreen
         putStrLn "Qual o código/nome da sala que você quer visualizar?"
         roomCode <- getInputData getAnswer checkRoomCode
         (Just room) <- getRoom roomCode
-        putStrLn $ show room
-        putStrLn "Deseja visualizar alguma reserva da sala acima [S/N]?"
-        viewReservation <- getInputData getAnswer yesOrNo
-        when viewReservation (do
-                putStrLn "Qual o dia da reserva [DD-MM-AAAA]?"
-                [y,m,d] <- getInputData getAnswer checkDay
-                putStrLn "Qual o horário de início [HH:MM]?"
-                [hStart, minStart] <- getInputData getAnswer checkTime
-                reservation <- findReservationEasy roomCode (toInteger y,m,d,hStart,minStart)
-                putStrLn $ show reservation)
+        print room
+        putStrLn "Aperte qualquer tecla para continuar."
+        getLine
         return StartScreen
 
+    useContent ViewFilterScreen = do
+        putStrLn $ getContent ViewFilterScreen
+        rooms <- getRoomsFilter []
+        sequence $ map print rooms
+        return StartScreen
+
+    useContent ReportRoomScreen = do
+        putStrLn $ getContent ReportRoomScreen
+        putStrLn "Qual o código/nome da sala que você quer visualizar?"
+        roomCode <- getInputData getAnswer checkRoomCode
+        (Just room) <- getRoom roomCode
+        putStrLn "Qual o dia de ocupação você deseja ver [DD-MM-AAAA]?"
+        [y,m,d] <- getInputData getAnswer checkDay
+        putStrLn $ createReportForTheRoom (toInteger y, m, d) room
+        waitInput
+        return StartScreen
+
+    useContent ReportDayScreen = do
+        putStrLn $ getContent ReportDayScreen
+        putStrLn "Qual o dia de ocupação você deseja ver [DD-MM-AAAA]?"
+        [y,m,d] <- getInputData getAnswer checkDay
+        report <- createReportForTheDay (toInteger y, m, d)
+        putStrLn report
+        waitInput
+        return StartScreen
+    
     useContent CreateReservationScreen = do
         putStrLn $ getContent CreateReservationScreen
         putStrLn "Qual o código/nome da sala que você quer reservar?"
@@ -139,9 +160,9 @@ instance Action Screen where
         user <- getLoggedUser
         created <- makeReservation roomCode (nameUser user) description (toInteger y,m,d,hStart,mStart) (toInteger y,m,d,hEnd,mEnd)
         if created 
-            then putStrLn "Reserva criada! Aperte qualquer tecla para continuar."
-            else putStrLn "Sala já ocupada neste horário. Aperte qualquer tecla para continuar."
-        getLine
+            then putStr "Reserva criada! "
+            else putStr "Sala já ocupada neste horário. "
+        waitInput
         return LoggedScreen
 
     useContent EditReservationScreen = do
@@ -162,9 +183,9 @@ instance Action Screen where
         user <- getLoggedUser
         edited <- editReservation roomCode (nameUser user) (toInteger yOld,mOld,dOld,hOldStart,minOldStart) (toInteger yNew,mNew,dNew,hNewStart,minNewStart) (toInteger yNew,mNew,dNew,hNewEnd,minNewEnd)
         if edited 
-            then putStrLn "Reserva editada! Aperte qualquer tecla para continuar."
-            else putStrLn "A reserva não existe ou já está ocupada no novo horário. Aperte qualquer tecla para continuar."
-        getLine
+            then putStrLn "Reserva editada! "
+            else putStrLn "A reserva não existe ou já está ocupada no novo horário. "
+        waitInput
         return LoggedScreen
     
     useContent RemoveReservationScreen = do
@@ -183,8 +204,8 @@ instance Action Screen where
         toDelete <- getInputData getAnswer yesOrNo
         when toDelete (do 
                 deleteReservation roomCode (nameUser user) (toInteger y,m,d,hStart,minStart)
-                putStrLn "Reserva deletada. Aperte qualquer tecla para continuar."
-                getLine
+                putStrLn "Reserva deletada. "
+                waitInput
                 return())
         return LoggedScreen
 
@@ -198,6 +219,11 @@ userInteraction screen = do
 
     nextScreen <- useContent currentScreen
     return nextScreen
+
+waitInput :: IO String
+waitInput = do
+    putStrLn "Aperte qualquer tecla para continuar"
+    getLine
 
 {-
    Funcao para obter resposta do usuario.
@@ -224,3 +250,50 @@ getInputData getter checker = do
     case checkedAnswer of
         Left error -> do {putStrLn error; getInputData getter checker}
         Right answer -> return answer
+
+
+        
+getRoomsFilter :: [Room] -> IO ([Room])
+getRoomsFilter previous = do
+    putStrLn "Por qual critério você deseja filtrar?\n\
+              \1 - Categoria\n\
+              \2 - Capacidade\n\
+              \3 - Horário\n\
+              \4 - Recursos"
+    option <- getInputData getAnswer checkFilter
+    rooms <- case option of 
+                1 -> do 
+                    printCategories 
+                    cat <- getInputData getAnswer checkCategory
+                    searchRoomsCategory $ Just cat
+                2 -> do 
+                    putStrLn "Capacidade mínima desejada: "
+                    cap <- getInputData getAnswer checkNumber
+                    searchRoomsCapacity $ Just cap
+                3 -> do
+                    putStrLn "Qual o dia a ser buscado [DD-MM-AAAA]?"
+                    [y,m,d] <- getInputData getAnswer checkDay
+                    putStrLn "Qual o horário de início a ser buscado [HH:MM]?"
+                    [hStart, minStart] <- getInputData getAnswer checkTime
+                    putStrLn "Qual o horário de término a ser buscado [HH:MM]?"
+                    [hEnd, minEnd] <- getInputData getAnswer checkTime
+                    searchRoomsTime (Just (toInteger y, m, d, hStart, minStart)) (Just (toInteger y,m,d,hEnd,minEnd))
+                4 -> do
+                    printResources
+                    resources <- getResources []
+                    searchRoomsResources $ Just resources
+
+    let intersected = if previous == [] then rooms else rooms `intersect` previous
+    putStrLn "Deseja combinar sua busca com outro filtro [S/N]?"
+    more <- getInputData getAnswer yesOrNo
+    if more then getRoomsFilter intersected else return intersected
+
+getResources :: [Resource] -> IO [Resource]
+getResources previous = do
+    kind <- getInputData getAnswer checkResource
+    putStrLn "Qual a quantidade mínima?"
+    quantity <- getInputData getAnswer checkNumber
+    let resources = previous ++ [Resource kind quantity]
+    putStrLn "Deseja buscar mais recursos [S/N]?"
+    more <- getInputData getAnswer yesOrNo
+    if more then getResources resources else return resources

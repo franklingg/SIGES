@@ -64,13 +64,15 @@ instance Content Screen where
                              \[R]etornar (menu anterior)"
 
     getContent ViewScreen = "\n\
-                             \==========================  \n\
-                             \  VISUALIZAÇÃO DE SALAS     \n\
-                             \==========================  \n\
-                             \[S]ala específica           \n\
-                             \[F]iltrar salas por atributo\n\   
+                             \==========================    \n\
+                             \  VISUALIZAÇÃO DE SALAS       \n\
+                             \==========================    \n\
+                             \[D]ados de uma sala específica\n\
+                             \[F]iltrar salas por atributo  \n\
+                             \[O]cupação por sala           \n\
+                             \[S]alas ocupadas em certo dia \n\   
                              \[R]etornar (menu principal)"
-    getContent ViewSpecificScreen = "\n\
+    getContent ViewRoomScreen = "\n\
                             \=============================\n\
                             \  VISUALIZAR SALA ESPECÍFICA   \n\
                             \=============================\n"
@@ -78,6 +80,14 @@ instance Content Screen where
                             \==========================\n\
                             \  VISUALIZAR POR FILTROS    \n\
                             \==========================\n"
+    getContent ReportRoomScreen = "\n\
+                            \=============================\n\
+                            \ RELATÓRIO DE SALA ESPECÍFICA\n\
+                            \=============================\n"
+    getContent ReportDayScreen = "\n\
+                            \=============================\n\
+                            \ RELATÓRIO DE DIA ESPECÍFICO \n\
+                            \=============================\n"
     getContent CreateReservationScreen = "\n\
                              \=========================\n\
                              \    CADASTRAR RESERVAS   \n\
@@ -97,5 +107,5 @@ instance Content Screen where
     nextScreens AdminScreen = Map.fromList [('C', CreateReservationScreen), ('V', ViewScreen), ('A',EditReservationScreen), ('D',RemoveReservationScreen),('R', SignUpScreen), ('E', RemoveUserScreen), ('F', StartScreen)]
     nextScreens SignUpScreen = Map.fromList [('R', StartScreen)]
     nextScreens RemoveUserScreen = Map.fromList [('R', StartScreen)]
-    nextScreens ViewScreen = Map.fromList [('S', ViewSpecificScreen), ('F',ViewFilterScreen), ('R', StartScreen)]
+    nextScreens ViewScreen = Map.fromList [('D', ViewRoomScreen), ('F',ViewFilterScreen), ('O',ReportRoomScreen),('S',ReportDayScreen), ('R', StartScreen)]
     nextScreens _ = Map.empty

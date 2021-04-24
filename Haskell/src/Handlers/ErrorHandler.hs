@@ -139,3 +139,38 @@ checkDescription str = do
     if all (\c -> isPrint c) str && length str > 5
         then return (Right str)
         else return (Left "Apenas letras são permitidas. Tente novamente.")
+
+
+checkCategory :: String -> IO (Either ErrorLog RoomCategory)
+checkCategory catStr
+    | c == 'L' = return $ Right Laboratory
+    | c == 'A' = return $ Right Auditorium
+    | c == 'S' = return $ Right Classroom
+    | c == 'E' = return $ Right Office
+    | c == 'D' = return $ Right Warehouse
+    | otherwise = return $ Left "Apenas uma das opções acima. Tente novamente"
+    where c = toUpper (head catStr) 
+
+checkNumber :: String -> IO (Either ErrorLog Int)
+checkNumber numStr
+    | num > 0 && num < 300 = return $ Right num
+    | otherwise = return $ Left "Valor inválido. Tente novamente"
+    where num = read numStr
+
+checkResource :: String -> IO (Either ErrorLog ResourceKind)
+checkResource resStr
+    | c == 'P' = return $ Right Projector
+    | c == 'M' = return $ Right Microscope
+    | c == 'B' = return $ Right Desk
+    | c == 'C' = return $ Right Computer
+    | c == 'Q' = return $ Right Board
+    | c == 'A' = return $ Right AirConditioner
+    | otherwise = return $ Left "Apenas uma das opções acima. Tente novamente"
+    where c = toUpper (head resStr) 
+
+checkFilter :: String -> IO (Either ErrorLog Int)
+checkFilter filterStr = do
+    let filterNum = read filterStr
+    if filterNum `elem` [1,2,3,4] 
+        then return $ Right filterNum 
+        else return $ Left "Valor inválido. Tente novamente"

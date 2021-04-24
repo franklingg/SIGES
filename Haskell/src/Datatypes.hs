@@ -39,8 +39,10 @@ data Screen = ExitScreen
             | SignUpScreen
             | RemoveUserScreen
             | ViewScreen
-            | ViewSpecificScreen
+            | ViewRoomScreen
             | ViewFilterScreen
+            | ReportRoomScreen
+            | ReportDayScreen
             | CreateReservationScreen
             | EditReservationScreen
             | RemoveReservationScreen
@@ -71,17 +73,15 @@ data RoomCategory = Laboratory
                   | Auditorium
                   | Classroom
                   | Office
-                  | ConferenceRoom
+                  | Warehouse
                   deriving (Eq, Show, Generic)
 
 -- Dados dos tipos de recursos
-data ResourceKind = StudentDesk
-              | Projector
+data ResourceKind = Projector
               | Microscope
               | Desk
               | Computer
               | Board
-              | LabBench
               | AirConditioner
               deriving (Eq, Show, Generic)
 

@@ -4,8 +4,6 @@ module Handlers.RoomsHandler where
 import Manager
 -- importa a entidade DataHandler
 import Handlers.DataHandler
--- importa List
-import Data.List
 
 -- Room e uma instancia da classe de tipo Show
 instance Show Room where
@@ -229,14 +227,21 @@ searchRoomsResources resourcesNeeded = do
     else do
         return allRooms
 
-{-
-   Funcao para pesquisar salas com recursos combinados.
--}
-searchRoomsCombined :: Maybe RoomCategory -> Maybe Int -> Maybe (Integer, Int, Int, Int, Int) -> Maybe (Integer, Int, Int, Int, Int) -> Maybe [Resource] -> IO [Room]
-searchRoomsCombined catRoom capRoom startTimeTuple finishTimeTuple resourcesNeeded = do
-    filteredCategory <- searchRoomsCategory catRoom
-    filteredCapacity <- searchRoomsCapacity capRoom
-    filteredTime <- searchRoomsTime startTimeTuple finishTimeTuple
-    filteredResources <- searchRoomsResources resourcesNeeded
-    let filtered = filteredCategory `intersect` filteredCapacity `intersect` filteredTime `intersect` filteredResources
-    return filtered
+printCategories :: IO ()
+printCategories = do
+    putStrLn "Qual categoria você deseja escolher?\n\
+             \[L]aboratório\n\
+             \[A]uditório\n\
+             \[S]ala de aula\n\
+             \[E]scritório\n\
+             \[D]epósito"
+
+printResources :: IO ()
+printResources = do
+    putStrLn "Qual recurso você deseja escolher?\n\
+             \[P]rojetor\n\
+             \[M]icroscópio\n\
+             \[B]irô\n\
+             \[C]omputador\n\
+             \[Q]uadro\n\
+             \[A]r condicionado"

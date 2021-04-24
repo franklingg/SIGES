@@ -2,6 +2,7 @@ module Manager(
     module Data.Maybe
    ,module Data.Char
    ,module Data.Either
+   ,module Data.List
    ,module Data.List.Split
    ,module Data.Password.Validate
    ,module Data.Password.Bcrypt
@@ -23,6 +24,7 @@ import Data.Maybe
 import Data.Char
 -- importa Either
 import Data.Either
+import Data.List
 import Data.List.Split
 -- importa Password.Validate
 import Data.Password.Validate (isValidPassword, defaultPasswordPolicy_)
