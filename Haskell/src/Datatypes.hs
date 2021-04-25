@@ -12,14 +12,14 @@ import GHC.Generics
 import Data.Time
 
 {-         Usuário Administrador        -}
--- |Versão resumida de usuário do sistema. Mantém dados essenciais, mas omite dados sensíveis que não serão necessários.
+-- | Versão resumida de usuário do sistema. Mantém dados essenciais, mas omite dados sensíveis que não serão necessários.
 data User = User {
     nameUser :: String  -- ^ O nome do Usuário.
    ,emailUser :: String -- ^ O e-mail do usuário.
    ,isAdminUser :: Bool -- ^ Indicação se o usuário é ou não um administrador.
 } deriving(Eq, Generic)
 
--- |Versão completa do usuário do sistema, a ser usada quando se precisa de todas as informações do usuário.
+-- | Versão completa do usuário do sistema, a ser usada quando se precisa de todas as informações do usuário.
 data UserFull = UserFull {
     name :: String             -- ^ O nome do usuário.
    ,email :: String            -- ^ O e-mail do usuário.
@@ -29,10 +29,10 @@ data UserFull = UserFull {
 } deriving(Eq, Show, Generic)
 
 {-         ERROR HANDLER         -}
--- |Define o tipo ErrorLog como uma String.
+-- | Define o tipo ErrorLog como uma String.
 type ErrorLog = String
 
--- |As diferentes telas do sistema.
+-- | As diferentes telas do sistema.
 data Screen = ExitScreen              -- ^ A tela de saída do sistema.
             | FirstScreen             -- ^ A tela inicial, quando nenhum administrador foi cadastrado ainda.
             | StartScreen             -- ^ A tela inicial do sistema quando já existem usuários cadastrados.
@@ -51,7 +51,7 @@ data Screen = ExitScreen              -- ^ A tela de saída do sistema.
             | RemoveReservationScreen -- ^ A tela para se remover uma reserva previamente feita.
             deriving (Eq)
 
--- |Uma sala do sistema SIGES.
+-- | Uma sala do sistema SIGES.
 data Room = Room {
     code :: String            -- ^ O código da sala.
    ,schedule :: [Reservation] -- ^ A agenda onde são armazenadas todas as reservas ativas para esta sala.
@@ -62,7 +62,7 @@ data Room = Room {
 
 } deriving (Eq, Generic)
 
--- |As reservas de salas do sistema.
+-- | As reservas de salas do sistema.
 data Reservation = Reservation {
     requester :: String     -- ^ O responsável pela reserva.
    ,description :: String   -- ^ A descrição do evento da reserva.
@@ -71,7 +71,7 @@ data Reservation = Reservation {
 
 } deriving (Eq, Generic)
 
--- |As categorias de sala oferecidas pelo sistema.
+-- | As categorias de sala oferecidas pelo sistema.
 data RoomCategory = Laboratory -- ^ Sala que funciona como um laboratório.
                   | Auditorium -- ^ Sala que funciona como um auditório.
                   | Classroom  -- ^ Sala que funciona como uma sala de aula.
@@ -79,7 +79,7 @@ data RoomCategory = Laboratory -- ^ Sala que funciona como um laboratório.
                   | Warehouse  -- ^ Sala que funciona como um depósito.
                   deriving (Eq, Show, Generic)
 
--- |Os tipos de recursos existentes no sistema.
+-- | Os tipos de recursos existentes no sistema.
 data ResourceKind = Projector      -- ^ Projetor ou Datashow.
                   | Microscope     -- ^ Microscópio.
                   | Desk           -- ^ Escrivaninha.
@@ -88,7 +88,7 @@ data ResourceKind = Projector      -- ^ Projetor ou Datashow.
                   | AirConditioner -- ^ Ar condicionado.
               deriving (Eq, Show, Generic)
 
--- |Os recursos oferecidos pelas salas do sistema.
+-- | Os recursos oferecidos pelas salas do sistema.
 data Resource = Resource {
     resourceKind :: ResourceKind -- ^ O tipo do recurso.
    ,resourceQuantity :: Int      -- ^ A quantidade do recurso que a sala oferece.

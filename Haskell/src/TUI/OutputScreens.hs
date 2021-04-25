@@ -1,7 +1,6 @@
 {-|
 Module      : OutputScreens
 Description : Módulo com o conteúdo exibido em cada tela e que armazena a relação entre as telas do sistema SIGES.
-Copyright   : 
 -}
 module TUI.OutputScreens
 ( module TUI.OutputScreens
@@ -10,7 +9,7 @@ module TUI.OutputScreens
 import qualified Data.Map as Map
 import Manager
 
--- |Typeclass Content, que estabelece operações de conteúdo para as telas do sistema.
+-- | Typeclass Content, que estabelece operações de conteúdo para as telas do sistema.
 class Content a where
     getContent :: a -> String               -- ^ Operação de obter o conteúdo de uma determinada tela.
     nextScreens :: a -> Map.Map Char Screen -- ^ Operação de obter as possíveis próximas telas de uma tela.

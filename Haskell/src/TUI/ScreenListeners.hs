@@ -1,7 +1,6 @@
 {-|
 Module      : ScreenListeners
-Description : 
-Copyright   : 
+Description : Módulo que estabelece ações e lógica das telas e de leitura de dados no sistema SIGES.
 -}
 module TUI.ScreenListeners(
     module TUI.ScreenListeners
@@ -17,7 +16,7 @@ import Handlers.UserHandler
 import Handlers.DataHandler
 import Handlers.RoomsHandler
 
--- |Typeclass que estabelece as operações de ações a ser executadas em cada tela do sistema.
+-- | Typeclass que estabelece as operações de ações a ser executadas em cada tela do sistema.
 class Action a where
     useContent :: a -> IO Screen -- ^ A implementação de como a tela será impressa na tela e como lerá as informações dadas pelo usuário.
 
@@ -204,9 +203,7 @@ instance Action Screen where
                 return())
         return LoggedScreen
 
-{-
-   Funcao para interacao com o usuario.
--}
+-- | Esta é a função responsável por encontrar e controlar quais telas serão exibidas no sistema SIGES.
 userInteraction :: Screen -> IO Screen
 userInteraction screen = do
     firstAccess <- noUsersYet
@@ -220,24 +217,18 @@ waitInput = do
     putStrLn "Aperte qualquer tecla para continuar"
     getLine
 
-{-
-   Funcao para obter resposta do usuario.
--}
+-- | Esta função exibirá um prompt e captará a resposta digitada pelo usuário.
 getAnswer :: IO String
 getAnswer = do
     putStr ">> "
     hFlush (stdout)
     getLine
 
-{-
-   Funcao para obter a senha do usuario.
--}
+-- | Função responsável por captar a senha do usuário da entrada e garantir que ela seja exibida apenas com asteriscos, como forma de melhorar a segurança.
 getPassword :: IO String
 getPassword = Hkl.runInputT Hkl.defaultSettings $ do {p <- Hkl.getPassword (Just '*') ">> "; return $ fromJust p}
 
-{-
-   Funcao para obter os dados de entrada.
--}
+-- | Dada uma Mônada de String qualquer e uma função de verificação, esta função aplicará a função sobre a String. Caso a String passe na verificação fornecida, será retornada. Caso contrário, uma mensagem de erro será exibida e a função será repetida com uma nova entrada.
 getInputData :: IO String -> (String -> IO (Either ErrorLog a)) -> IO a
 getInputData getter checker = do
     input <- getter
@@ -246,8 +237,7 @@ getInputData getter checker = do
         Left error -> do {putStrLn error; getInputData getter checker}
         Right answer -> return answer
 
-
-        
+-- | Esta filtrará salas pelos filtros escolhidos pelo usuário. MAis de um filtro podem ser aplicados simultaneamente, neste caso, a função perguntará um a um quais filtros devem ser adicionados.
 getRoomsFilter :: [Room] -> IO ([Room])
 getRoomsFilter previous = do
     putStrLn "Por qual critério você deseja filtrar?\n\
@@ -283,6 +273,7 @@ getRoomsFilter previous = do
     more <- getInputData getAnswer yesOrNo
     if more then getRoomsFilter intersected else return intersected
 
+-- | Função auxiliar à função de filtro de salas. Esta função lerá da entrada recursos que o usuário deseja buscar e suas respectivas quantidades, e então produzirá uma lista de recursos com estas informações e a retornará.
 getResources :: [Resource] -> IO [Resource]
 getResources previous = do
     kind <- getInputData getAnswer checkResource

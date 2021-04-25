@@ -1,7 +1,6 @@
 {-|
 Module      : RoomsHandler
 Description : Módulo contendo as operações básicas para manipulação de salas no sistema SIGES.
-Copyright   : 
 -}
 module Handlers.RoomsHandler where
 
@@ -29,18 +28,18 @@ instance Ord Reservation where
 instance Show Resource where
     show(Resource kind quantity) = " " ++ show kind ++ ": " ++ show quantity
 
--- |Função auxiliar que, dada uma tupla com um Integer para o ano e um Int para mÊs, dia, hora e minuto, respectivamente, cria um LocalTime.
+-- | Função auxiliar que, dada uma tupla com um Integer para o ano e um Int para mÊs, dia, hora e minuto, respectivamente, cria um LocalTime.
 makeTime :: (Integer, Int, Int, Int, Int) -> LocalTime
 makeTime (a, m, d, h, min) = time
     where (Just clock) = makeTimeOfDayValid h min 00
           calendar = fromGregorian a m d
           time = LocalTime calendar clock
 
--- |Esta função recebe uma sala e um horário, e verifica se esta sala estará livre neste horário, respondendo com um valor booleano.
+-- | Esta função recebe uma sala e um horário, e verifica se esta sala estará livre neste horário, respondendo com um valor booleano.
 isFree :: Room -> LocalTime -> Bool
 isFree room newTime = not $ any (\reservation -> (startTime reservation <= newTime) && (finishTime reservation >= newTime)) (schedule room)
 
--- |Esta função criará uma reserva em uma das salas, a partir do código da mesma, do nome do responsável pela reserva, e das tuplas especificando data e horário de finalização do evento.
+-- | Esta função criará uma reserva em uma das salas, a partir do código da mesma, do nome do responsável pela reserva, e das tuplas especificando data e horário de finalização do evento.
 makeReservation :: String -> String -> String -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> IO Bool
 makeReservation codeStr userName descriptionStr startTimeTuple finishTimeTuple = do
     let codeRoom = map toUpper codeStr
@@ -59,7 +58,7 @@ makeReservation codeStr userName descriptionStr startTimeTuple finishTimeTuple =
         else
             return False
 
--- |Esta função deletará uma função identificada pelo código da sala e nome do responsável, e pela tupla do horário de início do evento.
+-- | Esta função deletará uma função identificada pelo código da sala e nome do responsável, e pela tupla do horário de início do evento.
 deleteReservation :: String -> String -> (Integer, Int, Int, Int, Int) -> IO Bool
 deleteReservation codeStr userName startTimeTuple = do
     let codeRoom = map toUpper codeStr
@@ -76,7 +75,7 @@ deleteReservation codeStr userName startTimeTuple = do
 
         else return False
 
--- |Dada uma sala, identificada pelo seu código, um horário, representado em forma de tupla e um nome de usuário, esta função retornará a reserva com os dados equivalentes.
+-- | Dada uma sala, identificada pelo seu código, um horário, representado em forma de tupla e um nome de usuário, esta função retornará a reserva com os dados equivalentes.
 findReservation :: String -> (Integer,Int,Int,Int,Int)-> String -> IO Reservation
 findReservation codeRoom startTimeTuple userName = do
     (Just room) <- getRoom codeRoom
@@ -84,7 +83,7 @@ findReservation codeRoom startTimeTuple userName = do
         matching = filter (\reservation -> (startTime reservation == makeTime startTimeTuple) && (requester reservation == userName)) reservations
     return $ head matching
 
--- |Dada uma sala, identificada pelo seu código, e um horário em forma de tupla, esta função retornará a reserva da sala cujo evento se inicie no horário dado.
+-- | Dada uma sala, identificada pelo seu código, e um horário em forma de tupla, esta função retornará a reserva da sala cujo evento se inicie no horário dado.
 findReservationEasy :: String -> (Integer,Int,Int,Int,Int) -> IO Reservation
 findReservationEasy codeRoom startTimeTuple = do
     (Just room) <- getRoom codeRoom
@@ -93,7 +92,7 @@ findReservationEasy codeRoom startTimeTuple = do
     return $ head matching
 
 
--- |Esta função alterará o horário de uma reserva (identificada pelo código de sua sala, pelo seu responsável e horário de início). Caso não seja possível fazer a alteração, nada será feito. A função retornará um valor booleano indicando se foi possível fazer a operação.
+-- | Esta função alterará o horário de uma reserva (identificada pelo código de sua sala, pelo seu responsável e horário de início). Caso não seja possível fazer a alteração, nada será feito. A função retornará um valor booleano indicando se foi possível fazer a operação.
 editReservation :: String -> String -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> IO Bool
 editReservation codeStr userName currentStartTimeTuple newStartTimeTuple newFinishTimeTuple = do
     let codeRoom = map toUpper codeStr    
@@ -118,12 +117,12 @@ editReservation codeStr userName currentStartTimeTuple newStartTimeTuple newFini
             return False
 
 
--- |Dado um LocalTime para comparação, esta função irá retirar de uma determinada sala as reservas finalizadas antes deste horário.
+-- | Dado um LocalTime para comparação, esta função irá retirar de uma determinada sala as reservas finalizadas antes deste horário.
 cleanReservations :: LocalTime -> Room -> Room
 cleanReservations timeNow room = Room{code=code room, schedule=newSchedule, resources=resources room, capacity=capacity room, localization=localization room, category=category room}
     where newSchedule = filter (\reservation -> finishTime reservation < timeNow) (schedule room)
 
--- |Esta função removerá de todas as salas as reservas cujo horário de final do evento já passou.
+-- | Esta função removerá de todas as salas as reservas cujo horário de final do evento já passou.
 cleanAllReservations :: IO Bool
 cleanAllReservations = do
     utcTimeNow <- getCurrentTime
@@ -131,7 +130,7 @@ cleanAllReservations = do
     let timeNow = utcToLocalTime timeZone utcTimeNow
     updateAllRooms (cleanReservations timeNow)        
 
--- |Dado um dia representado em uma tupla e um código de sala, esta função criará um relatório em texto com todas as reservas que esta sala tem para o dia especificado.
+-- | Dado um dia representado em uma tupla e um código de sala, esta função criará um relatório em texto com todas as reservas que esta sala tem para o dia especificado.
 createReportForTheRoom :: (Integer, Int, Int) -> Room -> String
 createReportForTheRoom (a, m, d) room = result
     where calendar = fromGregorian a m d
@@ -139,7 +138,7 @@ createReportForTheRoom (a, m, d) room = result
           reservationsList = ("Relatório de ocupação para a sala " ++ code room ++ " no dia: " ++ show calendar ++ ":\n\n"): map show reservations
           result = intercalate "\n" reservationsList
 
--- |Dado um dia representado em uma tupla, esta função criará um relatório em texto para todas as reservas de todas as salas para o dia especificado.
+-- | Dado um dia representado em uma tupla, esta função criará um relatório em texto para todas as reservas de todas as salas para o dia especificado.
 createReportForTheDay :: (Integer, Int, Int) -> IO String
 createReportForTheDay calendarTuple = do
     allRooms <- fetchRooms
@@ -148,7 +147,7 @@ createReportForTheDay calendarTuple = do
 
     return result
 
--- |Com uma categoria especificada, esta função verificará o sistema e retornará a lista contendo todas as salas desta categoria.
+-- | Com uma categoria especificada, esta função verificará o sistema e retornará a lista contendo todas as salas desta categoria.
 searchRoomsCategory :: RoomCategory -> IO [Room]
 searchRoomsCategory catRoom = do
     allRooms <- fetchRooms
@@ -156,14 +155,14 @@ searchRoomsCategory catRoom = do
     return filtered
 
 
--- |Com uma capacidade especificada, esta função verificará o sistema e retornará a lista contendo todas as salas com esta capacidade ou mais.
+-- | Com uma capacidade especificada, esta função verificará o sistema e retornará a lista contendo todas as salas com esta capacidade ou mais.
 searchRoomsCapacity :: Int -> IO [Room]
 searchRoomsCapacity capRoom = do
     allRooms <- fetchRooms
     let filtered = filter (\room -> capacity room >= capRoom) allRooms
     return filtered
 
--- |Com um horário de início e fim especificado em forma de tupla, esta função verificará o sistema e retornará a lista contendo todas as salas que estejam livres neste horário.
+-- | Com um horário de início e fim especificado em forma de tupla, esta função verificará o sistema e retornará a lista contendo todas as salas que estejam livres neste horário.
 searchRoomsTime :: Maybe (Integer, Int, Int, Int, Int) -> Maybe (Integer, Int, Int, Int, Int) -> IO [Room]
 searchRoomsTime startTimeTuple finishTimeTuple = do
     allRooms <- fetchRooms
@@ -172,36 +171,36 @@ searchRoomsTime startTimeTuple finishTimeTuple = do
         filtered = filter (\room -> isFree room startTime && isFree room finishTime) allRooms
     return filtered
 
--- |Esta função recebe uma sala e um Resource e verifica se esta sala tem o recurso e se o tem na quantidade especificada ou superior, retornando a resposta em forma de valor booleano.
+-- | Esta função recebe uma sala e um Resource e verifica se esta sala tem o recurso e se o tem na quantidade especificada ou superior, retornando a resposta em forma de valor booleano.
 resourceIsEnough :: Room -> Resource -> Bool
 resourceIsEnough room r | any (\roomResource -> (resourceKind roomResource == resourceKind r) && (resourceQuantity roomResource >= resourceQuantity r)) (resources room) = True
                         | otherwise = False
 
--- |Esta função verificará se uma sala contém todos os recursos em uma lista, e se os tem na quantidade especificada ou superior.
+-- | Esta função verificará se uma sala contém todos os recursos em uma lista, e se os tem na quantidade especificada ou superior.
 containsResources :: [Resource] -> Room -> Bool
 containsResources [] _ = True
 containsResources rs room = all (resourceIsEnough room) rs
 
--- |Com uma lista de recursos especificada, esta função verificará o sistema e retornará a lista contendo todas as salas que supram esta demanda.
+-- | Com uma lista de recursos especificada, esta função verificará o sistema e retornará a lista contendo todas as salas que supram esta demanda.
 searchRoomsResources :: Maybe [Resource] -> IO [Room]
 searchRoomsResources resourcesNeeded = do
     allRooms <- fetchRooms
     let filtered = filter (containsResources resourcesNeeded) allRooms
     return filtered
 
--- |Dado um nome de usuário e uma sala, esta função verifica se a sala foi reservada por este usuário para algum horário e retorna a resposta em forma de valor booleano.
+-- | Dado um nome de usuário e uma sala, esta função verifica se a sala foi reservada por este usuário para algum horário e retorna a resposta em forma de valor booleano.
 wasReservedBy :: String -> Room -> Bool
 wasReservedBy requesterName room = result
     where result = any (\reservation -> requesterName == requester reservation) (schedule room)
 
--- |Com um nome de usuário especificado, esta função verificará o sistema e retornará a lista contendo todas as salas que foram reservadas para algum horário por aquele usuário.
+-- | Com um nome de usuário especificado, esta função verificará o sistema e retornará a lista contendo todas as salas que foram reservadas para algum horário por aquele usuário.
 searchRoomsRequester :: String -> IO [Room]
 searchRoomsRequester requesterName = do
     allRooms <- fetchRooms
     let filtered = filter (\room -> wasReservedBy requesterName room) allRooms
     return filtered
 
--- |Esta função produzirá um texto contendo a lista de todas as categorias de sala suportadas pelo sistema.
+-- | Esta função produzirá um texto contendo a lista de todas as categorias de sala suportadas pelo sistema.
 printCategories :: IO ()
 printCategories = do
     putStrLn "Qual categoria você deseja escolher?\n\
@@ -211,7 +210,7 @@ printCategories = do
              \[E]scritório\n\
              \[D]epósito"
 
--- |Esta função produzirá um texto listando todos os recursos oferecidos pelas salas do sistema.
+-- | Esta função produzirá um texto listando todos os recursos oferecidos pelas salas do sistema.
 printResources :: IO ()
 printResources = do
     putStrLn "Qual recurso você deseja escolher?\n\
