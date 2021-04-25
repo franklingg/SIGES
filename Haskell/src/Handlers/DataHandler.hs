@@ -18,7 +18,7 @@ userJSON :: FilePath
 userJSON = "data/userData.json"
 
 -- | Dado um FilePath, esta função verifica se ele se refere a um arquivo existente.
-fileExists :: FilePath -> IO (Bool)
+fileExists :: FilePath -> IO Bool
 fileExists path = do doesFileExist path
 
 instance FromJSON User where
@@ -48,7 +48,7 @@ deleteUser emailStr = do
    (Just allUsers) <- decode <$> BL.readFile userJSON :: IO (Maybe [UserFull])
    let allButOne = filter (\user -> email user /= emailStr) allUsers
    BL.writeFile userJSON $ encode allButOne
-   return $ not (allUsers == allButOne) -- If both arrays are equal, then nothing was removed
+   return $ allUsers /= allButOne -- If both arrays are equal, then nothing was removed
 
 -- | Esta função considerará uma String, e retornará o usuário cadastrado no sistema com o e-mail igual a esta String, caso exista.
 getUser :: String -> IO (Maybe UserFull)
@@ -71,12 +71,10 @@ hasLoggedUser :: IO Bool
 hasLoggedUser = do fileExists userTmpJSON
 
 -- | Esta função retornará o Usuário atualmente logado no sistema.
-getLoggedUser :: IO (User)
+getLoggedUser :: IO User
 getLoggedUser = do
    tmpUser <- decode <$> BL.readFile userTmpJSON
-   if isJust tmpUser
-      then return (fromJust tmpUser)
-      else getLoggedUser
+   maybe getLoggedUser return tmpUser
 
 -- | Esta função deslogará um usuário do sistema, destruindo as informações salvas temporariamente.
 signOutUser :: IO ()
@@ -111,7 +109,7 @@ fetchRooms = do
 
 -- | Esta função verifica as salas cadastradas no sistema e retornará um valor booleano true caso o sistema não possua nenhuma sala cadastrada ainda, e false em caso contrário.
 noRoomsYet :: IO Bool
-noRoomsYet = do null <$> fetchRooms
+noRoomsYet = null <$> fetchRooms
 
 -- | Esta função considera uma sala, e caso ela ainda não exista no sistema, será incluída e um valor booleano true será retornado. Caso contrário, um valor booleano false será retornado.
 saveRoom :: Room -> IO Bool

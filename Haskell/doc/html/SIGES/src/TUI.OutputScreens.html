@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-comment">{-|
+Module      : OutputScreens
+Description : M&#243;dulo com o conte&#250;do exibido em cada tela e que armazena a rela&#231;&#227;o entre as telas do sistema SIGES.
+-}</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">TUI.OutputScreens</span><span>
+</span><span id="line-6"></span><span class="hs-special">(</span><span> </span><span class="hs-keyword">module</span><span> </span><span class="annot"><a href="TUI.OutputScreens.html"><span class="hs-identifier">TUI.OutputScreens</span></a></span><span>
+</span><span id="line-7"></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-8"></span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Map</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Map</span></span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Manager.html"><span class="hs-identifier">Manager</span></a></span><span>
+</span><span id="line-11"></span><span>
+</span><span id="line-12"></span><span class="hs-comment">-- | Typeclass Content, que estabelece opera&#231;&#245;es de conte&#250;do para as telas do sistema.</span><span>
+</span><span id="line-13"></span><span class="hs-keyword">class</span><span> </span><span id="Content"><span class="annot"><a href="TUI.OutputScreens.html#Content"><span class="hs-identifier hs-var">Content</span></a></span></span><span> </span><span id="local-6989586621679098343"><span class="annot"><a href="#local-6989586621679098343"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-14"></span><span>    </span><span id="getContent"><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-type">getContent</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679098343"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>               </span><span class="hs-comment">-- ^ Opera&#231;&#227;o de obter o conte&#250;do de uma determinada tela.</span><span>
+</span><span id="line-15"></span><span>    </span><span id="nextScreens"><span class="annot"><a href="TUI.OutputScreens.html#nextScreens"><span class="hs-identifier hs-type">nextScreens</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679098343"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Map.Map</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Char</span></span><span> </span><span class="annot"><a href="Datatypes.html#Screen"><span class="hs-identifier hs-type">Screen</span></a></span><span> </span><span class="hs-comment">-- ^ Opera&#231;&#227;o de obter as poss&#237;veis pr&#243;ximas telas de uma tela.</span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="TUI.OutputScreens.html#Content"><span class="hs-identifier hs-type">Content</span></a></span><span> </span><span class="annot"><a href="Datatypes.html#Screen"><span class="hs-identifier hs-type">Screen</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-18"></span><span>    </span><span id="local-6989586621679098333"><span class="annot"><span class="annottext">getContent :: Screen -&gt; String
+</span><a href="#local-6989586621679098333"><span class="hs-identifier hs-var hs-var hs-var hs-var">getContent</span></a></span></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ExitScreen"><span class="hs-identifier hs-var">ExitScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\nAt&#233; a pr&#243;xima \n\
+                             \e obrigado pelos peixes!\n&quot;</span></span><span>
+</span><span id="line-20"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#FirstScreen"><span class="hs-identifier hs-var">FirstScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\nBEM-VINDO(A) AO SIGES! PARA COME&#199;AR, VAMOS CADASRTRAR\n\
+                              \O PRIMEIRO USU&#193;RIO (ADMINISTRADOR) DO SISTEMA!\n&quot;</span></span><span>
+</span><span id="line-22"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#StartScreen"><span class="hs-identifier hs-var">StartScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n=========================\n\
+                            \  BEM-VINDO(A) AO SIGES  \n\
+                            \=========================\n\
+                            \\nO que deseja fazer?\n\
+                            \[L]ogin\n\
+                            \[V]isualizar reservas\n\
+                            \[D]esligar&quot;</span></span><span>
+</span><span id="line-29"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#LoginScreen"><span class="hs-identifier hs-var">LoginScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                            \=========================\n\
+                            \          LOGIN          \n\
+                            \=========================\n\
+                            \[R]etornar (menu inicial)&quot;</span></span><span>
+</span><span id="line-34"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#LoggedScreen"><span class="hs-identifier hs-var">LoggedScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                            \=========================\n\
+                            \     TELA DE USU&#193;RIO     \n\
+                            \=========================\n\
+                            \[C]adastrar reservas     \n\
+                            \[V]isualizar reservas    \n\
+                            \[E]ditar reservas        \n\
+                            \[R]emover reservas       \n\   
+                            \[D]eslogar&quot;</span></span><span>
+</span><span id="line-43"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#AdminScreen"><span class="hs-identifier hs-var">AdminScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                                    \==========================\n\
+                                    \   TELA DE ADMINISTRADOR  \n\
+                                    \==========================\n\
+                                    \[I]ncluir novas salas     \n\
+                                    \[C]adastrar reservas      \n\
+                                    \[V]isualizar reservas     \n\
+                                    \[A]lterar reservas        \n\
+                                    \[D]eletar reservas        \n\
+                                    \[R]egistrar novo usu&#225;rio  \n\
+                                    \[E]xcluir usu&#225;rio         \n\
+                                    \[F]azer logout&quot;</span></span><span>
+</span><span id="line-55"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#InsertRoomScreen"><span class="hs-identifier hs-var">InsertRoomScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                            \==========================\n\
+                            \    INCLUIR NOVAS SALAS    \n\
+                            \==========================&quot;</span></span><span>
+</span><span id="line-59"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#SignUpScreen"><span class="hs-identifier hs-var">SignUpScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                             \=========================\n\
+                             \    CADASTRAR USU&#193;RIO    \n\
+                             \=========================\n\
+                             \[R]etornar (menu anterior)&quot;</span></span><span>
+</span><span id="line-64"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#RemoveUserScreen"><span class="hs-identifier hs-var">RemoveUserScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                             \=========================\n\
+                             \     REMOVER USU&#193;RIO     \n\
+                             \=========================\n\
+                             \[R]etornar (menu anterior)&quot;</span></span><span>
+</span><span id="line-69"></span><span>
+</span><span id="line-70"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewScreen"><span class="hs-identifier hs-var">ViewScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                             \==========================    \n\
+                             \  VISUALIZA&#199;&#195;O DE SALAS       \n\
+                             \==========================    \n\
+                             \[D]ados de uma sala espec&#237;fica\n\
+                             \[F]iltrar salas por atributo  \n\
+                             \[O]cupa&#231;&#227;o por sala           \n\
+                             \[S]alas ocupadas em certo dia \n\   
+                             \[R]etornar (menu principal)&quot;</span></span><span>
+</span><span id="line-79"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewUserScreen"><span class="hs-identifier hs-var">ViewUserScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                            \=============================\n\
+                            \ VISUALIZAR SALAS DE USU&#193;RIO \n\
+                            \=============================\n&quot;</span></span><span>
+</span><span id="line-83"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewRoomScreen"><span class="hs-identifier hs-var">ViewRoomScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                            \=============================\n\
+                            \  VISUALIZAR SALA ESPEC&#205;FICA   \n\
+                            \=============================\n&quot;</span></span><span>
+</span><span id="line-87"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewFilterScreen"><span class="hs-identifier hs-var">ViewFilterScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                            \==========================\n\
+                            \  VISUALIZAR POR FILTROS    \n\
+                            \==========================\n&quot;</span></span><span>
+</span><span id="line-91"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ReportRoomScreen"><span class="hs-identifier hs-var">ReportRoomScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                            \=============================\n\
+                            \ RELAT&#211;RIO DE SALA ESPEC&#205;FICA\n\
+                            \=============================\n&quot;</span></span><span>
+</span><span id="line-95"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ReportDayScreen"><span class="hs-identifier hs-var">ReportDayScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                            \=============================\n\
+                            \ RELAT&#211;RIO DE DIA ESPEC&#205;FICO \n\
+                            \=============================\n&quot;</span></span><span>
+</span><span id="line-99"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#CreateReservationScreen"><span class="hs-identifier hs-var">CreateReservationScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                             \=========================\n\
+                             \    CADASTRAR RESERVAS   \n\
+                             \=========================\n&quot;</span></span><span>
+</span><span id="line-103"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#EditReservationScreen"><span class="hs-identifier hs-var">EditReservationScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                             \=========================\n\
+                             \     EDITAR RESERVAS     \n\
+                             \=========================\n&quot;</span></span><span>
+</span><span id="line-107"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#getContent"><span class="hs-identifier hs-var">getContent</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#RemoveReservationScreen"><span class="hs-identifier hs-var">RemoveReservationScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;\n\
+                            \=========================\n\
+                            \     REMOVER RESERVAS    \n\
+                            \=========================\n&quot;</span></span><span>
+</span><span id="line-111"></span><span>
+</span><span id="line-112"></span><span>    </span><span id="local-6989586621679098314"><span class="annot"><span class="annottext">nextScreens :: Screen -&gt; Map Char Screen
+</span><a href="#local-6989586621679098314"><span class="hs-identifier hs-var hs-var hs-var hs-var">nextScreens</span></a></span></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#StartScreen"><span class="hs-identifier hs-var">StartScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Char, Screen)] -&gt; Map Char Screen
+forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
+</span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'L'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#LoginScreen"><span class="hs-identifier hs-var">LoginScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'V'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewScreen"><span class="hs-identifier hs-var">ViewScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'D'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ExitScreen"><span class="hs-identifier hs-var">ExitScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-113"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#nextScreens"><span class="hs-identifier hs-var">nextScreens</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#LoginScreen"><span class="hs-identifier hs-var">LoginScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Char, Screen)] -&gt; Map Char Screen
+forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
+</span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'R'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#StartScreen"><span class="hs-identifier hs-var">StartScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-114"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#nextScreens"><span class="hs-identifier hs-var">nextScreens</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#LoggedScreen"><span class="hs-identifier hs-var">LoggedScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Char, Screen)] -&gt; Map Char Screen
+forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
+</span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'C'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#CreateReservationScreen"><span class="hs-identifier hs-var">CreateReservationScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'V'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewUserScreen"><span class="hs-identifier hs-var">ViewUserScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'E'</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#EditReservationScreen"><span class="hs-identifier hs-var">EditReservationScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'R'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#RemoveReservationScreen"><span class="hs-identifier hs-var">RemoveReservationScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'D'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#StartScreen"><span class="hs-identifier hs-var">StartScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-115"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#nextScreens"><span class="hs-identifier hs-var">nextScreens</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#AdminScreen"><span class="hs-identifier hs-var">AdminScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Char, Screen)] -&gt; Map Char Screen
+forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
+</span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'I'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#InsertRoomScreen"><span class="hs-identifier hs-var">InsertRoomScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'C'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#CreateReservationScreen"><span class="hs-identifier hs-var">CreateReservationScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'V'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewUserScreen"><span class="hs-identifier hs-var">ViewUserScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'A'</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#EditReservationScreen"><span class="hs-identifier hs-var">EditReservationScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'D'</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#RemoveReservationScreen"><span class="hs-identifier hs-var">RemoveReservationScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'R'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#SignUpScreen"><span class="hs-identifier hs-var">SignUpScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'E'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#RemoveUserScreen"><span class="hs-identifier hs-var">RemoveUserScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'F'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#StartScreen"><span class="hs-identifier hs-var">StartScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-116"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#nextScreens"><span class="hs-identifier hs-var">nextScreens</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#SignUpScreen"><span class="hs-identifier hs-var">SignUpScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Char, Screen)] -&gt; Map Char Screen
+forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
+</span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'R'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#StartScreen"><span class="hs-identifier hs-var">StartScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-117"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#nextScreens"><span class="hs-identifier hs-var">nextScreens</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#RemoveUserScreen"><span class="hs-identifier hs-var">RemoveUserScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Char, Screen)] -&gt; Map Char Screen
+forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
+</span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'R'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#StartScreen"><span class="hs-identifier hs-var">StartScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-118"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#nextScreens"><span class="hs-identifier hs-var">nextScreens</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewScreen"><span class="hs-identifier hs-var">ViewScreen</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[(Char, Screen)] -&gt; Map Char Screen
+forall k a. Ord k =&gt; [(k, a)] -&gt; Map k a
+</span><span class="hs-identifier hs-var">Map.fromList</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'D'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewRoomScreen"><span class="hs-identifier hs-var">ViewRoomScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'F'</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ViewFilterScreen"><span class="hs-identifier hs-var">ViewFilterScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'O'</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ReportRoomScreen"><span class="hs-identifier hs-var">ReportRoomScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'S'</span></span><span class="hs-special">,</span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#ReportDayScreen"><span class="hs-identifier hs-var">ReportDayScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Char
+</span><span class="hs-char">'R'</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Screen
+</span><a href="Datatypes.html#StartScreen"><span class="hs-identifier hs-var">StartScreen</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span>
+</span><span id="line-119"></span><span>    </span><span class="annot"><a href="TUI.OutputScreens.html#nextScreens"><span class="hs-identifier hs-var">nextScreens</span></a></span><span> </span><span class="annot"><span class="annottext">Screen
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Map Char Screen
+forall k a. Map k a
+</span><span class="hs-identifier hs-var">Map.empty</span></span></pre></body></html>

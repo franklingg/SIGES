@@ -1,7 +1,6 @@
 {-|
 Module      : Datatypes
 Description : Módulo contendo os diferentes módulos próprios do sistema SIGES.
-Copyright   : 
 -}
 {-# LANGUAGE DeriveGeneric #-}
 module Datatypes where
@@ -11,7 +10,7 @@ import Data.Text
 import GHC.Generics
 import Data.Time
 
-{-         Usuário Administrador        -}
+
 -- | Versão resumida de usuário do sistema. Mantém dados essenciais, mas omite dados sensíveis que não serão necessários.
 data User = User {
     nameUser :: String  -- ^ O nome do Usuário.
@@ -28,7 +27,7 @@ data UserFull = UserFull {
    ,isAdmin :: Bool            -- ^ Indicação se o usuário é administrador.
 } deriving(Eq, Show, Generic)
 
-{-         ERROR HANDLER         -}
+
 -- | Define o tipo ErrorLog como uma String.
 type ErrorLog = String
 
@@ -39,8 +38,10 @@ data Screen = ExitScreen              -- ^ A tela de saída do sistema.
             | LoginScreen             -- ^ A tela de Login.
             | LoggedScreen            -- ^ A tela após um usuário logar-se no sistema.
             | AdminScreen             -- ^ A tela exibida após um administrador fazer login no sistema.
+            | InsertRoomScreen        -- ^ A tela de cadastrar uma nova sala no sistema
             | SignUpScreen            -- ^ A tela de cadastro do usuário.
             | RemoveUserScreen        -- ^ A tela de remoção de um usuário.
+            | ViewUserScreen          -- ^ A tela de visualização de salas específica de um usuário.
             | ViewScreen              -- ^ A tela com opções de visualização de salas.
             | ViewRoomScreen          -- ^ A tela de visualização de uma sala específica.
             | ViewFilterScreen        -- ^ A tela de busca de salas por filtros.

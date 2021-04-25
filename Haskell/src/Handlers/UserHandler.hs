@@ -35,7 +35,7 @@ correctPassword emailStr passStr = do
     return (check == PasswordCheckSuccess)
 
 -- | Dada uma String contendo um e-mail, esta função procurará no sistema um Userfull com este e-mail, e retornará a sua versão com as informações essenciais para o funcionamento do sistema, omitindo dados sensíveis: um User.
-retrieveUser :: String -> IO (User)
+retrieveUser :: String -> IO User
 retrieveUser emailStr = do
     (Just user) <- getUser emailStr
     return $ User {nameUser= name user, emailUser= email user, isAdminUser = isAdmin user}

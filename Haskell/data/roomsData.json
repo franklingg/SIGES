@@ -1,1 +1,23 @@
-[{"schedule":[],"category":"Classroom","resources":[],"capacity":100,"code":"SalaZero","localization":"Bloco BL"},{"schedule":[],"category":"Laboratory","resources":[{"resourceKind":"Microscope","resourceQuantity":5},{"resourceKind":"Projector","resourceQuantity":1},{"resourceKind":"Computer","resourceQuantity":1}],"capacity":1,"code":"CA01","localization":"Bloco BL"}]
+[
+  {
+    "schedule": [],
+    "category": "Laboratory",
+    "resources": [
+      { "resourceKind": "Microscope", "resourceQuantity": 5 },
+      { "resourceKind": "Projector", "resourceQuantity": 1 },
+      { "resourceKind": "Computer", "resourceQuantity": 1 }
+    ],
+    "capacity": 1,
+    "code": "SALAUM",
+    "localization": "Bloco BL"
+  },
+  {
+    "schedule": [
+    ],
+    "category": "Classroom",
+    "resources": [],
+    "capacity": 100,
+    "code": "SALAZERO",
+    "localization": "Bloco BL"
+  }
+]

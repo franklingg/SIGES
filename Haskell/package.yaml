@@ -33,6 +33,7 @@ dependencies:
 - process
 - directory
 - split
+- monad-loops
 
 library:
   source-dirs: src

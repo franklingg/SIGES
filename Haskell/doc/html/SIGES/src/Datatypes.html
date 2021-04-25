@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span id="%24con2tag_26yKZltZd6EGyLdwC4e0Lp"></span><span class="hs-comment">{-|
+Module      : Datatypes
+Description : M&#243;dulo contendo os diferentes m&#243;dulos pr&#243;prios do sistema SIGES.
+-}</span><span>
+</span><span id="line-5"></span><span class="hs-pragma">{-# LANGUAGE DeriveGeneric #-}</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Datatypes</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString</span></span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.Generics</span></span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Time</span></span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span>
+</span><span id="line-14"></span><span class="hs-comment">-- | Vers&#227;o resumida de usu&#225;rio do sistema. Mant&#233;m dados essenciais, mas omite dados sens&#237;veis que n&#227;o ser&#227;o necess&#225;rios.</span><span>
+</span><span id="line-15"></span><span id="local-6989586621679096716"><span id="local-6989586621679096717"></span></span><span class="hs-keyword">data</span><span> </span><span id="User"><span class="annot"><a href="Datatypes.html#User"><span class="hs-identifier hs-var">User</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="User"><span class="annot"><a href="Datatypes.html#User"><span class="hs-identifier hs-var">User</span></a></span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-16"></span><span>    </span><span id="nameUser"><span class="annot"><span class="annottext">User -&gt; String
+</span><a href="Datatypes.html#nameUser"><span class="hs-identifier hs-var hs-var">nameUser</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>  </span><span class="hs-comment">-- ^ O nome do Usu&#225;rio.</span><span>
+</span><span id="line-17"></span><span>   </span><span class="hs-special">,</span><span id="emailUser"><span class="annot"><span class="annottext">User -&gt; String
+</span><a href="Datatypes.html#emailUser"><span class="hs-identifier hs-var hs-var">emailUser</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-comment">-- ^ O e-mail do usu&#225;rio.</span><span>
+</span><span id="line-18"></span><span>   </span><span class="hs-special">,</span><span id="isAdminUser"><span class="annot"><span class="annottext">User -&gt; Bool
+</span><a href="Datatypes.html#isAdminUser"><span class="hs-identifier hs-var hs-var">isAdminUser</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span> </span><span class="hs-comment">-- ^ Indica&#231;&#227;o se o usu&#225;rio &#233; ou n&#227;o um administrador.</span><span>
+</span><span id="line-19"></span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span class="hs-special">(</span><span id="local-6989586621679096708"><span id="local-6989586621679096710"><span class="annot"><span class="annottext">User -&gt; User -&gt; Bool
+(User -&gt; User -&gt; Bool) -&gt; (User -&gt; User -&gt; Bool) -&gt; Eq User
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: User -&gt; User -&gt; Bool
+$c/= :: User -&gt; User -&gt; Bool
+== :: User -&gt; User -&gt; Bool
+$c== :: User -&gt; User -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. User -&gt; Rep User x)
+-&gt; (forall x. Rep User x -&gt; User) -&gt; Generic User
+forall x. Rep User x -&gt; User
+forall x. User -&gt; Rep User x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep User x -&gt; User
+$cfrom :: forall x. User -&gt; Rep User x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-20"></span><span>
+</span><span id="line-21"></span><span class="hs-comment">-- | Vers&#227;o completa do usu&#225;rio do sistema, a ser usada quando se precisa de todas as informa&#231;&#245;es do usu&#225;rio.</span><span>
+</span><span id="line-22"></span><span id="local-6989586621679096702"><span id="local-6989586621679096703"></span></span><span class="hs-keyword">data</span><span> </span><span id="UserFull"><span class="annot"><a href="Datatypes.html#UserFull"><span class="hs-identifier hs-var">UserFull</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="UserFull"><span class="annot"><a href="Datatypes.html#UserFull"><span class="hs-identifier hs-var">UserFull</span></a></span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-23"></span><span>    </span><span id="name"><span class="annot"><span class="annottext">UserFull -&gt; String
+</span><a href="Datatypes.html#name"><span class="hs-identifier hs-var hs-var">name</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>             </span><span class="hs-comment">-- ^ O nome do usu&#225;rio.</span><span>
+</span><span id="line-24"></span><span>   </span><span class="hs-special">,</span><span id="email"><span class="annot"><span class="annottext">UserFull -&gt; String
+</span><a href="Datatypes.html#email"><span class="hs-identifier hs-var hs-var">email</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>            </span><span class="hs-comment">-- ^ O e-mail do usu&#225;rio.</span><span>
+</span><span id="line-25"></span><span>   </span><span class="hs-special">,</span><span id="password"><span class="annot"><span class="annottext">UserFull -&gt; Text
+</span><a href="Datatypes.html#password"><span class="hs-identifier hs-var hs-var">password</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>           </span><span class="hs-comment">-- ^ A senha (criptografada) do usu&#225;rio.</span><span>
+</span><span id="line-26"></span><span>   </span><span class="hs-special">,</span><span id="registrationDate"><span class="annot"><span class="annottext">UserFull -&gt; String
+</span><a href="Datatypes.html#registrationDate"><span class="hs-identifier hs-var hs-var">registrationDate</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="hs-comment">-- ^ A data em que o usu&#225;rio se registrou.</span><span>
+</span><span id="line-27"></span><span>   </span><span class="hs-special">,</span><span id="isAdmin"><span class="annot"><span class="annottext">UserFull -&gt; Bool
+</span><a href="Datatypes.html#isAdmin"><span class="hs-identifier hs-var hs-var">isAdmin</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bool</span></span><span>            </span><span class="hs-comment">-- ^ Indica&#231;&#227;o se o usu&#225;rio &#233; administrador.</span><span>
+</span><span id="line-28"></span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span class="hs-special">(</span><span id="local-6989586621679096692"><span id="local-6989586621679096694"><span class="annot"><span class="annottext">UserFull -&gt; UserFull -&gt; Bool
+(UserFull -&gt; UserFull -&gt; Bool)
+-&gt; (UserFull -&gt; UserFull -&gt; Bool) -&gt; Eq UserFull
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: UserFull -&gt; UserFull -&gt; Bool
+$c/= :: UserFull -&gt; UserFull -&gt; Bool
+== :: UserFull -&gt; UserFull -&gt; Bool
+$c== :: UserFull -&gt; UserFull -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679096686"><span id="local-6989586621679096688"><span id="local-6989586621679096690"><span class="annot"><span class="annottext">Int -&gt; UserFull -&gt; ShowS
+[UserFull] -&gt; ShowS
+UserFull -&gt; String
+(Int -&gt; UserFull -&gt; ShowS)
+-&gt; (UserFull -&gt; String) -&gt; ([UserFull] -&gt; ShowS) -&gt; Show UserFull
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [UserFull] -&gt; ShowS
+$cshowList :: [UserFull] -&gt; ShowS
+show :: UserFull -&gt; String
+$cshow :: UserFull -&gt; String
+showsPrec :: Int -&gt; UserFull -&gt; ShowS
+$cshowsPrec :: Int -&gt; UserFull -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. UserFull -&gt; Rep UserFull x)
+-&gt; (forall x. Rep UserFull x -&gt; UserFull) -&gt; Generic UserFull
+forall x. Rep UserFull x -&gt; UserFull
+forall x. UserFull -&gt; Rep UserFull x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep UserFull x -&gt; UserFull
+$cfrom :: forall x. UserFull -&gt; Rep UserFull x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span>
+</span><span id="line-30"></span><span>
+</span><span id="line-31"></span><span class="hs-comment">-- | Define o tipo ErrorLog como uma String.</span><span>
+</span><span id="line-32"></span><span class="hs-keyword">type</span><span> </span><span id="ErrorLog"><span class="annot"><a href="Datatypes.html#ErrorLog"><span class="hs-identifier hs-var">ErrorLog</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>
+</span><span id="line-33"></span><span>
+</span><span id="line-34"></span><span class="hs-comment">-- | As diferentes telas do sistema.</span><span>
+</span><span id="line-35"></span><span class="hs-keyword">data</span><span> </span><span id="Screen"><span class="annot"><a href="Datatypes.html#Screen"><span class="hs-identifier hs-var">Screen</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ExitScreen"><span class="annot"><a href="Datatypes.html#ExitScreen"><span class="hs-identifier hs-var">ExitScreen</span></a></span></span><span>              </span><span class="hs-comment">-- ^ A tela de sa&#237;da do sistema.</span><span>
+</span><span id="line-36"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="FirstScreen"><span class="annot"><a href="Datatypes.html#FirstScreen"><span class="hs-identifier hs-var">FirstScreen</span></a></span></span><span>             </span><span class="hs-comment">-- ^ A tela inicial, quando nenhum administrador foi cadastrado ainda.</span><span>
+</span><span id="line-37"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="StartScreen"><span class="annot"><a href="Datatypes.html#StartScreen"><span class="hs-identifier hs-var">StartScreen</span></a></span></span><span>             </span><span class="hs-comment">-- ^ A tela inicial do sistema quando j&#225; existem usu&#225;rios cadastrados.</span><span>
+</span><span id="line-38"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="LoginScreen"><span class="annot"><a href="Datatypes.html#LoginScreen"><span class="hs-identifier hs-var">LoginScreen</span></a></span></span><span>             </span><span class="hs-comment">-- ^ A tela de Login.</span><span>
+</span><span id="line-39"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="LoggedScreen"><span class="annot"><a href="Datatypes.html#LoggedScreen"><span class="hs-identifier hs-var">LoggedScreen</span></a></span></span><span>            </span><span class="hs-comment">-- ^ A tela ap&#243;s um usu&#225;rio logar-se no sistema.</span><span>
+</span><span id="line-40"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="AdminScreen"><span class="annot"><a href="Datatypes.html#AdminScreen"><span class="hs-identifier hs-var">AdminScreen</span></a></span></span><span>             </span><span class="hs-comment">-- ^ A tela exibida ap&#243;s um administrador fazer login no sistema.</span><span>
+</span><span id="line-41"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="InsertRoomScreen"><span class="annot"><a href="Datatypes.html#InsertRoomScreen"><span class="hs-identifier hs-var">InsertRoomScreen</span></a></span></span><span>        </span><span class="hs-comment">-- ^ A tela de cadastrar uma nova sala no sistema</span><span>
+</span><span id="line-42"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="SignUpScreen"><span class="annot"><a href="Datatypes.html#SignUpScreen"><span class="hs-identifier hs-var">SignUpScreen</span></a></span></span><span>            </span><span class="hs-comment">-- ^ A tela de cadastro do usu&#225;rio.</span><span>
+</span><span id="line-43"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="RemoveUserScreen"><span class="annot"><a href="Datatypes.html#RemoveUserScreen"><span class="hs-identifier hs-var">RemoveUserScreen</span></a></span></span><span>        </span><span class="hs-comment">-- ^ A tela de remo&#231;&#227;o de um usu&#225;rio.</span><span>
+</span><span id="line-44"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="ViewUserScreen"><span class="annot"><a href="Datatypes.html#ViewUserScreen"><span class="hs-identifier hs-var">ViewUserScreen</span></a></span></span><span>          </span><span class="hs-comment">-- ^ A tela de visualiza&#231;&#227;o de salas espec&#237;fica de um usu&#225;rio.</span><span>
+</span><span id="line-45"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="ViewScreen"><span class="annot"><a href="Datatypes.html#ViewScreen"><span class="hs-identifier hs-var">ViewScreen</span></a></span></span><span>              </span><span class="hs-comment">-- ^ A tela com op&#231;&#245;es de visualiza&#231;&#227;o de salas.</span><span>
+</span><span id="line-46"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="ViewRoomScreen"><span class="annot"><a href="Datatypes.html#ViewRoomScreen"><span class="hs-identifier hs-var">ViewRoomScreen</span></a></span></span><span>          </span><span class="hs-comment">-- ^ A tela de visualiza&#231;&#227;o de uma sala espec&#237;fica.</span><span>
+</span><span id="line-47"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="ViewFilterScreen"><span class="annot"><a href="Datatypes.html#ViewFilterScreen"><span class="hs-identifier hs-var">ViewFilterScreen</span></a></span></span><span>        </span><span class="hs-comment">-- ^ A tela de busca de salas por filtros.</span><span>
+</span><span id="line-48"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="ReportRoomScreen"><span class="annot"><a href="Datatypes.html#ReportRoomScreen"><span class="hs-identifier hs-var">ReportRoomScreen</span></a></span></span><span>        </span><span class="hs-comment">-- ^ A tela de exibi&#231;&#227;o de relat&#243;rio de ocupa&#231;&#227;o para uma sala espec&#237;fica.</span><span>
+</span><span id="line-49"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="ReportDayScreen"><span class="annot"><a href="Datatypes.html#ReportDayScreen"><span class="hs-identifier hs-var">ReportDayScreen</span></a></span></span><span>         </span><span class="hs-comment">-- ^ A tela de exibi&#231;&#227;o de relat&#243;rio de ocupa&#231;&#227;o para todas as salas em um determinado dia.</span><span>
+</span><span id="line-50"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="CreateReservationScreen"><span class="annot"><a href="Datatypes.html#CreateReservationScreen"><span class="hs-identifier hs-var">CreateReservationScreen</span></a></span></span><span> </span><span class="hs-comment">-- ^ A tela para se fazer uma nova reserva em uma sala.</span><span>
+</span><span id="line-51"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="EditReservationScreen"><span class="annot"><a href="Datatypes.html#EditReservationScreen"><span class="hs-identifier hs-var">EditReservationScreen</span></a></span></span><span>   </span><span class="hs-comment">-- ^ A tela para se editar uma reserva previamente feita.</span><span>
+</span><span id="line-52"></span><span>            </span><span class="hs-glyph">|</span><span> </span><span id="RemoveReservationScreen"><span class="annot"><a href="Datatypes.html#RemoveReservationScreen"><span class="hs-identifier hs-var">RemoveReservationScreen</span></a></span></span><span> </span><span class="hs-comment">-- ^ A tela para se remover uma reserva previamente feita.</span><span>
+</span><span id="line-53"></span><span>            </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679096660"><span id="local-6989586621679096662"><span class="annot"><span class="annottext">Screen -&gt; Screen -&gt; Bool
+(Screen -&gt; Screen -&gt; Bool)
+-&gt; (Screen -&gt; Screen -&gt; Bool) -&gt; Eq Screen
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Screen -&gt; Screen -&gt; Bool
+$c/= :: Screen -&gt; Screen -&gt; Bool
+== :: Screen -&gt; Screen -&gt; Bool
+$c== :: Screen -&gt; Screen -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-54"></span><span>
+</span><span id="line-55"></span><span class="hs-comment">-- | Uma sala do sistema SIGES.</span><span>
+</span><span id="line-56"></span><span id="local-6989586621679096658"><span id="local-6989586621679096659"></span></span><span class="hs-keyword">data</span><span> </span><span id="Room"><span class="annot"><a href="Datatypes.html#Room"><span class="hs-identifier hs-var">Room</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Room"><span class="annot"><a href="Datatypes.html#Room"><span class="hs-identifier hs-var">Room</span></a></span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-57"></span><span>    </span><span id="code"><span class="annot"><span class="annottext">Room -&gt; String
+</span><a href="Datatypes.html#code"><span class="hs-identifier hs-var hs-var">code</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>            </span><span class="hs-comment">-- ^ O c&#243;digo da sala.</span><span>
+</span><span id="line-58"></span><span>   </span><span class="hs-special">,</span><span id="schedule"><span class="annot"><span class="annottext">Room -&gt; [Reservation]
+</span><a href="Datatypes.html#schedule"><span class="hs-identifier hs-var hs-var">schedule</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Datatypes.html#Reservation"><span class="hs-identifier hs-type">Reservation</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-comment">-- ^ A agenda onde s&#227;o armazenadas todas as reservas ativas para esta sala.</span><span>
+</span><span id="line-59"></span><span>   </span><span class="hs-special">,</span><span id="resources"><span class="annot"><span class="annottext">Room -&gt; [Resource]
+</span><a href="Datatypes.html#resources"><span class="hs-identifier hs-var hs-var">resources</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Datatypes.html#Resource"><span class="hs-identifier hs-type">Resource</span></a></span><span class="hs-special">]</span><span>   </span><span class="hs-comment">-- ^ A lista de recursos oferecidos pela sala.</span><span>
+</span><span id="line-60"></span><span>   </span><span class="hs-special">,</span><span id="capacity"><span class="annot"><span class="annottext">Room -&gt; Int
+</span><a href="Datatypes.html#capacity"><span class="hs-identifier hs-var hs-var">capacity</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>           </span><span class="hs-comment">-- ^ A quantidade de pessoas suportada pela sala.</span><span>
+</span><span id="line-61"></span><span>   </span><span class="hs-special">,</span><span id="localization"><span class="annot"><span class="annottext">Room -&gt; String
+</span><a href="Datatypes.html#localization"><span class="hs-identifier hs-var hs-var">localization</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>    </span><span class="hs-comment">-- ^ A Localiza&#231;&#227;o da Sala.</span><span>
+</span><span id="line-62"></span><span>   </span><span class="hs-special">,</span><span id="category"><span class="annot"><span class="annottext">Room -&gt; RoomCategory
+</span><a href="Datatypes.html#category"><span class="hs-identifier hs-var hs-var">category</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Datatypes.html#RoomCategory"><span class="hs-identifier hs-type">RoomCategory</span></a></span><span>  </span><span class="hs-comment">-- ^ A categoria da sala.</span><span>
+</span><span id="line-63"></span><span>
+</span><span id="line-64"></span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679096647"><span id="local-6989586621679096649"><span class="annot"><span class="annottext">Room -&gt; Room -&gt; Bool
+(Room -&gt; Room -&gt; Bool) -&gt; (Room -&gt; Room -&gt; Bool) -&gt; Eq Room
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Room -&gt; Room -&gt; Bool
+$c/= :: Room -&gt; Room -&gt; Bool
+== :: Room -&gt; Room -&gt; Bool
+$c== :: Room -&gt; Room -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. Room -&gt; Rep Room x)
+-&gt; (forall x. Rep Room x -&gt; Room) -&gt; Generic Room
+forall x. Rep Room x -&gt; Room
+forall x. Room -&gt; Rep Room x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep Room x -&gt; Room
+$cfrom :: forall x. Room -&gt; Rep Room x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-65"></span><span>
+</span><span id="line-66"></span><span class="hs-comment">-- | As reservas de salas do sistema.</span><span>
+</span><span id="line-67"></span><span id="local-6989586621679096643"><span id="local-6989586621679096644"></span></span><span class="hs-keyword">data</span><span> </span><span id="Reservation"><span class="annot"><a href="Datatypes.html#Reservation"><span class="hs-identifier hs-var">Reservation</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Reservation"><span class="annot"><a href="Datatypes.html#Reservation"><span class="hs-identifier hs-var">Reservation</span></a></span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-68"></span><span>    </span><span id="requester"><span class="annot"><span class="annottext">Reservation -&gt; String
+</span><a href="Datatypes.html#requester"><span class="hs-identifier hs-var hs-var">requester</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>     </span><span class="hs-comment">-- ^ O respons&#225;vel pela reserva.</span><span>
+</span><span id="line-69"></span><span>   </span><span class="hs-special">,</span><span id="description"><span class="annot"><span class="annottext">Reservation -&gt; String
+</span><a href="Datatypes.html#description"><span class="hs-identifier hs-var hs-var">description</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span>   </span><span class="hs-comment">-- ^ A descri&#231;&#227;o do evento da reserva.</span><span>
+</span><span id="line-70"></span><span>   </span><span class="hs-special">,</span><span id="startTime"><span class="annot"><span class="annottext">Reservation -&gt; LocalTime
+</span><a href="Datatypes.html#startTime"><span class="hs-identifier hs-var hs-var">startTime</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">LocalTime</span></span><span>  </span><span class="hs-comment">-- ^ O tempo de in&#237;cio do evento.</span><span>
+</span><span id="line-71"></span><span>   </span><span class="hs-special">,</span><span id="finishTime"><span class="annot"><span class="annottext">Reservation -&gt; LocalTime
+</span><a href="Datatypes.html#finishTime"><span class="hs-identifier hs-var hs-var">finishTime</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">LocalTime</span></span><span> </span><span class="hs-comment">-- ^ O tempo de finaliza&#231;&#227;o do evento.</span><span>
+</span><span id="line-72"></span><span>
+</span><span id="line-73"></span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679096634"><span id="local-6989586621679096636"><span class="annot"><span class="annottext">Reservation -&gt; Reservation -&gt; Bool
+(Reservation -&gt; Reservation -&gt; Bool)
+-&gt; (Reservation -&gt; Reservation -&gt; Bool) -&gt; Eq Reservation
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Reservation -&gt; Reservation -&gt; Bool
+$c/= :: Reservation -&gt; Reservation -&gt; Bool
+== :: Reservation -&gt; Reservation -&gt; Bool
+$c== :: Reservation -&gt; Reservation -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. Reservation -&gt; Rep Reservation x)
+-&gt; (forall x. Rep Reservation x -&gt; Reservation)
+-&gt; Generic Reservation
+forall x. Rep Reservation x -&gt; Reservation
+forall x. Reservation -&gt; Rep Reservation x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep Reservation x -&gt; Reservation
+$cfrom :: forall x. Reservation -&gt; Rep Reservation x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-74"></span><span>
+</span><span id="line-75"></span><span class="hs-comment">-- | As categorias de sala oferecidas pelo sistema.</span><span>
+</span><span id="line-76"></span><span id="local-6989586621679096630"><span id="local-6989586621679096631"></span></span><span class="hs-keyword">data</span><span> </span><span id="RoomCategory"><span class="annot"><a href="Datatypes.html#RoomCategory"><span class="hs-identifier hs-var">RoomCategory</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Laboratory"><span class="annot"><a href="Datatypes.html#Laboratory"><span class="hs-identifier hs-var">Laboratory</span></a></span></span><span> </span><span class="hs-comment">-- ^ Sala que funciona como um laborat&#243;rio.</span><span>
+</span><span id="line-77"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span id="Auditorium"><span class="annot"><a href="Datatypes.html#Auditorium"><span class="hs-identifier hs-var">Auditorium</span></a></span></span><span> </span><span class="hs-comment">-- ^ Sala que funciona como um audit&#243;rio.</span><span>
+</span><span id="line-78"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span id="Classroom"><span class="annot"><a href="Datatypes.html#Classroom"><span class="hs-identifier hs-var">Classroom</span></a></span></span><span>  </span><span class="hs-comment">-- ^ Sala que funciona como uma sala de aula.</span><span>
+</span><span id="line-79"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span id="Office"><span class="annot"><a href="Datatypes.html#Office"><span class="hs-identifier hs-var">Office</span></a></span></span><span>     </span><span class="hs-comment">-- ^ Sala que funciona como um escrit&#243;rio.</span><span>
+</span><span id="line-80"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span id="Warehouse"><span class="annot"><a href="Datatypes.html#Warehouse"><span class="hs-identifier hs-var">Warehouse</span></a></span></span><span>  </span><span class="hs-comment">-- ^ Sala que funciona como um dep&#243;sito.</span><span>
+</span><span id="line-81"></span><span>                  </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679096621"><span id="local-6989586621679096623"><span class="annot"><span class="annottext">RoomCategory -&gt; RoomCategory -&gt; Bool
+(RoomCategory -&gt; RoomCategory -&gt; Bool)
+-&gt; (RoomCategory -&gt; RoomCategory -&gt; Bool) -&gt; Eq RoomCategory
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: RoomCategory -&gt; RoomCategory -&gt; Bool
+$c/= :: RoomCategory -&gt; RoomCategory -&gt; Bool
+== :: RoomCategory -&gt; RoomCategory -&gt; Bool
+$c== :: RoomCategory -&gt; RoomCategory -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679096615"><span id="local-6989586621679096617"><span id="local-6989586621679096619"><span class="annot"><span class="annottext">Int -&gt; RoomCategory -&gt; ShowS
+[RoomCategory] -&gt; ShowS
+RoomCategory -&gt; String
+(Int -&gt; RoomCategory -&gt; ShowS)
+-&gt; (RoomCategory -&gt; String)
+-&gt; ([RoomCategory] -&gt; ShowS)
+-&gt; Show RoomCategory
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [RoomCategory] -&gt; ShowS
+$cshowList :: [RoomCategory] -&gt; ShowS
+show :: RoomCategory -&gt; String
+$cshow :: RoomCategory -&gt; String
+showsPrec :: Int -&gt; RoomCategory -&gt; ShowS
+$cshowsPrec :: Int -&gt; RoomCategory -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. RoomCategory -&gt; Rep RoomCategory x)
+-&gt; (forall x. Rep RoomCategory x -&gt; RoomCategory)
+-&gt; Generic RoomCategory
+forall x. Rep RoomCategory x -&gt; RoomCategory
+forall x. RoomCategory -&gt; Rep RoomCategory x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep RoomCategory x -&gt; RoomCategory
+$cfrom :: forall x. RoomCategory -&gt; Rep RoomCategory x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-82"></span><span>
+</span><span id="line-83"></span><span class="hs-comment">-- | Os tipos de recursos existentes no sistema.</span><span>
+</span><span id="line-84"></span><span id="local-6989586621679096611"><span id="local-6989586621679096612"></span></span><span class="hs-keyword">data</span><span> </span><span id="ResourceKind"><span class="annot"><a href="Datatypes.html#ResourceKind"><span class="hs-identifier hs-var">ResourceKind</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Projector"><span class="annot"><a href="Datatypes.html#Projector"><span class="hs-identifier hs-var">Projector</span></a></span></span><span>      </span><span class="hs-comment">-- ^ Projetor ou Datashow.</span><span>
+</span><span id="line-85"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span id="Microscope"><span class="annot"><a href="Datatypes.html#Microscope"><span class="hs-identifier hs-var">Microscope</span></a></span></span><span>     </span><span class="hs-comment">-- ^ Microsc&#243;pio.</span><span>
+</span><span id="line-86"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span id="Desk"><span class="annot"><a href="Datatypes.html#Desk"><span class="hs-identifier hs-var">Desk</span></a></span></span><span>           </span><span class="hs-comment">-- ^ Escrivaninha.</span><span>
+</span><span id="line-87"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span id="Computer"><span class="annot"><a href="Datatypes.html#Computer"><span class="hs-identifier hs-var">Computer</span></a></span></span><span>       </span><span class="hs-comment">-- ^ Computador.</span><span>
+</span><span id="line-88"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span id="Board"><span class="annot"><a href="Datatypes.html#Board"><span class="hs-identifier hs-var">Board</span></a></span></span><span>          </span><span class="hs-comment">-- ^ Quadro negro ou branco.</span><span>
+</span><span id="line-89"></span><span>                  </span><span class="hs-glyph">|</span><span> </span><span id="AirConditioner"><span class="annot"><a href="Datatypes.html#AirConditioner"><span class="hs-identifier hs-var">AirConditioner</span></a></span></span><span> </span><span class="hs-comment">-- ^ Ar condicionado.</span><span>
+</span><span id="line-90"></span><span>              </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679096601"><span id="local-6989586621679096603"><span class="annot"><span class="annottext">ResourceKind -&gt; ResourceKind -&gt; Bool
+(ResourceKind -&gt; ResourceKind -&gt; Bool)
+-&gt; (ResourceKind -&gt; ResourceKind -&gt; Bool) -&gt; Eq ResourceKind
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: ResourceKind -&gt; ResourceKind -&gt; Bool
+$c/= :: ResourceKind -&gt; ResourceKind -&gt; Bool
+== :: ResourceKind -&gt; ResourceKind -&gt; Bool
+$c== :: ResourceKind -&gt; ResourceKind -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679096595"><span id="local-6989586621679096597"><span id="local-6989586621679096599"><span class="annot"><span class="annottext">Int -&gt; ResourceKind -&gt; ShowS
+[ResourceKind] -&gt; ShowS
+ResourceKind -&gt; String
+(Int -&gt; ResourceKind -&gt; ShowS)
+-&gt; (ResourceKind -&gt; String)
+-&gt; ([ResourceKind] -&gt; ShowS)
+-&gt; Show ResourceKind
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [ResourceKind] -&gt; ShowS
+$cshowList :: [ResourceKind] -&gt; ShowS
+show :: ResourceKind -&gt; String
+$cshow :: ResourceKind -&gt; String
+showsPrec :: Int -&gt; ResourceKind -&gt; ShowS
+$cshowsPrec :: Int -&gt; ResourceKind -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. ResourceKind -&gt; Rep ResourceKind x)
+-&gt; (forall x. Rep ResourceKind x -&gt; ResourceKind)
+-&gt; Generic ResourceKind
+forall x. Rep ResourceKind x -&gt; ResourceKind
+forall x. ResourceKind -&gt; Rep ResourceKind x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep ResourceKind x -&gt; ResourceKind
+$cfrom :: forall x. ResourceKind -&gt; Rep ResourceKind x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-91"></span><span>
+</span><span id="line-92"></span><span class="hs-comment">-- | Os recursos oferecidos pelas salas do sistema.</span><span>
+</span><span id="line-93"></span><span id="local-6989586621679096591"><span id="local-6989586621679096592"></span></span><span class="hs-keyword">data</span><span> </span><span id="Resource"><span class="annot"><a href="Datatypes.html#Resource"><span class="hs-identifier hs-var">Resource</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="Resource"><span class="annot"><a href="Datatypes.html#Resource"><span class="hs-identifier hs-var">Resource</span></a></span></span><span> </span><span class="hs-special">{</span><span>
+</span><span id="line-94"></span><span>    </span><span id="resourceKind"><span class="annot"><span class="annottext">Resource -&gt; ResourceKind
+</span><a href="Datatypes.html#resourceKind"><span class="hs-identifier hs-var hs-var">resourceKind</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Datatypes.html#ResourceKind"><span class="hs-identifier hs-type">ResourceKind</span></a></span><span> </span><span class="hs-comment">-- ^ O tipo do recurso.</span><span>
+</span><span id="line-95"></span><span>   </span><span class="hs-special">,</span><span id="resourceQuantity"><span class="annot"><span class="annottext">Resource -&gt; Int
+</span><a href="Datatypes.html#resourceQuantity"><span class="hs-identifier hs-var hs-var">resourceQuantity</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span>      </span><span class="hs-comment">-- ^ A quantidade do recurso que a sala oferece.</span><span>
+</span><span id="line-96"></span><span class="hs-special">}</span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679096584"><span id="local-6989586621679096586"><span class="annot"><span class="annottext">Resource -&gt; Resource -&gt; Bool
+(Resource -&gt; Resource -&gt; Bool)
+-&gt; (Resource -&gt; Resource -&gt; Bool) -&gt; Eq Resource
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: Resource -&gt; Resource -&gt; Bool
+$c/= :: Resource -&gt; Resource -&gt; Bool
+== :: Resource -&gt; Resource -&gt; Bool
+$c== :: Resource -&gt; Resource -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">(forall x. Resource -&gt; Rep Resource x)
+-&gt; (forall x. Rep Resource x -&gt; Resource) -&gt; Generic Resource
+forall x. Rep Resource x -&gt; Resource
+forall x. Resource -&gt; Rep Resource x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep Resource x -&gt; Resource
+$cfrom :: forall x. Resource -&gt; Rep Resource x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-97"></span><span>
+</span><span id="line-98"></span></pre></body></html>

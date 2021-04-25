@@ -43,10 +43,9 @@ spec = do
         it "Quando se remove um usuário não existente" $
             deleteUser (email $ createNewUser) `shouldReturn` False
 
-    {-describe "noRoomsYet" $ do
-        {-FIXME: when roomsData.json gets populated it will fail -}
-        it "Quando não se tem salas cadastradas ainda" $
-            noRoomsYet `shouldReturn` True-}
+    describe "noRoomsYet" $ do
+        it "Quando se tem salas cadastradas" $
+            noRoomsYet `shouldReturn` False
 
     describe "saveRoom" $ do
         it "Ao se adicionar uma sala" $

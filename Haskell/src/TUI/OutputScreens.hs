@@ -44,6 +44,7 @@ instance Content Screen where
                                     \==========================\n\
                                     \   TELA DE ADMINISTRADOR  \n\
                                     \==========================\n\
+                                    \[I]ncluir novas salas     \n\
                                     \[C]adastrar reservas      \n\
                                     \[V]isualizar reservas     \n\
                                     \[A]lterar reservas        \n\
@@ -51,6 +52,10 @@ instance Content Screen where
                                     \[R]egistrar novo usuário  \n\
                                     \[E]xcluir usuário         \n\
                                     \[F]azer logout"
+    getContent InsertRoomScreen = "\n\
+                            \==========================\n\
+                            \    INCLUIR NOVAS SALAS    \n\
+                            \=========================="
     getContent SignUpScreen = "\n\
                              \=========================\n\
                              \    CADASTRAR USUÁRIO    \n\
@@ -71,6 +76,10 @@ instance Content Screen where
                              \[O]cupação por sala           \n\
                              \[S]alas ocupadas em certo dia \n\   
                              \[R]etornar (menu principal)"
+    getContent ViewUserScreen = "\n\
+                            \=============================\n\
+                            \ VISUALIZAR SALAS DE USUÁRIO \n\
+                            \=============================\n"
     getContent ViewRoomScreen = "\n\
                             \=============================\n\
                             \  VISUALIZAR SALA ESPECÍFICA   \n\
@@ -102,8 +111,8 @@ instance Content Screen where
 
     nextScreens StartScreen = Map.fromList [('L', LoginScreen),('V', ViewScreen), ('D', ExitScreen)]
     nextScreens LoginScreen = Map.fromList [('R', StartScreen)]
-    nextScreens LoggedScreen = Map.fromList [('C', CreateReservationScreen), ('V', ViewScreen), ('E',EditReservationScreen), ('R', RemoveReservationScreen), ('D', StartScreen)]
-    nextScreens AdminScreen = Map.fromList [('C', CreateReservationScreen), ('V', ViewScreen), ('A',EditReservationScreen), ('D',RemoveReservationScreen),('R', SignUpScreen), ('E', RemoveUserScreen), ('F', StartScreen)]
+    nextScreens LoggedScreen = Map.fromList [('C', CreateReservationScreen), ('V', ViewUserScreen), ('E',EditReservationScreen), ('R', RemoveReservationScreen), ('D', StartScreen)]
+    nextScreens AdminScreen = Map.fromList [('I', InsertRoomScreen), ('C', CreateReservationScreen), ('V', ViewUserScreen), ('A',EditReservationScreen), ('D',RemoveReservationScreen),('R', SignUpScreen), ('E', RemoveUserScreen), ('F', StartScreen)]
     nextScreens SignUpScreen = Map.fromList [('R', StartScreen)]
     nextScreens RemoveUserScreen = Map.fromList [('R', StartScreen)]
     nextScreens ViewScreen = Map.fromList [('D', ViewRoomScreen), ('F',ViewFilterScreen), ('O',ReportRoomScreen),('S',ReportDayScreen), ('R', StartScreen)]

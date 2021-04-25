@@ -21,9 +21,9 @@ class Action a where
     useContent :: a -> IO Screen -- ^ A implementação de como a tela será impressa na tela e como lerá as informações dadas pelo usuário.
 
 instance Action Screen where
-    useContent ExitScreen = do 
-        putStrLn $ getContent ExitScreen    
-        exitWith ExitSuccess
+    useContent ExitScreen = do
+        putStrLn $ getContent ExitScreen
+        exitSuccess
 
     useContent FirstScreen = do
         putStrLn $ getContent FirstScreen
@@ -31,7 +31,7 @@ instance Action Screen where
         email <- getInputData getAnswer checkNewEmail
         if email == "Retornar"
             then return StartScreen
-            else do 
+            else do
                 putStrLn "Qual é a senha do novo usuário?"
                 password <- getInputData getPassword checkNewPass
                 putStrLn "Qual o nome do novo usuário?"
@@ -51,19 +51,35 @@ instance Action Screen where
         email <- getInputData getAnswer checkEmail
         if email == "Retornar"
             then return StartScreen
-            else do 
+            else do
                 putStrLn "Qual é a sua senha?"
                 password <- getInputData getPassword (checkPass email)
                 signUser email
                 return LoggedScreen
-    
+
     useContent LoggedScreen  = do
         user <- getLoggedUser
         let userScreen = if isAdminUser user then AdminScreen else LoggedScreen
         putStrLn $ getContent userScreen
         getInputData getAnswer (validScreen userScreen)
-    
+
     useContent AdminScreen = useContent LoggedScreen
+
+    useContent InsertRoomScreen = do
+        putStrLn $ getContent InsertRoomScreen
+        putStrLn "Qual o nome/código da sala a ser criada?"
+        code <- getInputData getAnswer checkNewRoomCode
+        printCategories
+        category <- getInputData getAnswer checkCategory
+        resources <- getResources
+        putStrLn "Qual a capacidade da sala a ser criada?"
+        capacity <- getInputData getAnswer checkNumber
+        putStrLn "Qual a localização da sala a ser criada?"
+        location <- getInputData getAnswer (return . Right)
+        createRoom code resources category capacity location
+        putStr "Sala criada! "
+        waitInput
+        return LoggedScreen
 
     useContent SignUpScreen = do
         putStrLn $ getContent SignUpScreen
@@ -71,7 +87,7 @@ instance Action Screen where
         email <- getInputData getAnswer checkNewEmail
         if email == "Retornar"
             then return LoggedScreen
-            else do 
+            else do
                 putStrLn "Qual é a senha do novo usuário?"
                 password <- getInputData getPassword checkNewPass
                 putStrLn "Qual o nome do novo usuário?"
@@ -79,22 +95,33 @@ instance Action Screen where
                 putStrLn "Este usuário é administrador (S/N)?"
                 isAdm <- getInputData getAnswer yesOrNo
                 registerNewUser email password name isAdm
-                return $ LoggedScreen
-    
+                return LoggedScreen
+
     useContent RemoveUserScreen = do
         admUser <- getLoggedUser
         putStrLn $ getContent RemoveUserScreen
         putStrLn "Qual o e-mail do usuário a ser deletado?"
         email <- getInputData getAnswer checkEmail
         if email == "Retornar" then return ()
-            else do 
+            else do
                 currentUser <- retrieveUser email
-                putStrLn $ show currentUser
+                print currentUser
                 putStrLn "Insira sua senha para confirmar:"
                 admPassword <- getInputData getPassword $ checkPass (emailUser admUser)
                 removeUser currentUser
                 putStrLn "Usuário removido!"
         return LoggedScreen
+
+    useContent ViewUserScreen = do
+        putStrLn $ getContent ViewUserScreen
+        user <- getLoggedUser
+        rooms <- searchRoomsRequester $ nameUser user
+        if null rooms
+            then putStrLn $ "Sem dados de salas encontrados para "++ nameUser user
+            else mapM_ print rooms
+        putStrLn "\nDeseja visualizar de outras formas/alguma sala específica [S/N]?"
+        more <- getInputData getAnswer yesOrNo
+        return $ if more then ViewScreen else LoggedScreen
 
     useContent ViewScreen = do
         putStrLn $ getContent ViewScreen
@@ -108,15 +135,19 @@ instance Action Screen where
         roomCode <- getInputData getAnswer checkRoomCode
         (Just room) <- getRoom roomCode
         print room
-        putStrLn "Aperte qualquer tecla para continuar."
-        getLine
-        return StartScreen
+        waitInput
+        userLogged <- hasLoggedUser
+        return $ if userLogged then LoggedScreen else StartScreen
 
     useContent ViewFilterScreen = do
         putStrLn $ getContent ViewFilterScreen
         rooms <- getRoomsFilter []
-        sequence $ map print rooms
-        return StartScreen
+        if null rooms
+            then putStrLn "Sem dados de salas encontrados\n"
+            else mapM_ print rooms
+        waitInput
+        userLogged <- hasLoggedUser
+        return $ if userLogged then LoggedScreen else StartScreen
 
     useContent ReportRoomScreen = do
         putStrLn $ getContent ReportRoomScreen
@@ -127,7 +158,8 @@ instance Action Screen where
         [y,m,d] <- getInputData getAnswer checkDay
         putStrLn $ createReportForTheRoom (toInteger y, m, d) room
         waitInput
-        return StartScreen
+        userLogged <- hasLoggedUser
+        return $ if userLogged then LoggedScreen else StartScreen
 
     useContent ReportDayScreen = do
         putStrLn $ getContent ReportDayScreen
@@ -136,8 +168,9 @@ instance Action Screen where
         report <- createReportForTheDay (toInteger y, m, d)
         putStrLn report
         waitInput
-        return StartScreen
-    
+        userLogged <- hasLoggedUser
+        return $ if userLogged then LoggedScreen else StartScreen
+
     useContent CreateReservationScreen = do
         putStrLn $ getContent CreateReservationScreen
         putStrLn "Qual o código/nome da sala que você quer reservar?"
@@ -153,7 +186,7 @@ instance Action Screen where
 
         user <- getLoggedUser
         created <- makeReservation roomCode (nameUser user) description (toInteger y,m,d,hStart,mStart) (toInteger y,m,d,hEnd,mEnd)
-        if created 
+        if created
             then putStr "Reserva criada! "
             else putStr "Sala já ocupada neste horário. "
         waitInput
@@ -176,12 +209,12 @@ instance Action Screen where
 
         user <- getLoggedUser
         edited <- editReservation roomCode (nameUser user) (toInteger yOld,mOld,dOld,hOldStart,minOldStart) (toInteger yNew,mNew,dNew,hNewStart,minNewStart) (toInteger yNew,mNew,dNew,hNewEnd,minNewEnd)
-        if edited 
+        if edited
             then putStrLn "Reserva editada! "
             else putStrLn "A reserva não existe ou já está ocupada no novo horário. "
         waitInput
         return LoggedScreen
-    
+
     useContent RemoveReservationScreen = do
         putStrLn $ getContent RemoveReservationScreen
         putStrLn "Qual o código/nome da sala que você quer remover a reserva?"
@@ -193,10 +226,10 @@ instance Action Screen where
 
         user <- getLoggedUser
         reservation <- findReservation roomCode (toInteger y,m,d,hStart,minStart) (nameUser user)
-        putStrLn $ show reservation
+        print reservation
         putStrLn "Confirma a deleção da reserva acima [S/N]?"
         toDelete <- getInputData getAnswer yesOrNo
-        when toDelete (do 
+        when toDelete (do
                 deleteReservation roomCode (nameUser user) (toInteger y,m,d,hStart,minStart)
                 putStrLn "Reserva deletada. "
                 waitInput
@@ -209,8 +242,7 @@ userInteraction screen = do
     firstAccess <- noUsersYet
     let currentScreen = if firstAccess then FirstScreen else screen
 
-    nextScreen <- useContent currentScreen
-    return nextScreen
+    useContent currentScreen
 
 waitInput :: IO String
 waitInput = do
@@ -221,7 +253,7 @@ waitInput = do
 getAnswer :: IO String
 getAnswer = do
     putStr ">> "
-    hFlush (stdout)
+    hFlush stdout
     getLine
 
 -- | Função responsável por captar a senha do usuário da entrada e garantir que ela seja exibida apenas com asteriscos, como forma de melhorar a segurança.
@@ -238,7 +270,7 @@ getInputData getter checker = do
         Right answer -> return answer
 
 -- | Esta filtrará salas pelos filtros escolhidos pelo usuário. MAis de um filtro podem ser aplicados simultaneamente, neste caso, a função perguntará um a um quais filtros devem ser adicionados.
-getRoomsFilter :: [Room] -> IO ([Room])
+getRoomsFilter :: [Room] -> IO [Room]
 getRoomsFilter previous = do
     putStrLn "Por qual critério você deseja filtrar?\n\
               \1 - Categoria\n\
@@ -246,15 +278,15 @@ getRoomsFilter previous = do
               \3 - Horário\n\
               \4 - Recursos"
     option <- getInputData getAnswer checkFilter
-    rooms <- case option of 
-                1 -> do 
-                    printCategories 
+    rooms <- case option of
+                1 -> do
+                    printCategories
                     cat <- getInputData getAnswer checkCategory
-                    searchRoomsCategory $ Just cat
-                2 -> do 
+                    searchRoomsCategory cat
+                2 -> do
                     putStrLn "Capacidade mínima desejada: "
                     cap <- getInputData getAnswer checkNumber
-                    searchRoomsCapacity $ Just cap
+                    searchRoomsCapacity cap
                 3 -> do
                     putStrLn "Qual o dia a ser buscado [DD-MM-AAAA]?"
                     [y,m,d] <- getInputData getAnswer checkDay
@@ -262,24 +294,37 @@ getRoomsFilter previous = do
                     [hStart, minStart] <- getInputData getAnswer checkTime
                     putStrLn "Qual o horário de término a ser buscado [HH:MM]?"
                     [hEnd, minEnd] <- getInputData getAnswer checkTime
-                    searchRoomsTime (Just (toInteger y, m, d, hStart, minStart)) (Just (toInteger y,m,d,hEnd,minEnd))
+                    searchRoomsTime (toInteger y, m, d, hStart, minStart) (toInteger y,m,d,hEnd,minEnd)
                 4 -> do
-                    printResources
-                    resources <- getResources []
-                    searchRoomsResources $ Just resources
+                    resources <- getResources
+                    searchRoomsResources resources
 
-    let intersected = if previous == [] then rooms else rooms `intersect` previous
+    let intersected = if null previous then rooms else rooms `intersect` previous
     putStrLn "Deseja combinar sua busca com outro filtro [S/N]?"
     more <- getInputData getAnswer yesOrNo
     if more then getRoomsFilter intersected else return intersected
 
 -- | Função auxiliar à função de filtro de salas. Esta função lerá da entrada recursos que o usuário deseja buscar e suas respectivas quantidades, e então produzirá uma lista de recursos com estas informações e a retornará.
-getResources :: [Resource] -> IO [Resource]
+{-getResources :: [Resource] -> IO [Resource]
 getResources previous = do
     kind <- getInputData getAnswer checkResource
-    putStrLn "Qual a quantidade mínima?"
+    putStrLn "Qual a quantidade desejada/existente do recurso?"
     quantity <- getInputData getAnswer checkNumber
     let resources = previous ++ [Resource kind quantity]
     putStrLn "Deseja buscar mais recursos [S/N]?"
     more <- getInputData getAnswer yesOrNo
-    if more then getResources resources else return resources
+    if more then getResources resources else return resources-}
+
+getResources :: IO [Resource]
+getResources = do
+    let action = do {
+        printResources;
+        kind <- getInputData getAnswer checkResource;
+        putStrLn "Qual a quantidade desejada/existente do recurso?";
+        quantity <- getInputData getAnswer checkNumber;
+        putStrLn "Deseja buscar mais recursos [S/N]?";
+        return $ Resource kind quantity
+    }
+    firstResource <- action
+    nextResources <- whileM (getInputData getAnswer yesOrNo) action
+    return $ firstResource:nextResources

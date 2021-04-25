@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 import TUI.ScreenListeners (userInteraction)
-import Manager (Screen (StartScreen), setTitle)
+import Manager (Screen (StartScreen), setTitle, os)
 import System.Process
 
  {-
@@ -8,7 +8,7 @@ import System.Process
 -}
 loop :: Screen -> IO ()
 loop currentScreen = do
-    system "cls"
+    if os == "linux" then system "clear" else system "cls"
     nextScreen <- userInteraction currentScreen
     loop nextScreen
 
