@@ -1,0 +1,26 @@
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\package.yaml:
+  hash: 2b0d44f5765f68b374d0a082744e97e3af4666d5238fb3cf59dc2f1f717e8d32
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\README.md:
+  hash: 46fa60a3f5e5d3e8824ff6b51077ab3c7af4cb1bed1df27d98ba0cefae1620d5
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\.stack-work\dist\274b403a\build\autogen\Paths_SIGES.hs:
+  hash: deebb11143768f09a40eab6737ce583c2a7f9303957723089cfde3722719789f
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\src\Manager.hs:
+  hash: b26197e2093b36efeb6d9ebc5ee189e1d84de846d1ab13a9fecf3d67d22fb19f
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\SIGES.cabal:
+  hash: 0aa263f655fc48f405fa06244478b7beac073d4708240b0a53f0222c034da3b1
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\src\Datatypes.hs:
+  hash: 349722f01ad113a4c1f4ae54206668ff981098427e2a21b4690ae40bf1872ff3
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\src\Handlers\RoomsHandler.hs:
+  hash: 529cac85f2152c6384ccfc6bb74569a617d7ab2222df365d5da1ab8340807509
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\src\TUI\OutputScreens.hs:
+  hash: e126f4dc94233cbb44a89287cf1ac37509ebcd1d92c92934b2a15de38ec133b4
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\src\Handlers\DataHandler.hs:
+  hash: 16d8eab94141b0c434946cc5c268c82c5c5d1b4fa8f9a1b1c2fa329ad5b554e6
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\src\TUI\ScreenListeners.hs:
+  hash: 76ac140d62e118963ec61751ab8e24a6fff6ed35ef175830708ddbca6019c210
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\src\Handlers\UserHandler.hs:
+  hash: 5db6852dd99241f6d127194429a64d0953f27cae96cdd4cdcbe76f6ab9c4074b
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\ChangeLog.md:
+  hash: 290ed50bc29b73f3d205276ed6e739b48cd8ceba4c5fcc658bd7742e31f16d5c
+C:\Users\Deilton\Documents\Estudos\PLP\SIGES\src\Handlers\ErrorHandler.hs:
+  hash: 9500894c44063833dcc866325e3071d408ffd9ee1ebc15f1e350dc29c34ab4ec

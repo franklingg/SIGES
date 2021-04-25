@@ -1,3 +1,8 @@
+{-|
+Module      : Manager
+Description : Módulo que reúne várias operações de importação necessárias aos demais módulos do sistema para despoluir o código.
+Copyright   : (c)
+-}
 module Manager(
     module Data.Maybe
    ,module Data.Char
@@ -18,29 +23,18 @@ module Manager(
    ,module System.Environment
 ) where
 
--- importa Maybe
 import Data.Maybe
--- importa Char
 import Data.Char
--- importa Either
 import Data.Either
 import Data.List
 import Data.List.Split
--- importa Password.Validate
 import Data.Password.Validate (isValidPassword, defaultPasswordPolicy_)
--- importa Password.Bcrypt
 import Data.Password.Bcrypt
--- importa Aeson
 import Data.Aeson
--- importa IO
 import System.IO
--- importa Exit
 import System.Exit
--- importa Email.Validate
 import Text.Email.Validate
--- importa Time
 import Data.Time
--- importa Datatypes
 import Datatypes
 import System.Console.ANSI
 import Control.Monad    

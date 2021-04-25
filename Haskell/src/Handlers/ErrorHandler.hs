@@ -1,24 +1,22 @@
+{-|
+Module      : ErrorHandler
+Description : Módulo contendo operações de verificação e tratamento de erros do sistema SIGES.
+Copyright   : 
+-}
 {-# LANGUAGE OverloadedStrings #-}
 module Handlers.ErrorHandler where
 
--- importa o Map
 import qualified Data.Map as Map
--- importa o ByteStrings.Char8
 import qualified Data.ByteString.Char8 as BS
--- importa o Text
 import qualified Data.Text as T
 
--- importa a entidade Manager
 import Manager
--- importa a entidade UserHandler
 import Handlers.UserHandler
 import Handlers.DataHandler
--- importa a entidade OutputScreens
 import TUI.OutputScreens
 
-{-
-   Funcao para verificar se a tela escolhida e valida.
--}
+
+-- |Dada uma determinada tela do sistema e uma resposta, esta função verifica se a resposta foi adequada àquela tela, retornando, em caso positivo, a tela equivalente à resposta, ou em caso negativo, o ErrorLog com a mensagem identificando qualerro existente na resposta.
 validScreen :: Screen -> String -> IO (Either ErrorLog Screen)
 validScreen screen answer
     | length answer /= 1 = return (Left "Por favor, digite apenas um caractere.")
@@ -28,18 +26,14 @@ validScreen screen answer
           allScreens = nextScreens screen
           (Just correctScreen) = Map.lookup charAnswer allScreens 
 
-{-
-   Funcao para verificar se o caractere digitado e o 'R'.
--}
+-- |Dada uma String, esta função verificará se esta String é composta unicamente pelo caractere 'R', respondendo com um valor booleano.
 singleCharIsR :: String -> Bool
 singleCharIsR str
     | length str /= 1 = False
     | toUpper (head str) == 'R' = True
     | otherwise = False
 
-{-
-   Funcao para verificar o novo email.
--}
+-- |Esta função considerará um e-mail, em String, e decidirá se ele é válido e livre ou se é inválido ou se já está em uso, retornando uma mensagem de erro caso o e-mail não seja válido e livre.
 checkNewEmail :: String -> IO (Either ErrorLog String)
 checkNewEmail emailString = do
     checkedEmail <- checkEmail emailString
@@ -49,9 +43,7 @@ checkNewEmail emailString = do
                 (Left notRegistered) -> Right emailString
                 _ -> Left "Este e-mail já pertence a uma conta no SIGES. Tente novamente.")
 
-{-
-   Funcao para verificar o email.
--}
+-- |Esta função considerará um e-mail, em String, e decidirá se ele é válido e está cadastrado. Caso não seja válido ou não esteja cadastrado, retornará uma mensagem de erro. Caso a função receba como parâmetro uma String composta apenas da letra R, responderá com a String "Retornar".
 checkEmail :: String -> IO (Either ErrorLog String)
 checkEmail emailString = do
     if singleCharIsR emailString
@@ -65,18 +57,14 @@ checkEmail emailString = do
                     False -> return (Left "Email não cadastrado. Tente novamente.")
                 )
 
-{-
-   Funcao para verificar a nova senha.
--}
+-- |Esta função considerará uma String determinada e decidirá se esta String pode ser usada como senha neste sistema. Em caso negativo, retornará uma mensagem de erro.
 checkNewPass :: String -> IO (Either ErrorLog String)
 checkNewPass passwordString
     | not $ isValidPassword defaultPasswordPolicy_ password = return (Left "A senha deve ter mais de 8 caracteres. Tente novamente.")
     | otherwise = return (Right passwordString)
     where password = mkPassword $ T.pack passwordString
 
-{-
-   Funcao para verificar a senha.
--}
+-- |Esta função considera um e-mail e uma senha, e decide se a senha está correta (caso em que retorna a própria senha) ou não (Caso em que retorna a mensagem de erro correspondente.)
 checkPass :: String -> String -> IO (Either ErrorLog String)
 checkPass emailString passwordString = do
     possiblePassword <- correctPassword emailString passwordString
@@ -84,18 +72,14 @@ checkPass emailString passwordString = do
         True -> return (Right passwordString)
         False -> return (Left "Senha incorreta. Tente novamente.")
 
-{-
-   Funcao para verificar o nome.
--}
+-- |Esta função considera uma String e decide se ela pode ser considerada como um nome do usuário (apenas letras e espaços são permitidos). Caso a String contenha um nome válido, o próprio nome será retornado. Caso contrário, uma mensagem de erro será retornada.
 checkName :: String -> IO (Either ErrorLog String)
 checkName str = do
     if all (\c -> isAlpha c || isSpace c) str
         then return (Right str)
         else return (Left "Apenas letras são permitidas. Tente novamente.")
 
-{-
-   Funcao para verificar se os caracteres digitados sao 'S' ou 'N'.
--}
+-- |Esta função considera uma String e decide se ela representa corretamente uma resposta de Sim ou Não (S ou N). Caso tenha mais de um caractere ou não seja S ou N, retornará uma mensagem de erro. Caso seja válida, a função retornará um Booleano. (True para S e False para N).
 yesOrNo :: String -> IO (Either ErrorLog Bool)
 yesOrNo str = do
     let firstChar = toUpper $ head str
@@ -106,7 +90,7 @@ yesOrNo str = do
                         'N' -> Right False
                         _ -> Left "Resposta inválida (apenas S/N). Tente novamente.")
 
-
+-- |Esta função considera uma Sting e decide se ela equivale ao código de uma das salas cadastradas no sistema (Caso em que retornará o próprio código). Caso contrário, a função retornará uma mensagem de erro.
 checkRoomCode :: String -> IO (Either ErrorLog String)
 checkRoomCode codeStr = do
     let codeRoom = map toUpper codeStr
@@ -115,7 +99,7 @@ checkRoomCode codeStr = do
         then return (Right codeRoom)
         else return (Left "Sala não cadastrada. Tente novamente.")
 
-
+-- |Esta função considera uma String, e decidirá se ela equivale a uma data válida. Em caso positivo, retornará o mesmo na forma de uma lista de inteiros. Caso contrário, retornará uma mensagem de erro equivalente ao problema encontrado.
 checkDay :: String -> IO (Either ErrorLog [Int])
 checkDay dayStr
     | length dayRemovedWs /= 10 = return (Left "Formato inválido (apenas DD-MM-AAAA). Tente novamente.")
@@ -125,6 +109,7 @@ checkDay dayStr
     where dayRemovedWs = foldr (\c acc -> if c /= ' ' then c:acc else acc) "" dayStr
           dayList@[day, month, year] = map read $ splitOn "-" dayRemovedWs
 
+-- |Esta função considera uma String e decide se ela equivale a um horário. Em caso positivo, retornará o horário em forma de Lista de inteiros. Caso contrário, retornará a mensagem de erro equivalente ao problema encontrado.
 checkTime :: String -> IO (Either ErrorLog [Int])
 checkTime timeStr
     | length timeRemovedWs /= 5 = return (Left "Formato inválido (apenas HH:MM). Tente novamente.")
@@ -134,13 +119,14 @@ checkTime timeStr
     where timeRemovedWs = foldr (\c acc -> if c /= ' ' then c:acc else acc) "" timeStr
           timeList@[hours, minutes] = map read $ splitOn ":" timeRemovedWs
 
+-- |Esta função considera uma String e decide se ela pode ser usada como descrição para uma reserva de sala. Em caso positivo, retornará a mesma String. Caso contrário, retornará uma mensagem de erro.
 checkDescription :: String -> IO (Either ErrorLog String)
 checkDescription str = do
     if all (\c -> isPrint c) str && length str > 5
         then return (Right str)
         else return (Left "Apenas letras são permitidas. Tente novamente.")
 
-
+-- |Esta função considera uma String e decide se ela representa uma das categorias no sistema. Caso represente, a função retornará a Categoria desejada, e em caso contrário, retornará uma mensagem de erro.
 checkCategory :: String -> IO (Either ErrorLog RoomCategory)
 checkCategory catStr
     | c == 'L' = return $ Right Laboratory
@@ -151,12 +137,14 @@ checkCategory catStr
     | otherwise = return $ Left "Apenas uma das opções acima. Tente novamente"
     where c = toUpper (head catStr) 
 
+-- |Esta função considera uma String e decide se ela contém um valor inteiro entre zero e trezentos, caso no qual retornará o inteiro. Em caso contrário, uma mensagem de erro será retornada.
 checkNumber :: String -> IO (Either ErrorLog Int)
 checkNumber numStr
     | num > 0 && num < 300 = return $ Right num
     | otherwise = return $ Left "Valor inválido. Tente novamente"
     where num = read numStr
 
+-- |Esta função considera uma String e decide se ela representa um dos tipos de recursos oferecidos pelas salas do sistema. Caso afirmativo, a função retornará o ResourceKind solicitado. Caso contrário, uma mensagem de erro será retornada.
 checkResource :: String -> IO (Either ErrorLog ResourceKind)
 checkResource resStr
     | c == 'P' = return $ Right Projector
@@ -168,6 +156,7 @@ checkResource resStr
     | otherwise = return $ Left "Apenas uma das opções acima. Tente novamente"
     where c = toUpper (head resStr) 
 
+-- |Esta função considera uma }String e decide se ela equivale a uma das opções (1, 2, 3, ou 4), caso em que retorna a opção como um inteiro. Em caso contrário, retornará uma mensagem de erro.
 checkFilter :: String -> IO (Either ErrorLog Int)
 checkFilter filterStr = do
     let filterNum = read filterStr

@@ -1,31 +1,26 @@
+{-|
+Module      : ScreenListeners
+Description : 
+Copyright   : 
+-}
 module TUI.ScreenListeners(
     module TUI.ScreenListeners
 ) where
 
--- importa Haskeline
 import qualified System.Console.Haskeline as Hkl
--- importa Map
 import qualified Data.Map as Map
 
--- importa a entidade Manager
 import Manager
--- importa a entidade OutputScreens
 import TUI.OutputScreens
--- importa a entidade ErrorHandler
 import Handlers.ErrorHandler
--- importa a entidade UserHandler
 import Handlers.UserHandler
--- importa a entidade DataHandler
 import Handlers.DataHandler
 import Handlers.RoomsHandler
 
-{-
-   Classe Action.
--}
+-- |Typeclass que estabelece as operações de ações a ser executadas em cada tela do sistema.
 class Action a where
-    useContent :: a -> IO Screen
+    useContent :: a -> IO Screen -- ^ A implementação de como a tela será impressa na tela e como lerá as informações dadas pelo usuário.
 
--- Action e uma instancia da classe de tipo Screen
 instance Action Screen where
     useContent ExitScreen = do 
         putStrLn $ getContent ExitScreen    

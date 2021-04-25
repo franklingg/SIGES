@@ -84,22 +84,6 @@ spec = do
         it "Ao se buscar com uma lista de recursos" $
             searchRoomsResources (Just [Resource{resourceKind = Microscope, resourceQuantity = 5}, Resource{resourceKind = Projector, resourceQuantity = 1},Resource{resourceKind = Computer, resourceQuantity = 1}]) `shouldReturn` [salaUm]
 
-    describe "searchRoomsCombined" $ do
-        it "Ao se colocar Nothing em todos os parâmetros" $
-            searchRoomsCombined Nothing Nothing Nothing Nothing Nothing `shouldReturn` [salaUm, salaZero]
-        it "Ao se colocar Nothing na categoria" $
-            searchRoomsCombined Nothing (Just 50) (Just (2021, 04, 04, 18, 45)) (Just (2021, 04, 04, 20, 15)) (Just []) `shouldReturn` [salaZero]
-        it "Ao se colocar Nothing na capacidade" $
-            searchRoomsCombined (Just Classroom) Nothing (Just (2021, 04, 04, 18, 45)) (Just (2021, 04, 04, 20, 15)) (Just []) `shouldReturn` [salaZero]
-        it "Ao se colocar Nothing no horário" $
-            searchRoomsCombined (Just Classroom) (Just 50) Nothing Nothing (Just []) `shouldReturn` [salaZero]
-        it "Ao se colocar Nothing na lista de recursos" $
-            searchRoomsCombined (Just Classroom) (Just 50) (Just (2021, 04, 04, 18, 45)) (Just (2021, 04, 04, 20, 15)) Nothing `shouldReturn` [salaZero]
-        it "Ao se buscar com todos os parâmetros sem salas que satisfaçam a busca" $
-            searchRoomsCombined (Just Classroom) (Just 50) (Just (2021, 04, 04, 18, 45)) (Just (2021, 04, 04, 20, 15)) (Just [Resource{resourceKind = Microscope, resourceQuantity = 5}, Resource{resourceKind = Projector, resourceQuantity = 1},Resource{resourceKind = Computer, resourceQuantity = 1}]) `shouldReturn` []
-        it "Ao se buscar com todos os parâmetros" $
-            searchRoomsCombined (Just Laboratory) (Just 1) (Just (2021, 04, 04, 18, 45)) (Just (2021, 04, 04, 20, 15)) (Just [Resource{resourceKind = Microscope, resourceQuantity = 5}, Resource{resourceKind = Projector, resourceQuantity = 1},Resource{resourceKind = Computer, resourceQuantity = 1}]) `shouldReturn` [salaUm]
-
     describe "cleanAllReservations" $ do
         it "Ao limpar as reservas" $
             cleanAllReservations `shouldReturn` True        
