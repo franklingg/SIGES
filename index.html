@@ -1,1 +1,168 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>SIGES-0.1.0.0</title><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial" /><link rel="stylesheet" type="text/css" href="quick-jump.css" /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700" /><script src="haddock-bundle.min.js" async="async" type="text/javascript"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script></head><body><div id="package-header"><span class="caption">SIGES-0.1.0.0</span><ul class="links" id="page-menu"><li><a href="index.html">Contents</a></li><li><a href="doc-index.html">Index</a></li></ul></div><div id="content"><div id="description"><h1>SIGES-0.1.0.0</h1><div class="doc"><p>Please see the README on GitHub at <a href="https://github.com/franklingg/SIGES#readme">https://github.com/franklingg/SIGES#readme</a></p></div></div><div id="module-list"><p class="caption">Signatures</p></div><div id="module-list"><p class="caption">Modules</p><ul><li><span class="module"><span class="noexpander">&nbsp;</span><a href="Datatypes.html">Datatypes</a></span> M&#243;dulo contendo os diferentes m&#243;dulos pr&#243;prios do sistema SIGES.</li><li><span class="module details-toggle-control details-toggle" data-details-id="n.2">Handlers</span><details id="n.2" open="open"><summary class="hide-when-js-enabled">Submodules</summary><ul><li><span class="module"><span class="noexpander">&nbsp;</span><a href="Handlers-DataHandler.html">Handlers.DataHandler</a></span> M&#243;dulo contendo as opera&#231;&#245;es de manipula&#231;&#227;o de dados e persist&#234;ncia do sistema SIGES.</li><li><span class="module"><span class="noexpander">&nbsp;</span><a href="Handlers-ErrorHandler.html">Handlers.ErrorHandler</a></span> M&#243;dulo contendo opera&#231;&#245;es de verifica&#231;&#227;o e tratamento de erros do sistema SIGES.</li><li><span class="module"><span class="noexpander">&nbsp;</span><a href="Handlers-RoomsHandler.html">Handlers.RoomsHandler</a></span> M&#243;dulo contendo as opera&#231;&#245;es b&#225;sicas para manipula&#231;&#227;o de salas no sistema SIGES.</li><li><span class="module"><span class="noexpander">&nbsp;</span><a href="Handlers-UserHandler.html">Handlers.UserHandler</a></span> M&#243;dulo contendo as opera&#231;&#245;es b&#225;sicas de manipula&#231;&#227;o de usu&#225;rios no sistema SIGES.</li></ul></details></li><li><span class="module"><span class="noexpander">&nbsp;</span><a href="Manager.html">Manager</a></span> M&#243;dulo que re&#250;ne v&#225;rias opera&#231;&#245;es de importa&#231;&#227;o necess&#225;rias aos demais m&#243;dulos do sistema para despoluir o c&#243;digo.</li><li><span class="module details-toggle-control details-toggle" data-details-id="n.4">TUI</span><details id="n.4" open="open"><summary class="hide-when-js-enabled">Submodules</summary><ul><li><span class="module"><span class="noexpander">&nbsp;</span><a href="TUI-OutputScreens.html">TUI.OutputScreens</a></span> M&#243;dulo com o conte&#250;do exibido em cada tela e que armazena a rela&#231;&#227;o entre as telas do sistema SIGES.</li><li><span class="module"><span class="noexpander">&nbsp;</span><a href="TUI-ScreenListeners.html">TUI.ScreenListeners</a></span> M&#243;dulo que estabelece a&#231;&#245;es e l&#243;gica das telas e de leitura de dados no sistema SIGES.</li></ul></details></li></ul></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.24.0</p></div></body></html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SIGES-0.1.0.0</title>
+    <link
+      href="linuwial.css"
+      rel="stylesheet"
+      type="text/css"
+      title="Linuwial"
+    />
+    <link rel="stylesheet" type="text/css" href="quick-jump.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+    />
+    <script
+      src="haddock-bundle.min.js"
+      async="async"
+      type="text/javascript"
+    ></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+      type="text/javascript"
+    ></script>
+  </head>
+  <body>
+    <div id="package-header">
+      <span class="caption">SIGES-0.1.0.0</span>
+      <ul class="links" id="page-menu">
+        <li><a href="index.html">Contents</a></li>
+        <li><a href="doc-index.html">Index</a></li>
+      </ul>
+    </div>
+    <div id="content">
+      <div id="description">
+        <h1>SIGES-0.1.0.0</h1>
+        <div class="doc">
+          <p>
+            Please see the README on GitHub at
+            <a href="https://github.com/franklingg/SIGES#readme"
+              >https://github.com/franklingg/SIGES#readme</a
+            >
+          </p>
+        </div>
+      </div>
+      <div id="module-list"><p class="caption">Signatures</p></div>
+      <div id="module-list">
+        <p class="caption">Modules</p>
+        <ul>
+          <li>
+            <span class="module"
+              ><span class="noexpander">&nbsp;</span
+              ><a href="Datatypes.html">Datatypes</a></span
+            >
+            M&#243;dulo contendo os diferentes m&#243;dulos pr&#243;prios do
+            sistema SIGES.
+          </li>
+          <li>
+            <span
+              class="module details-toggle-control details-toggle"
+              data-details-id="n.2"
+              >Handlers</span
+            >
+            <details id="n.2" open="open">
+              <summary class="hide-when-js-enabled">Submodules</summary>
+              <ul>
+                <li>
+                  <span class="module"
+                    ><span class="noexpander">&nbsp;</span
+                    ><a href="Handlers-DataHandler.html"
+                      >Handlers.DataHandler</a
+                    ></span
+                  >
+                  M&#243;dulo contendo as opera&#231;&#245;es de
+                  manipula&#231;&#227;o de dados e persist&#234;ncia do sistema
+                  SIGES.
+                </li>
+                <li>
+                  <span class="module"
+                    ><span class="noexpander">&nbsp;</span
+                    ><a href="Handlers-ErrorHandler.html"
+                      >Handlers.ErrorHandler</a
+                    ></span
+                  >
+                  M&#243;dulo contendo opera&#231;&#245;es de
+                  verifica&#231;&#227;o e tratamento de erros do sistema SIGES.
+                </li>
+                <li>
+                  <span class="module"
+                    ><span class="noexpander">&nbsp;</span
+                    ><a href="Handlers-RoomsHandler.html"
+                      >Handlers.RoomsHandler</a
+                    ></span
+                  >
+                  M&#243;dulo contendo as opera&#231;&#245;es b&#225;sicas para
+                  manipula&#231;&#227;o de salas no sistema SIGES.
+                </li>
+                <li>
+                  <span class="module"
+                    ><span class="noexpander">&nbsp;</span
+                    ><a href="Handlers-UserHandler.html"
+                      >Handlers.UserHandler</a
+                    ></span
+                  >
+                  M&#243;dulo contendo as opera&#231;&#245;es b&#225;sicas de
+                  manipula&#231;&#227;o de usu&#225;rios no sistema SIGES.
+                </li>
+              </ul>
+            </details>
+          </li>
+          <li>
+            <span class="module"
+              ><span class="noexpander">&nbsp;</span
+              ><a href="Manager.html">Manager</a></span
+            >
+            M&#243;dulo que re&#250;ne v&#225;rias opera&#231;&#245;es de
+            importa&#231;&#227;o necess&#225;rias aos demais m&#243;dulos do
+            sistema para despoluir o c&#243;digo.
+          </li>
+          <li>
+            <span
+              class="module details-toggle-control details-toggle"
+              data-details-id="n.4"
+              >TUI</span
+            >
+            <details id="n.4" open="open">
+              <summary class="hide-when-js-enabled">Submodules</summary>
+              <ul>
+                <li>
+                  <span class="module"
+                    ><span class="noexpander">&nbsp;</span
+                    ><a href="TUI-OutputScreens.html"
+                      >TUI.OutputScreens</a
+                    ></span
+                  >
+                  M&#243;dulo com o conte&#250;do exibido em cada tela e que
+                  armazena a rela&#231;&#227;o entre as telas do sistema SIGES.
+                </li>
+                <li>
+                  <span class="module"
+                    ><span class="noexpander">&nbsp;</span
+                    ><a href="TUI-ScreenListeners.html"
+                      >TUI.ScreenListeners</a
+                    ></span
+                  >
+                  M&#243;dulo que estabelece a&#231;&#245;es e l&#243;gica das
+                  telas e de leitura de dados no sistema SIGES.
+                </li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div id="footer">
+      <p>
+        Produced by
+        <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.24.0
+      </p>
+    </div>
+  </body>
+</html>
