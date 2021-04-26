@@ -37,6 +37,7 @@ instance Action Screen where
                 putStrLn "Qual o nome do novo usuário?"
                 name <- getInputData getAnswer checkName
                 registerNewUser email password name True
+                signUser email
                 return AdminScreen
 
     useContent StartScreen = do
