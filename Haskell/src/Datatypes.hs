@@ -78,7 +78,7 @@ data RoomCategory = Laboratory -- ^ Sala que funciona como um laboratório.
                   | Classroom  -- ^ Sala que funciona como uma sala de aula.
                   | Office     -- ^ Sala que funciona como um escritório.
                   | Warehouse  -- ^ Sala que funciona como um depósito.
-                  deriving (Eq, Show, Generic)
+                  deriving (Eq, Generic)
 
 -- | Os tipos de recursos existentes no sistema.
 data ResourceKind = Projector      -- ^ Projetor ou Datashow.
@@ -87,7 +87,7 @@ data ResourceKind = Projector      -- ^ Projetor ou Datashow.
                   | Computer       -- ^ Computador.
                   | Board          -- ^ Quadro negro ou branco.
                   | AirConditioner -- ^ Ar condicionado.
-              deriving (Eq, Show, Generic)
+              deriving (Eq, Generic)
 
 -- | Os recursos oferecidos pelas salas do sistema.
 data Resource = Resource {

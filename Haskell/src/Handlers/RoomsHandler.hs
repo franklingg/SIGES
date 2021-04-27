@@ -21,6 +21,20 @@ instance Show Reservation where
                                                                    \Fim: "++ show finishTime ++      "\n\
                                                                    \Responsável: " ++ requester ++   "\n\
                                                                    \Motivo: "++ description
+instance Show RoomCategory where
+    show Laboratory = "Laboratório"
+    show Auditorium = "Auditório"
+    show Classroom  = "Sala de Aula"
+    show Office     = "Escritório"
+    show Warehouse  = "Depósito"
+
+instance Show ResourceKind where
+    show Projector      = "Projetor"
+    show Microscope     = "Microscópio"
+    show Desk           = "Mesa"
+    show Computer       = "Computador"
+    show Board          = "Quadro"
+    show AirConditioner = "Ar Condicionado"
 
 instance Ord Reservation where
     compare res1 res2 = if startTime res1 <= startTime res2 then LT else GT
