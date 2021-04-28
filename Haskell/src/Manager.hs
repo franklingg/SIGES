@@ -14,6 +14,7 @@ module Manager(
    ,module Data.Password.Bcrypt
    ,module Data.Aeson
    ,module Data.Functor
+   ,module Data.Algebra.Boolean
    ,module System.IO
    ,module System.Exit
    ,module System.Info
@@ -36,6 +37,7 @@ import Data.Password.Bcrypt
 import Data.Aeson
 import Data.Time
 import Data.Functor
+import Data.Algebra.Boolean (xor)
 import System.IO
 import System.Exit
 import System.Info

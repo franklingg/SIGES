@@ -57,8 +57,8 @@ makeTime (a, m, d, h, min) = time
           time = LocalTime calendar clock
 
 -- | Esta função recebe uma sala e um horário, e verifica se esta sala estará livre neste horário, respondendo com um valor booleano.
-isFree :: Room -> LocalTime -> Bool
-isFree room newTime = not $ any (\reservation -> (startTime reservation <= newTime) && (finishTime reservation >= newTime)) (schedule room)
+isFree :: Room -> LocalTime -> LocalTime -> Bool
+isFree room newStartTime newFinishTime = all (\reservation -> (startTime reservation >= newFinishTime) `xor` (finishTime reservation <= newStartTime)) (schedule room)
 
 -- | Esta função criará uma reserva em uma das salas, a partir do código da mesma, do nome do responsável pela reserva, e das tuplas especificando data e horário de finalização do evento.
 makeReservation :: String -> String -> String -> (Integer, Int, Int, Int, Int) -> (Integer, Int, Int, Int, Int) -> IO Bool
@@ -68,7 +68,7 @@ makeReservation codeStr userName descriptionStr startTimeTuple finishTimeTuple =
         finishTimeReservation = makeTime finishTimeTuple
     (Just room) <- getRoom codeRoom
 
-    if isFree room startTimeReservation && isFree room finishTimeReservation
+    if isFree room startTimeReservation finishTimeReservation
         then do
             let newReservation = Reservation{requester=userName, description=descriptionStr, startTime=startTimeReservation, finishTime=finishTimeReservation}
                 newSchedule = insert newReservation (schedule room)
@@ -122,7 +122,7 @@ editReservation codeStr userName currentStartTimeTuple newStartTimeTuple newFini
         newStartTime = makeTime newStartTimeTuple
         newFinishTime = makeTime newFinishTimeTuple
         reservationExists = any (\reservation -> startTime reservation == currentStartTime && requester reservation == userName) (schedule room)
-        newTimeIsFree = isFree room newStartTime && isFree room newFinishTime
+        newTimeIsFree = isFree room newStartTime newFinishTime
 
     if reservationExists && newTimeIsFree
         then do
@@ -189,7 +189,7 @@ searchRoomsTime startTimeTuple finishTimeTuple = do
     allRooms <- fetchRooms
     let startTime = makeTime startTimeTuple
         finishTime = makeTime finishTimeTuple
-        filtered = filter (\room -> isFree room startTime && isFree room finishTime) allRooms
+        filtered = filter (\room -> isFree room startTime finishTime) allRooms
     return filtered
 
 -- | Esta função recebe uma sala e um Resource e verifica se esta sala tem o recurso e se o tem na quantidade especificada ou superior, retornando a resposta em forma de valor booleano.

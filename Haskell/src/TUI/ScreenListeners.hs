@@ -306,16 +306,6 @@ getRoomsFilter previous = do
     if more then getRoomsFilter intersected else return intersected
 
 -- | Função auxiliar à função de filtro de salas. Esta função lerá da entrada recursos que o usuário deseja buscar e suas respectivas quantidades, e então produzirá uma lista de recursos com estas informações e a retornará.
-{-getResources :: [Resource] -> IO [Resource]
-getResources previous = do
-    kind <- getInputData getAnswer checkResource
-    putStrLn "Qual a quantidade desejada/existente do recurso?"
-    quantity <- getInputData getAnswer checkNumber
-    let resources = previous ++ [Resource kind quantity]
-    putStrLn "Deseja buscar mais recursos [S/N]?"
-    more <- getInputData getAnswer yesOrNo
-    if more then getResources resources else return resources-}
-
 getResources :: IO [Resource]
 getResources = do
     let action = do {

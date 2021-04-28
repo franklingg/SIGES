@@ -60,7 +60,7 @@ spec = do
         it "Ao se procurar num horário vago para todas as salas" $
             searchRoomsTime (2017, 04, 04, 12, 0) (2017, 04, 04, 14, 0) `shouldReturn` [salaUm, salaZero]
         it "Ao se procurar num horário qualquer" $
-            searchRoomsTime (2015, 12, 17, 10, 0) (2015, 12, 17, 12, 0) `shouldReturn` [salaUm]
+            searchRoomsTime (2015, 12, 17, 10, 0) (2015, 12, 17, 13, 0) `shouldReturn` [salaUm]
 
     describe "searchRoomsResources" $ do
         it "Ao se buscar um recurso que nenhuma sala possui" $
