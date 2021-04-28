@@ -138,6 +138,7 @@ checkDescription str = do
 checkCategory :: String -> IO (Either ErrorLog RoomCategory)
 checkCategory catStr
     | null catStr = return $ Left "Apenas uma das opções acima. Tente novamente"
+    | length catStr /= 1 = return $ Left "Apenas uma das opções acima. Tente novamente"
     | c == 'L' = return $ Right Laboratory
     | c == 'A' = return $ Right Auditorium
     | c == 'S' = return $ Right Classroom
@@ -157,6 +158,7 @@ checkNumber numStr
 checkResource :: String -> IO (Either ErrorLog ResourceKind)
 checkResource resStr
     | null resStr = return $ Left "Apenas uma das opções acima. Tente novamente"
+    | length resStr /= 1 = return $ Left "Apenas uma das opções acima. Tente novamente"
     | c == 'P' = return $ Right Projector
     | c == 'M' = return $ Right Microscope
     | c == 'B' = return $ Right Desk
