@@ -78,8 +78,7 @@ instance Action Screen where
         putStrLn "Qual a localização da sala a ser criada?"
         location <- getInputData getAnswer (return . Right)
         createRoom code resources category capacity location
-        putStr "Sala criada! "
-        waitInput
+        waitInput "Sala criada! "
         return LoggedScreen
 
     useContent SignUpScreen = do
@@ -96,6 +95,7 @@ instance Action Screen where
                 putStrLn "Este usuário é administrador (S/N)?"
                 isAdm <- getInputData getAnswer yesOrNo
                 registerNewUser email password name isAdm
+                waitInput "Usuário registrado! "
                 return LoggedScreen
 
     useContent RemoveUserScreen = do
@@ -110,7 +110,7 @@ instance Action Screen where
                 putStrLn "Insira sua senha para confirmar:"
                 admPassword <- getInputData getPassword $ checkPass (emailUser admUser)
                 removeUser currentUser
-                putStrLn "Usuário removido!"
+                waitInput "Usuário removido! "
         return LoggedScreen
 
     useContent ViewUserScreen = do
@@ -136,7 +136,7 @@ instance Action Screen where
         roomCode <- getInputData getAnswer checkRoomCode
         (Just room) <- getRoom roomCode
         print room
-        waitInput
+        waitInput ""
         userLogged <- hasLoggedUser
         return $ if userLogged then LoggedScreen else StartScreen
 
@@ -146,7 +146,7 @@ instance Action Screen where
         if null rooms
             then putStrLn "Sem dados de salas encontrados\n"
             else mapM_ print rooms
-        waitInput
+        waitInput ""
         userLogged <- hasLoggedUser
         return $ if userLogged then LoggedScreen else StartScreen
 
@@ -158,7 +158,7 @@ instance Action Screen where
         putStrLn "Qual o dia de ocupação você deseja ver [DD-MM-AAAA]?"
         [y,m,d] <- getInputData getAnswer checkDay
         putStrLn $ createReportForTheRoom (toInteger y, m, d) room
-        waitInput
+        waitInput ""
         userLogged <- hasLoggedUser
         return $ if userLogged then LoggedScreen else StartScreen
 
@@ -168,7 +168,7 @@ instance Action Screen where
         [y,m,d] <- getInputData getAnswer checkDay
         report <- createReportForTheDay (toInteger y, m, d)
         putStrLn report
-        waitInput
+        waitInput ""
         userLogged <- hasLoggedUser
         return $ if userLogged then LoggedScreen else StartScreen
 
@@ -188,9 +188,8 @@ instance Action Screen where
         user <- getLoggedUser
         created <- makeReservation roomCode (nameUser user) description (toInteger y,m,d,hStart,mStart) (toInteger y,m,d,hEnd,mEnd)
         if created
-            then putStr "Reserva criada! "
-            else putStr "Sala já ocupada neste horário. "
-        waitInput
+            then waitInput "Reserva criada! "
+            else waitInput "Sala já ocupada neste horário. "
         return LoggedScreen
 
     useContent EditReservationScreen = do
@@ -211,9 +210,8 @@ instance Action Screen where
         user <- getLoggedUser
         edited <- editReservation roomCode (nameUser user) (toInteger yOld,mOld,dOld,hOldStart,minOldStart) (toInteger yNew,mNew,dNew,hNewStart,minNewStart) (toInteger yNew,mNew,dNew,hNewEnd,minNewEnd)
         if edited
-            then putStrLn "Reserva editada! "
-            else putStrLn "A reserva não existe ou já está ocupada no novo horário. "
-        waitInput
+            then waitInput "Reserva editada! "
+            else waitInput "A reserva não existe ou já está ocupada no novo horário. "
         return LoggedScreen
 
     useContent RemoveReservationScreen = do
@@ -232,8 +230,7 @@ instance Action Screen where
         toDelete <- getInputData getAnswer yesOrNo
         when toDelete (do
                 deleteReservation roomCode (nameUser user) (toInteger y,m,d,hStart,minStart)
-                putStrLn "Reserva deletada. "
-                waitInput
+                waitInput "Reserva deletada. "
                 return())
         return LoggedScreen
 
@@ -245,10 +242,9 @@ userInteraction screen = do
 
     useContent currentScreen
 
-waitInput :: IO String
-waitInput = do
-    putStrLn "Aperte qualquer tecla para continuar"
-    getLine
+-- | Esta função exibirá a mensagem informada e aguardará qualquer tecla pressionada
+waitInput :: String -> IO ()
+waitInput msg = Hkl.runInputT Hkl.defaultSettings (do b <-Hkl.waitForAnyKey $ msg ++ "Aperte qualquer tecla para continuar";return())
 
 -- | Esta função exibirá um prompt e captará a resposta digitada pelo usuário.
 getAnswer :: IO String

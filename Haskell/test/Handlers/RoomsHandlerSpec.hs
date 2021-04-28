@@ -75,5 +75,9 @@ spec = do
     describe "cleanAllReservations" $ do
         it "Ao limpar as reservas" $
             cleanAllReservations `shouldReturn` True
+        it "Remaining" $ do
+            deleteReservation "SALAZERO" "Patati" (2015, 12, 17, 8, 0) `shouldReturn` True
+        it "Remaining2" $ do
+            deleteReservation "SALAZERO" "Patati" (2015, 12, 17, 12, 0) `shouldReturn` True
 
 main = hspec spec
