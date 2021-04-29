@@ -20,3 +20,6 @@ Por fim, só resta rodar o programa ou testá-lo:
 > `stack run`
 > 
 > `stack test`
+
+## Demonstração
+A [demonstração em vídeo](https://www.youtube.com/watch?v=SQXOwC9G9Ho) do sistema, provê detalhamento da explicação de cada função do SIGES.
