@@ -53,7 +53,8 @@
 
 <div id="UMLs">
   <h2>Use cases</h2>
-  <img src="https://user-images.githubusercontent.com/62446763/110842773-4d5b7500-8286-11eb-97cc-d0ee61a273b5.png">
+  <img src="https://user-images.githubusercontent.com/62446763/116602824-9a60dc80-a902-11eb-9c28-b4e8219443c2.jpg">
   <h2>Diagrama de fluxo do sistema</h2>
-  <img src="https://user-images.githubusercontent.com/61962950/111155223-f221cf00-8572-11eb-91af-1dda3922a428.png">
+  <img src="https://user-images.githubusercontent.com/62446763/116602902-ae0c4300-a902-11eb-8a8d-21399dde5b32.jpg">
 </div>
+
