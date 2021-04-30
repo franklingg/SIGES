@@ -1,0 +1,8 @@
+// RODAR NO PROMPT
+swipl -s main.pl -t start
+
+// RODAR TESTES
+swipl -s main.pl -t test
+
+// CRIAR EXECUTAVEL
+swipl -o my_executable --stand_alone=true -g start -O -q -c main.pl
