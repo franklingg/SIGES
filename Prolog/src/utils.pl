@@ -1,5 +1,5 @@
 :- module(utils, [emptyDict/1, promptNumber/2, promptString/2, promptChoice/2, cls/0,
-                  searchDict/3, getInputData/4, yesOrNo/1, timeNow/1, promptTest/1]).
+                  searchDict/3, getInputData/4, yesOrNo/1, timeNow/1, promptTest/1, stringBuilder/3]).
 :- encoding(utf8).
 
 :- use_module('./Handlers/errorHandler.pl').
@@ -48,7 +48,7 @@ timeNow(D):- get_time(X), stamp_date_time(X, D, 10800).
 stringBuilder([], Aux, Text) :-
     Text = Aux.
 
-stringBuilder([H|T], Aux, Text) :-
+stringBuilder([H|T], Aux, Text) :- %Uma lista de strings, Um auxiliar (iniciar com uma string vazia) e uma variável Text para a resposta.
     string_concat(Aux, H, Intermediate),
     stringBuilder(T, Intermediate, Text).
     
