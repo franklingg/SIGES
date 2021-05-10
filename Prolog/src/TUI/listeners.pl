@@ -63,6 +63,24 @@ screenListener('delete_user', NextScreen):-
 
 screenListener('view', _).
 
+screenListener('view_user_screen', _).
+
+screenListener('view_room_screen', _).
+
+screenListener('view_filter_screen', _).
+
+screenListener('report_room_screen', _).
+
+screenListener('report_day_screen', _).
+
+screenListener('add_new_room', _).
+
+screenListener('make_reservation', _).
+
+screenListener('edit_reservation', _).
+
+screenListener('remove_reservation', _).
+
 
 loggedUserScreen(Next):-
     dataHandler:user(_,_,IsAdm), 
