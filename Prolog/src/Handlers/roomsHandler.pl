@@ -4,7 +4,7 @@
                          searchRoomsResources/2, searchRoomsTime/3, cleanAllReservations/0,
                          printCategories/0, printResources/0, showRoom/2, createReportForTheRoom/3,
                          createReportForTheDay/2]).
-
+:- encoding(utf8).
 :- use_module('./../utils.pl').
 :- use_module('./dataHandler.pl').
 
@@ -30,7 +30,7 @@ deleteRoom(CodeStr):-
 
 isFree([], _, _).
 
-isFree([H|T], StartTime, FinishTime) :-
+isFree([H|T], StartTime, FinishTime):-
     H(_, _, StartRoom, FinishRoom),
     (StartTime @=< StartRoom, FinishTime @=< FinishRoom,
     !;
@@ -186,22 +186,22 @@ searchRoomsRequester(UserName, Rooms) :-
     List\=[],
     include(wasReservedBy(UsewrName), List, Rooms).
     
-printCategories :-
-    writeln('Qual categoria você deseja escolher?\n\
-            \[L]aboratório\n\
-            \[A]uditório\n\
-            \[S]ala de aula\n\
-            \[E]scritório\n\
-            \[D]epósito')
+printCategories:-
+    writeln('Qual categoria você deseja escolher?\n\c
+            [L]aboratório\n\c
+            [A]uditório\n\c
+            [S]ala de aula\n\c
+            [E]scritório\n\c
+            [D]epósito').
 
-printResources :-
-    writeln('Qual recurso você deseja escolher?\n\
-            \[P]rojetor\n\
-            \[M]icroscópio\n\
-            \[B]irô\n\
-            \[C]omputador\n\
-            \[Q]uadro\n\
-            \[A]r condicionado')
+printResources:-
+    writeln('Qual recurso você deseja escolher?\n\c
+            [P]rojetor\n\c
+            [M]icroscópio\n\c
+            [B]irô\n\c
+            [C]omputador\n\c
+            [Q]uadro\n\c
+            [A]r condicionado').
 
 showResourcesList([], Aux, Text) :-
     Text = Aux.
@@ -261,7 +261,7 @@ showReservationList([], Aux, Text) :-
 
 showReservationList([H|T], Aux, Text) :-
     showReservation(H, Str),
-    string_concat(Str, '\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\n', Intermediate),
+    string_concat(Str, '\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\cn', Intermediate),
 
     showReservationList(T, Intermediate, Text).
 
@@ -276,7 +276,7 @@ filterReservations([H|T], Day, Aux, List) :- %Day é um date/3, diferente do Sta
     (ResDay = Day,
     append([Aux], [H], Intermediate),
     !;
-    Intermediate = Aux,),
+    Intermediate = Aux),
 
     filterReservations(T, Day, Intermediate, List).
 
@@ -286,9 +286,9 @@ showDay(Day, Text) :-
     number_string(M, Month),
     number_string(D, Day),
 
-    stringBuilder([Day, '/', Month, '/', Year], '', Text)
+    stringBuilder([Day, '/', Month, '/', Year], '', Text).
 
-createReportForTheRoom(Day, Room, Text) :-
+createReportForTheRoom(Day, Room, Text):-
     R = dataHandler:room(Code, Schedule, _, _, _, _),
     Day = date(Y, M, D),
     showDay(Day, D),
@@ -297,7 +297,7 @@ createReportForTheRoom(Day, Room, Text) :-
     string_concat('Relatório de ocupação para a sala ', Code, Str1),
     string_concat(Str1, ' no dia: ', Str2),
     string_concat(Str2, D, Str3),
-    string_concat(Str3, ':\n\n', L1),
+    string_concat(Str3, ':\n\cn', L1),
 
     showReservationList(Reservations, '', L2),
 

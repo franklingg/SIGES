@@ -11,7 +11,7 @@
 :- dynamic reservation/4. % (requester, description, start_time, finish_time)
 
 % HANDLER
-cleanUsers :- retractall(userFull).
+cleanUsers:- retractall(userFull).
 
 existsUserFile :- exists_file('data/users.bd').
 
@@ -20,7 +20,7 @@ writeUsers:- tell('data/users.bd'),
              told,
              cleanUsers.
 
-readUsers :- consult('data/users.bd').
+readUsers:- consult('data/users.bd').
 
 notExistingUser(Email):-
     readUsers,
@@ -33,22 +33,22 @@ saveUser(U):- assertz(U), writeUsers.
 
 %ROOMS
 
-cleanRooms :- retractall(room).
+cleanRooms:- retractall(room).
 
-existsRoomsFile :- exists_file('data/rooms.bd').
+existsRoomFile:- exists_file('data/rooms.bd').
 
-writeRooms :- tell('data/rooms.bd'),
+writeRooms:- tell('data/rooms.bd'),
              listing(room),
              told,
              cleanRooms.
 
-readRooms :- consult('data/rooms.bd').
+readRooms:- consult('data/rooms.bd').
 
-notExistingRoom(code) :-
+notExistingRoom(code):-
     readRooms,
     findall(_, room(Code, _, _, _, _, _), List),
     cleanRooms,
     List = [], !;
     fail.
 
-saveRoom(R) :- assertz(R), writeRooms.
+saveRoom(R):- assertz(R), writeRooms.
