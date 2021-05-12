@@ -5,6 +5,7 @@
 :- use_module('./../utils.pl').
 :- use_module('./../Handlers/dataHandler.pl').
 :- use_module('./../Handlers/userHandler.pl').
+:- use_module('./../Handlers/roomsHandler.pl').
 
 screenListener('first', NextScreen):-
     writeln("Bem-vindo(a) ao SIGES! \n\c
@@ -73,7 +74,22 @@ screenListener('report_room_screen', _).
 
 screenListener('report_day_screen', _).
 
-screenListener('add_new_room', _).
+screenListener('add_new_room', NextScreen):-
+    writeln('Qual o nome/código da sala a ser criada?'),
+    promptString('>> ', Name),
+    roomsHandler:printCategories,
+    promptString('>>', Category),
+    roomsHandler:printResources,
+    promptString('>>', Resource),
+    writeln('Qual a capacidade da sala a ser criada?'),
+    promptNumber('>>', Qnt),
+    writeln('Qual a localização da sala a ser criada?'),
+    promptString('>>', Loc),
+    roomsHandler:createRoom(Name, Resource, Category, Qnt, Loc),
+    writeln('Sala criada com sucesso.'),
+    writeln(''),
+    loggedUserScreen(NextScreen);
+    NextScreen = 'add_new_room'.
 
 screenListener('make_reservation', _).
 

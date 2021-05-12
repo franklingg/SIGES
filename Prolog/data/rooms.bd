@@ -1,0 +1,4 @@
+:- dynamic room/6.
+
+room("SALAUM", [], "P", "L", 10, "BlocoBG").
+
