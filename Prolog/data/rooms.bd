@@ -1,0 +1,6 @@
+:- dynamic room/0.
+
+
+:- dynamic room/6.
+
+

@@ -1,5 +1,5 @@
 :- module(roomsHandler, [createRoom/5, getRoom/2, deleteRoom/1, makeReservation/5,
-                         deleteReservation/3, findReservation/4, editReservation/5,
+                         deleteReservation/3, findReservation/3, editReservation/5,
                          searchRoomsCapacity/2, searchRoomsCategory/2, searchRoomsRequester/2,
                          searchRoomsResources/2, searchRoomsTime/3, cleanAllReservations/0,
                          printCategories/0, printResources/0, showRoom/2, createReportForTheRoom/3,
@@ -10,6 +10,7 @@
 
 createRoom(CodeStr, Resources, Category, Capacity, Localization) :-
     string_upper(CodeStr, Code),
+    dataHandler:notExistingRoom(Code),
     R = dataHandler:room(Code, [], Resources, Category, Capacity, Localization),
     dataHandler:saveRoom(R).
 
@@ -31,7 +32,7 @@ deleteRoom(CodeStr):-
 isFree([], _, _).
 
 isFree([H|T], StartTime, FinishTime):-
-    H(_, _, StartRoom, FinishRoom),
+    H = reservation(_, _, StartRoom, FinishRoom),
     (StartTime @=< StartRoom, FinishTime @=< FinishRoom,
     !;
     StartTime @>= StartRoom, FinishTime @>= FinishRoom),
@@ -61,14 +62,14 @@ matchTime(StartTime, Res) :-
 deleteReservation(CodeStr, UserName, StartTime) :-
     getRoom(CodeStr, R),
     R = dataHandler:room(Code, Schedule, Resources, Category, Capacity, Localization),
-    existsReservation(Schedule, UserName, StartTime, Res),
+    existsReservation(Schedule, UserName, StartTime),
     
     exclude(matchTime(StartTime), Schedule, NewSchedule),
     NewRoom = dataHandler:room(Code, NewSchedule, Resources, Category, Capacity, Localization),
     deleteRoom(CodeStr),
     dataHandler:saveRoom(NewRoom).
     
-findReservation(CodeStr, StartTime, UserName, Res) :-
+findReservation(CodeStr, StartTime, Res) :-
     getRoom(CodeStr, R),
     R = dataHandler:room(_, Schedule, _, _, _, _),
     include(matchTime(StartTime), Schedule, Matching), Matching\=[],
@@ -80,10 +81,10 @@ editReservation(CodeStr, UserName, CurrentStartTime, NewStartTime, NewFinishTime
     existsReservation(Schedule, UserName, CurrentStartTime),
     isFree(Schedule, NewStartTime, NewFinishTime),
 
-    findReservation(CodeStr, CurrentStartTime, UserName, Res),
+    findReservation(CodeStr, CurrentStartTime, Res),
     Res = dataHandler:reservation(Requester, Description, _, _),
     NewReservation = dataHandler:reservation(Requester, Description, NewStartTime, NewFinishTime),
-    exclude(matchTime(StartTime), Schedule, DeletedSchedule),
+    exclude(matchTime(CurrentStartTime), Schedule, DeletedSchedule),
     append([DeletedSchedule, [NewReservation]], NewSchedule),
     NewRoom = dataHandler:room(Code, NewSchedule, Resources, Category, Capacity, Localization),
     deleteRoom(CodeStr),
@@ -97,7 +98,7 @@ cleanReservations(TimeNow, R) :-
     R = dataHandler:room(Code, Schedule, Resources, Category, Capacity, Localization),
     exclude(hasPassed(TimeNow), Schedule, NewSchedule),
     NewRoom = dataHandler:room(Code, NewSchedule, Resources, Category, Capacity, Localization),
-    deleteRoom(CodeStr),
+    deleteRoom(Code),
     dataHandler:saveRoom(NewRoom).
 
 cleanAllReservationsAux([], _).
@@ -146,7 +147,7 @@ searchRoomsTime(StartTime, FinishTime, Rooms) :-
     findall(_, dataHandler:room(_, _, _, _, _, _), List),
     dataHandler:cleanRooms,
     List\=[],
-    include(hasCapacity(Capacity), List, Rooms).
+    include(hasTime(StartTime, FinishTime), List, Rooms).
 
 resourceIsEnough([], _) :-
     false.
@@ -184,7 +185,7 @@ searchRoomsRequester(UserName, Rooms) :-
     findall(_, dataHandler:room(_, _, _, _, _, _), List),
     dataHandler:cleanRooms,
     List\=[],
-    include(wasReservedBy(UsewrName), List, Rooms).
+    include(wasReservedBy(UserName), List, Rooms).
     
 printCategories:-
     writeln('Qual categoria você deseja escolher?\n\c
@@ -224,7 +225,7 @@ showRoom(Room, Text) :-
     number_string(Capacity, Cap),
     showResourcesList(Resources, '', ResList),
     
-    L1 = 'Dados da sala: ',
+    string_concat('Dados da sala ', Code, L1),
     string_concat('Categoria: ', RoomCat, L2),
     string_concat('Capacidade: ', Cap, L3),
     string_concat('Localização: ', Localization, L4),
@@ -261,15 +262,15 @@ showReservationList([], Aux, Text) :-
 
 showReservationList([H|T], Aux, Text) :-
     showReservation(H, Str),
-    string_concat(Str, '\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\cn', Intermediate),
+    string_concat(Str, '\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\n', Aux),
 
-    showReservationList(T, Intermediate, Text).
+    showReservationList(T, Aux, Text).
 
 filterReservations([], _, Aux, List) :-
     List = Aux.
 
 filterReservations([H|T], Day, Aux, List) :- %Day é um date/3, diferente do Start e FinishTime, que são date/9
-    H = dataHandler:reservation(Requester, Description, StartTime, FinishTime),
+    H = dataHandler:reservation(_, _, StartTime, _),
     StartTime = date(Y,M,D,_,_,_,_,_,_),
     ResDay = date(Y, M, D),
 
@@ -289,8 +290,7 @@ showDay(Day, Text) :-
     stringBuilder([Day, '/', Month, '/', Year], '', Text).
 
 createReportForTheRoom(Day, Room, Text):-
-    R = dataHandler:room(Code, Schedule, _, _, _, _),
-    Day = date(Y, M, D),
+    Room = dataHandler:room(Code, Schedule, _, _, _, _),
     showDay(Day, D),
 
     filterReservations(Schedule, Day, [], Reservations),
@@ -303,11 +303,11 @@ createReportForTheRoom(Day, Room, Text):-
 
     string_concat(L1, L2, Text).
 
-createReports([], Aux, Text) :-
+createReports(_, [], Aux, Text) :-
     Text = Aux.
 
-createReports([H|T], Aux, Text):-
-    createReportForTheRoom(H, '', Line),
+createReports(Day, [H|T], Aux, Text):-
+    createReportForTheRoom(Day, H, Line),
     string_concat(Aux, Line, Intermediate),
 
     createReports(T, Intermediate, Text).
@@ -318,4 +318,4 @@ createReportForTheDay(Day, Text) :-
     dataHandler:cleanRooms,
     List\=[],
 
-    createReports(List, '', Text).
+    createReports(Day, List, '', Text).

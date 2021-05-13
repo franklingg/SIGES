@@ -5,6 +5,7 @@
 % DATATYPES
 :- dynamic userFull/5.
 :- dynamic user/3.
+
 :- dynamic room/6. % (code, schedule, resources, category, capacity, localization)
 :- dynamic resource/2. % (name_of_resource, quantity)
 :- dynamic category/1. % (name_of_category)
@@ -44,9 +45,9 @@ writeRooms:- tell('data/rooms.bd'),
 
 readRooms:- consult('data/rooms.bd').
 
-notExistingRoom(code):-
+notExistingRoom(Code):-
     readRooms,
-    findall(_, room(Code, _, _, _, _, _), List),
+    findall(_, dataHandler:room(Code, _, _, _, _, _), List),
     cleanRooms,
     List = [], !;
     fail.
