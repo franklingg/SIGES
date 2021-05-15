@@ -19,3 +19,17 @@ promptError(6):- writeln("Nome inválido. Tente novamente.").
 promptError(7):- writeln("Email já cadastrado. Tente novamente.").
 
 promptError(8):- writeln("Usuário não cadastrado. Tente novamente.").
+
+promptError(9):- writeln("Sala já cadastrada. Tente novamente.").
+
+promptError(10):- writeln("Sala não encontrada. Tente novamente.").
+
+promptError(11):- writeln("Sala já ocupada neste horário. Tente novamente.").
+
+promptError(12):- writeln("Não foi possível deletar, informações incorretas. Tente novamente.").
+
+promptError(13):- writeln("Não foi possível editar, informações incorretas. Tente novamente.").
+
+promptError(14):- writeln("O sistema não possui nenhuma sala que atenda a esta capacidade.").
+
+promptError(15):- writeln("O sistema mão possui nenhuma sala livre no horário especificado.").

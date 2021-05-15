@@ -1,6 +1,8 @@
 :- module(userHandler, [createUser/4, checkValidEmail/1, checkValidPassword/1, 
                         checkValidName/1, login/2]).
 
+:- encoding(utf8).
+
 :- use_module(library(crypto)).
 
 :- use_module('./../utils.pl').
@@ -8,16 +10,16 @@
 
 createUser(Name, Email, Password, AdmChar):-
     utils:timeNow(D),string_lower(AdmChar, L),atom_string(R,L),
-    (R='s'->IsAdm=true;R='n'->IsAdm=false),
+    (R='s'->IsAdm=true,!;R='n'->IsAdm=false),
     (\+ dataHandler:existsUserFile,!;dataHandler:notExistingUser(Email)),
     crypto_password_hash(Password, PasswordHash),
-    U=dataHandler:userFull(Name, Email, PasswordHash, IsAdm, D),
+    U= userFull(Name, Email, PasswordHash, IsAdm, D),
     dataHandler:saveUser(U),
-    login(Email, Password);
+    login(Email, Password),!;
     errorHandler:promptError(7),fail.
 
 checkValidEmail(Email):-
-    wildcard_match('[a-z]*@[a-z]*.[a-z]*', Email, [case_sensitive(false)]),!;
+    wildcard_match("[a-z]*@[a-z]*.[a-z]*", Email, [case_sensitive(false)]),!;
     errorHandler:promptError(2),fail.
 
 checkValidPassword(Password):-

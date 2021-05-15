@@ -1,7 +1,13 @@
-:- encoding('utf8').
+:- encoding(utf8).
 
-:- use_module('./../../src/Handlers/userHandler.pl').
-:- use_module('./../../src/utils.pl', [promptTest/1]).
+:- use_module("./../../src/Handlers/userHandler.pl").
+:- use_module("./../../src/utils.pl", [promptTest/1]).
+
+userTest(N, E, P, A):-
+    N="userTest",
+    E="email@test.com",
+    P="passwordTest",
+    A="n".
 
 :- begin_tests(userHandler).
 
@@ -41,17 +47,12 @@ test(t2, [setup(promptTest("Nome OK - "))]) :-
 
 :- end_tests(checkValidName).
 
-userTest(N, E, P, A):-
-    N="userTest",
-    E="email@test.com",
-    P="passwordTest",
-    A="n".
 
 :- begin_tests(createUser).
 
 test(t1, [setup(promptTest("\n.Cria usuário corretamente - "))]) :-
     userTest(Name, Email, Password, AdmChar),
-    userHandler:createUser(Name, Email, Password, AdmChar),!.
+    userHandler:createUser(Name, Email, Password, AdmChar).
 
 test(t2, [setup(promptTest("\n.Usuário já existe - ")), fail]) :-
     userTest(Name, Email, Password, AdmChar),

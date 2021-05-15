@@ -1,7 +1,4 @@
-:- dynamic userFull/0.
-
-
 :- dynamic userFull/5.
 
-userFull("admin", "admin@admin.com", '$pbkdf2-sha512$t=131072$pL8s47F7UujlqU6D+N3PNw$oV6EI5VXYkjQvuKFNWn2Jxr8TbSYFTP4sHkcq9rUzSwTJ4b2TRGRQpSspQ27o6bD8103HfXpwY4AANhzTlWbIw', true, date(2021, 4, 17, 13, 26, 31.032661914, 10800, -, -)).
+userFull("admin", "admin@admin.com", "$pbkdf2-sha512$t=131072$pL8s47F7UujlqU6D+N3PNw$oV6EI5VXYkjQvuKFNWn2Jxr8TbSYFTP4sHkcq9rUzSwTJ4b2TRGRQpSspQ27o6bD8103HfXpwY4AANhzTlWbIw", true, date(2021, 4, 17, 13, 26, 31.032661914, 10800, -, -)).
 

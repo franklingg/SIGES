@@ -1,22 +1,22 @@
-:- encoding('utf8').
+:- encoding(utf8).
 
-:- use_module('./../../src/utils.pl').
+:- use_module("./../../src/utils.pl").
 
 :- begin_tests(utils).
 
 :- begin_tests(searchDict).
 
 test(t1, [setup(promptTest("\n.Chave incorreta em dicionário - ")), fail]) :-
-    D=_{'a':'sala a', 'b': 'sala b', 'c': 'sala c'},
-    utils:searchDict(D, 'bbb', _).
+    D=_{"a":"sala a", "b": "sala b", "c": "sala c"},
+    utils:searchDict(D, "bbb", _).
 
 test(t2, [setup(promptTest("\n.Chave incorreta em dicionário - ")), fail]) :-
-    D=_{'a':'sala a', 'b': 'sala b', 'c': 'sala c'},
-    utils:searchDict(D, 'd', _).
+    D=_{"a":"sala a", "b": "sala b", "c": "sala c"},
+    utils:searchDict(D, "d", _).
 
 test(t3, [setup(promptTest("\n.Chave correta em dicionário - "))]) :-
-    D=_{'a':'sala a', 'b': 'sala b', 'c': 'sala c'},
-    utils:searchDict(D, 'b', 'sala b').
+    D=_{"a":"sala a", "b": "sala b", "c": "sala c"},
+    utils:searchDict(D, "b", "sala b").
 
 :- end_tests(searchDict).
 
