@@ -218,11 +218,9 @@ printResources:-
             [Q]uadro\n\c
             [A]r condicionado").
 
-showResList([], Aux, Text) :-
-    Text = Aux.
-
+showResList([], Aux, Aux).
 showResList([H|T], Aux, Text) :-
-    H = reservation(Name, Amount),
+    H = res(dataHandler:resourceKind(Name), Amount),
     number_string(Amount, StrAmount),
 
     string_concat(Name, ": ", Begin),
@@ -231,11 +229,11 @@ showResList([H|T], Aux, Text) :-
 
     string_concat(Aux, Line, Intermediate),
     showResList(T, Intermediate, Text).
-    
 
-showRoom(Room, Text) :-
+showRoom(CodeStr, Text) :-
+    getRoom(CodeStr, Room),
     Room = room(Code, _, Resources, Category, Capacity, Localization),
-    Category = category(RoomCat),
+    Category = dataHandler:category(RoomCat),
     number_string(Capacity, Cap),
     showResList(Resources, "", ResList),
     
@@ -271,25 +269,21 @@ showReservation(Reservation, Text) :-
 
     utils:stringBuilder([L1, "\n", L2, "\n", L3, "\n", L4, "\n", L5], "", Text).
 
-showReservationList([], Aux, Text) :-
-    Text = Aux.
-
+showReservationList([], Aux, Aux).
 showReservationList([H|T], Aux, Text) :-
     showReservation(H, Str),
-    string_concat(Str, "\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\n", Aux),
+    string_concat(Str, "\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\n", Part),
+    string_concat(Aux, Part, Intermediate),
+    showReservationList(T, Intermediate, Text).
 
-    showReservationList(T, Aux, Text).
-
-filterReservations([], _, Aux, List) :-
-    List = Aux.
-
+filterReservations([], _, Aux, Aux).
 filterReservations([H|T], Day, Aux, List) :- %Day é um date/3, diferente do Start e FinishTime, que são date/9
     H = reservation(_, _, StartTime, _),
     StartTime = date(Y,M,D,_,_,_,_,_,_),
     ResDay = date(Y, M, D),
 
     (ResDay = Day,
-    append([Aux], [H], Intermediate),
+    append(Aux, [H], Intermediate),
     !;
     Intermediate = Aux),
 
@@ -301,7 +295,7 @@ showDay(Day, Text) :-
     number_string(M, Month),
     number_string(D, Day),
 
-    stringBuilder([Day, "/", Month, "/", Year], "", Text).
+    utils:stringBuilder([Day, "/", Month, "/", Year], "", Text).
 
 createReportForTheRoom(Day, Room, Text):-
     Room = room(Code, Schedule, _, _, _, _),
@@ -317,19 +311,13 @@ createReportForTheRoom(Day, Room, Text):-
 
     string_concat(L1, L2, Text).
 
-createReports(_, [], Aux, Text) :-
-    Text = Aux.
-
+createReports(_, [], Aux, Aux).
 createReports(Day, [H|T], Aux, Text):-
     createReportForTheRoom(Day, H, Line),
     string_concat(Aux, Line, Intermediate),
 
-    createReports(T, Intermediate, Text).
+    createReports(Day, T, Intermediate, Text).
 
 createReportForTheDay(Day, Text) :-
-    dataHandler:readRooms,
-    findall(_, dataHandler:room(_, _, _, _, _, _), List),
-    dataHandler:cleanRooms,
-    List\=[],
-
-    createReports(Day, List, "", Text).
+    fetchRooms(Rooms),
+    createReports(Day, Rooms, "", Text).

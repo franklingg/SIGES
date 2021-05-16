@@ -29,7 +29,3 @@ promptError(11):- writeln("Sala já ocupada neste horário. Tente novamente.").
 promptError(12):- writeln("Não foi possível deletar, informações incorretas. Tente novamente.").
 
 promptError(13):- writeln("Não foi possível editar, informações incorretas. Tente novamente.").
-
-promptError(14):- writeln("O sistema não possui nenhuma sala que atenda a esta capacidade.").
-
-promptError(15):- writeln("O sistema mão possui nenhuma sala livre no horário especificado.").

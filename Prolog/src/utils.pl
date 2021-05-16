@@ -46,9 +46,7 @@ yesOrNo(String):-
 
 timeNow(D):- get_time(X), stamp_date_time(X, D, 10800).
 
-stringBuilder([], Aux, Text) :-
-    Text = Aux.
-
+stringBuilder([], Aux, Aux).
 stringBuilder([H|T], Aux, Text) :- %Uma lista de strings, Um auxiliar (iniciar com uma string vazia) e uma variável Text para a resposta.
     string_concat(Aux, H, Intermediate),
     stringBuilder(T, Intermediate, Text).
