@@ -224,7 +224,8 @@ showResList([H|T], Aux, Text) :-
     dataHandler:resourceKind(R, Name),
     number_string(Amount, StrAmount),
 
-    string_concat(Name, ": ", Begin),
+    string_concat("\t", Name, Tabbed),
+    string_concat(Tabbed, ": ", Begin),
     string_concat(Begin, StrAmount, Full),
     string_concat(Full, "\n", Line),
 
@@ -238,7 +239,7 @@ showRoom(Room, Text) :-
     number_string(Capacity, Cap),
     showResList(Resources, "", ResList),
     
-    string_concat("Dados da sala ", Code, L1),
+    string_concat("\nDados da sala ", Code, L1),
     string_concat("Categoria: ", RoomCat, L2),
     string_concat("Capacidade: ", Cap, L3),
     string_concat("Localização: ", Localization, L4),

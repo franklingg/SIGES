@@ -1,6 +1,6 @@
 :- module(utils, [emptyDict/1, promptNumber/2, promptString/2, promptChoice/2, cls/0,
                   waitInput/0, waitInput/1, searchDict/3, getInputData/4, getInputData/2,
-                  yesOrNo/1, getYesOrNo/1, checkNumber/1, getNumber/1, trivial/1, timeNow/1,
+                  getYesOrNo/1, getNumber/1, getDate/3, getTime/2, trivial/1, timeNow/1, 
                   promptTest/1, stringBuilder/3, xor/2]).
 :- encoding(utf8).
 
@@ -53,8 +53,7 @@ yesOrNo(String):-
     errorHandler:promptError(5), fail.
 
 getYesOrNo(Answer):-
-    emptyDict(N),
-    getInputData(yesOrNo, A, N, _),
+    getInputData(yesOrNo, A),
     string_lower(A, Ans),
     (Ans="s"->Answer=true,!;Answer=false).
 
@@ -64,8 +63,7 @@ checkNumber(NumberStr):-
     errorHandler:promptError(15),fail.
 
 getNumber(Number):-
-    emptyDict(N),
-    getInputData(checkNumber, NumberStr, N, _),
+    getInputData(checkNumber, NumberStr),
     number_string(Number, NumberStr).
 
 checkDate(DateStr):-
@@ -73,13 +71,24 @@ checkDate(DateStr):-
     split_string(DateStr, "-", "", [D, M, _]),
     number_string(Day, D), Day >= 1, Day =< 31,
     number_string(Month, M), Month >= 1, Month =< 12,!;
-    promptError(16),fail.
+    errorHandler:promptError(16),fail.
 
 getDate(Day,Month,Year):-
-    emptyDict(N),
-    getInputData(checkDate, DateStr, N, _),
+    getInputData(checkDate, DateStr),
     split_string(DateStr, "-", "", [D, M, Y]),
     number_string(Day, D), number_string(Month, M),number_string(Year, Y).
+
+checkTime(TimeStr):-
+    string_length(TimeStr, L), L = 5,
+    split_string(TimeStr, ":", "", [H, M]),
+    number_string(Hour, H), Hour >= 0, Hour < 24,
+    number_string(Minutes, M), Minutes >= 0, Minutes < 60,!;
+    errorHandler:promptError(17),fail.
+
+getTime(Hours, Minutes):-
+    getInputData(checkTime, TimeStr),
+    split_string(TimeStr, ":", "", [H, M]),
+    number_string(Hours, H),number_string(Minutes, M).
 
 trivial(_).
 

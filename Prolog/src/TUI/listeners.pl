@@ -4,6 +4,7 @@
 :- use_module("./screens.pl").
 :- use_module("./../utils.pl").
 :- use_module("./../Handlers/dataHandler.pl").
+:- use_module("./../Handlers/errorHandler.pl").
 :- use_module("./../Handlers/userHandler.pl").
 :- use_module("./../Handlers/roomsHandler.pl").
 
@@ -68,12 +69,12 @@ screenListener('add_new_room', NextScreen):-
     writeln("Qual a localização da sala a ser criada?"),
     utils:getInputData(utils:trivial, Localization),
     roomsHandler:createRoom(Code, Resources, Category, Capacity, Localization),
-    waitInput("Sala criada! "),
+    utils:waitInput("Sala criada! "),
     loggedUserScreen(NextScreen).
 
 screenListener('view', NextScreen):-
     screen('view',_,NextScreens),
-    promptChoice(NextScreens, Next),
+    utils:promptChoice(NextScreens, Next),
     (current_predicate(user/3),
     Next = 'start',
     loggedUserScreen(NextScreen),!;
@@ -94,10 +95,14 @@ screenListener('view_room', NextScreen):-
     utils:getInputData(roomsHandler:checkRoomCode, Code),
     roomsHandler:getRoom(Code, Room),
     printRooms([Room]),
-    waitInput,
+    utils:waitInput,
     NextScreen='view'.
 
-screenListener('view_filter', _).
+screenListener('view_filter', NextScreen):-
+    getRoomsFilter([], Rooms),
+    printRooms(Rooms),
+    utils:waitInput,
+    NextScreen='view'.
 
 screenListener('report_room', NextScreen):-
     writeln("Qual o código/nome da sala que você quer visualizar?"),
@@ -105,19 +110,17 @@ screenListener('report_room', NextScreen):-
     roomsHandler:getRoom(Code, Room),
     writeln("Qual o dia de ocupação você deseja ver [DD-MM-AAAA]?"),
     utils:getDate(D,M,Y),
-    Day = date(Y,M,D),
-    roomsHandler:createReportForTheRoom(Day, Room, Report),
+    roomsHandler:createReportForTheRoom(date(Y,M,D), Room, Report),
     writeln(Report),
-    waitInput,
+    utils:waitInput,
     NextScreen='view'.
 
 screenListener('report_day', NextScreen):-
     writeln("Qual o dia de ocupação você deseja ver [DD-MM-AAAA]?"),
     utils:getDate(D,M,Y),
-    Day = date(Y,M,D),
-    roomsHandler:createReportForTheDay(Day, Report),
+    roomsHandler:createReportForTheDay(date(Y,M,D), Report),
     writeln(Report),
-    waitInput,
+    utils:waitInput,
     NextScreen='view'.
 
 screenListener('make_reservation', _).
@@ -142,14 +145,60 @@ getResources(Aux, Resources):-
     writeln("Qual a quantidade desejada/existente do recurso?"),
     utils:getNumber(Amount),
     Resource = res(Kind, Amount),
-    append(Aux, [Resource], I),
-    writeln("Deseja buscar mais recursos [S/N]?"),
+    append(Aux, [Resource], NewAux),
+    (writeln("Deseja buscar mais recursos [S/N]?"),
     utils:getYesOrNo(More),
-    not(More), Resources=I,!;
-    getResources(I, Resources).
+    not(More), Resources=NewAux,!;
+    getResources(NewAux, Resources)).
+
+checkFilter(FilterStr):-
+    string_length(FilterStr, L), L = 1,
+    member(FilterStr, ["1", "2", "3", "4"]),!;
+    errorHandler:promptError(14), fail.
+
+getRoomsFilter(Aux, Result):-
+    writeln('Por qual critério você deseja filtrar?\n\c
+             1 - Categoria\n\c
+             2 - Capacidade\n\c
+             3 - Horário\n\c
+             4 - Recursos'),
+    utils:getInputData(listeners:checkFilter, Filter),
+    (Filter="1" -> (
+        roomsHandler:printCategories,
+        utils:getInputData(dataHandler:checkCategory, Cat),
+        dataHandler:getCategory(Cat, Category),
+        roomsHandler:searchRoomsCategory(Category, Searched)
+        ),!;
+     Filter="2" -> (
+        writeln("Qual a capacidade mínima desejada? "),
+        utils:getNumber(Capacity),
+        roomsHandler:searchRoomsCapacity(Capacity, Searched)
+        ),!;
+    Filter="3" -> (
+        writeln("Qual o dia a ser buscado [DD-MM-AAAA]?"),
+        utils:getDate(D,M,Y),
+        writeln("Qual o horário de início a ser buscado [HH:MM]?"),
+        utils:getTime(HourStart, MinStart),
+        writeln("Qual o horário de término a ser buscado [HH:MM]?"),
+        utils:getTime(HourEnd, MinEnd),
+        StartTime=date(Y,M,D,HourStart,MinStart, 0),
+        EndTime=date(Y,M,D,HourEnd,MinEnd, 0),
+        roomsHandler:searchRoomsTime(StartTime, EndTime, Searched)
+        ),!;
+    Filter="4" -> (
+        getResources(Resources),
+        roomsHandler:searchRoomsResources(Resources, Searched)
+        )
+    ),
+    (Aux=[], NewAux = Searched,!;
+     intersection(Aux, Searched, NewAux)),
+    writeln("Deseja combinar sua busca com outros filtros [S/N]?"),
+    utils:getYesOrNo(More),
+    (not(More), Result=NewAux,!;
+    getRoomsFilter(NewAux, Result)).
 
 printRooms([]).
 printRooms([Head|Tail]):-
     roomsHandler:showRoom(Head, Text),
-    writeln(Text),nl,
+    writeln(Text),
     printRooms(Tail).
