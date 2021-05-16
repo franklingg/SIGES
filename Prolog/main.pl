@@ -12,7 +12,7 @@ main(Type):-
     screen(Type,Content,NextScreens),
     writeln(Content),
     screenListener(Type,Next),
-    (nonvar(Next);
+    (nonvar(Next),!;
     promptChoice(NextScreens, Next)),
     main(Next).
 

@@ -32,10 +32,11 @@ checkValidName(Name):-
     
 login(Email,Password):-
     dataHandler:readUsers,
-    bagof(_,dataHandler:userFull(Name,Email,PasswordHash,IsAdm,_),List),
+    bagof(_,dataHandler:userFull(Name,Email,Hash,IsAdm,_),List),
     dataHandler:cleanUsers,
-    List\=[],crypto_password_hash(Password,PasswordHash),!, 
-    assertz(dataHandler:user(Name,Email,IsAdm));
+    atom_string(PasswordHash, Hash),
+    List\=[],crypto_password_hash(Password,PasswordHash), 
+    assertz(dataHandler:user(Name,Email,IsAdm)),!;
     errorHandler:promptError(4),fail.
 
 deleteUser(Email):-

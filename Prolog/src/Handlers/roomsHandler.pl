@@ -3,7 +3,7 @@
                          searchRoomsCapacity/2, searchRoomsCategory/2, searchRoomsRequester/2,
                          searchRoomsResources/2, searchRoomsTime/3, cleanAllReservations/0,
                          printCategories/0, printResources/0, showRoom/2, createReportForTheRoom/3,
-                         createReportForTheDay/2]).
+                         createReportForTheDay/2,checkNewRoomCode/1]).
 :- encoding(utf8).
 :- use_module("./../utils.pl").
 :- use_module("./dataHandler.pl").
@@ -321,3 +321,12 @@ createReports(Day, [H|T], Aux, Text):-
 createReportForTheDay(Day, Text) :-
     fetchRooms(Rooms),
     createReports(Day, Rooms, "", Text).
+
+
+checkNewRoomCode(CodeStr):-
+    string_upper(CodeStr, Code),
+    dataHandler:readRooms,
+    findall(_, dataHandler:room(Code, _, _, _, _, _), List),
+    dataHandler:cleanRooms,
+    List=[],!;
+    errorHandler:promptError(9),fail.

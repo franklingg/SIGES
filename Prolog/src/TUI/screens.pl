@@ -5,7 +5,7 @@
 
 systemStart(T):-
         dataHandler:existsUserFile,
-        T='start';
+        T='start',!;
         T='first'.
 
 screen('first',Content,_):-
@@ -46,7 +46,7 @@ screen('logged',Content,NextScreens):-
                   (D)eletar reservas      \n\c
                   (F)azer logout',
         NextScreens = _{'c':'make_reservation', 
-                        'v':'view_user_screen', 
+                        'v':'view_user', 
                         'e':'edit_reservation', 
                         'd':'remove_reservation',
                         'f':'start'}.
@@ -65,7 +65,7 @@ screen('admin',Content,NextScreens):-
                  (F)azer Logout',
         NextScreens = _{'i': 'add_new_room',
                         'c':'make_reservation', 
-                        'v':'view_user_screen', 
+                        'v':'view_user', 
                         'a':'edit_reservation',
                         'd':'remove_reservation',
                         'r':'register_user',
@@ -91,33 +91,33 @@ screen('view',Content,NextScreens):-
                   (O)cupação por sala            \n\c
                   (S)alas ocupadas em certo dia  \n\c 
                   (R)etornar (menu principal)',
-        NextScreens=_{'d':'view_room_screen',
-                      'f':'view_filter_screen',
-                      'o':'report_room_screen',
-                      's':'report_day_screen',
+        NextScreens=_{'d':'view_room',
+                      'f':'view_filter',
+                      'o':'report_room',
+                      's':'report_day',
                       'r':'start'}.
 
-screen('view_user_screen',Content,_):-
+screen('view_user',Content,_):-
         Content='=============================\n\c
                 \r VISUALIZAR SALAS DE USUÁRIO \n\c
                  ============================='.
 
-screen('view_room_screen',Content,_):-
+screen('view_room',Content,_):-
         Content='=============================\n\c
                 \r VISUALIZAR SALA ESPECÍFICA \n\c
                  ============================='.
 
-screen('view_filter_screen',Content,_):-
+screen('view_filter',Content,_):-
         Content='=========================\n\c
                 \r VISUALIZAR POR FILTROS \n\c
                  ========================='.
 
-screen('report_room_screen',Content,_):-
+screen('report_room',Content,_):-
         Content='===============================\n\c
                 \r RELATÓRIO DE SALA ESPECÍFICA \n\c
                  ==============================='.
 
-screen('report_day_screen',Content,_):-
+screen('report_day',Content,_):-
         Content='==============================\n\c
                 \r RELATÓRIO DE DIA ESPECÍFICO \n\c
                  =============================='.
