@@ -220,7 +220,8 @@ printResources:-
 
 showResList([], Aux, Aux).
 showResList([H|T], Aux, Text) :-
-    H = res(dataHandler:resourceKind(Name), Amount),
+    H = res(dataHandler:resourceKind(R), Amount),
+    dataHandler:resourceKind(R, Name),
     number_string(Amount, StrAmount),
 
     string_concat(Name, ": ", Begin),
@@ -230,10 +231,10 @@ showResList([H|T], Aux, Text) :-
     string_concat(Aux, Line, Intermediate),
     showResList(T, Intermediate, Text).
 
-showRoom(CodeStr, Text) :-
-    getRoom(CodeStr, Room),
+showRoom(Room, Text) :-
     Room = room(Code, _, Resources, Category, Capacity, Localization),
-    Category = dataHandler:category(RoomCat),
+    Category = dataHandler:category(Cat),
+    dataHandler:category(Cat, RoomCat),
     number_string(Capacity, Cap),
     showResList(Resources, "", ResList),
     
@@ -289,27 +290,26 @@ filterReservations([H|T], Day, Aux, List) :- %Day é um date/3, diferente do Sta
 
     filterReservations(T, Day, Intermediate, List).
 
-showDay(Day, Text) :-
-    Day = date(Y,M,D),
+showDay(Date, Text) :-
+    Date = date(Y,M,D),
     number_string(Y, Year),
     number_string(M, Month),
     number_string(D, Day),
-
+    
     utils:stringBuilder([Day, "/", Month, "/", Year], "", Text).
 
 createReportForTheRoom(Day, Room, Text):-
     Room = room(Code, Schedule, _, _, _, _),
     showDay(Day, D),
-
     filterReservations(Schedule, Day, [], Reservations),
-    string_concat("Relatório de ocupação para a sala ", Code, Str1),
+    string_concat("\nRelatório de ocupação para a sala ", Code, Str1),
     string_concat(Str1, " no dia: ", Str2),
     string_concat(Str2, D, Str3),
-    string_concat(Str3, ":\n\cn", L1),
+    string_concat(Str3, ":\n\c", L1),
 
     showReservationList(Reservations, "", L2),
-
-    string_concat(L1, L2, Text).
+    (L2="", string_concat(L1, "Sem reservas para mostrar\n", Text),!;
+    string_concat(L1,L2,Text)).
 
 createReports(_, [], Aux, Aux).
 createReports(Day, [H|T], Aux, Text):-
@@ -330,3 +330,6 @@ checkNewRoomCode(CodeStr):-
     dataHandler:cleanRooms,
     List=[],!;
     errorHandler:promptError(9),fail.
+
+checkRoomCode(CodeStr):-
+    getRoom(CodeStr, _).

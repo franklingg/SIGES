@@ -1,6 +1,7 @@
 :- module(utils, [emptyDict/1, promptNumber/2, promptString/2, promptChoice/2, cls/0,
-                  waitInput/0, waitInput/1, searchDict/3, getInputData/4, yesOrNo/1,
-                  checkNumber/1, trivial/1, timeNow/1, promptTest/1, stringBuilder/3, xor/2]).
+                  waitInput/0, waitInput/1, searchDict/3, getInputData/4, getInputData/2,
+                  yesOrNo/1, getYesOrNo/1, checkNumber/1, getNumber/1, trivial/1, timeNow/1,
+                  promptTest/1, stringBuilder/3, xor/2]).
 :- encoding(utf8).
 
 :- use_module("./Handlers/errorHandler.pl").
@@ -32,7 +33,7 @@ promptTest(Message):- ansi_format([bold,fg(yellow)], "~w", [Message]).
 waitInput:-waitInput("").
 
 waitInput(S):-
-    write(S), write("Aperte qualquer tecla para continuar."),get_single_char(_).
+    write(S), write("Aperte qualquer tecla para continuar."),get_single_char(_),nl.
     
 getInputData(Checker, Value, NextScreens, Next):-
     promptString(">> ", V),
@@ -41,6 +42,9 @@ getInputData(Checker, Value, NextScreens, Next):-
     Value=V,!;
     getInputData(Checker, Value, NextScreens, Next)).
 
+getInputData(Checker, Value):-
+    emptyDict(N),
+    getInputData(Checker, Value, N, _).
 
 yesOrNo(String):-
     string_length(String, L),L =:= 1,
@@ -48,10 +52,34 @@ yesOrNo(String):-
     (R="s";R="n"),!;
     errorHandler:promptError(5), fail.
 
+getYesOrNo(Answer):-
+    emptyDict(N),
+    getInputData(yesOrNo, A, N, _),
+    string_lower(A, Ans),
+    (Ans="s"->Answer=true,!;Answer=false).
+
 checkNumber(NumberStr):-
     number_string(N, NumberStr),
     N > 0, N =< 300, !;
     errorHandler:promptError(15),fail.
+
+getNumber(Number):-
+    emptyDict(N),
+    getInputData(checkNumber, NumberStr, N, _),
+    number_string(Number, NumberStr).
+
+checkDate(DateStr):-
+    string_length(DateStr,L), L == 10,
+    split_string(DateStr, "-", "", [D, M, _]),
+    number_string(Day, D), Day >= 1, Day =< 31,
+    number_string(Month, M), Month >= 1, Month =< 12,!;
+    promptError(16),fail.
+
+getDate(Day,Month,Year):-
+    emptyDict(N),
+    getInputData(checkDate, DateStr, N, _),
+    split_string(DateStr, "-", "", [D, M, Y]),
+    number_string(Day, D), number_string(Month, M),number_string(Year, Y).
 
 trivial(_).
 

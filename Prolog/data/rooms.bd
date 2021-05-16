@@ -1,2 +1,4 @@
 :- dynamic room/6.
 
+room("CAA01", [], [res(dataHandler:resourceKind('AirConditioner'), 1)], dataHandler:category('Laboratory'), 100, "sjsdf").
+

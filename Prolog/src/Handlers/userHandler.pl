@@ -8,9 +8,8 @@
 :- use_module('./../utils.pl').
 :- use_module('./dataHandler.pl').
 
-createUser(Name, Email, Password, AdmChar):-
-    utils:timeNow(D),string_lower(AdmChar, L),atom_string(R,L),
-    (R='s'->IsAdm=true,!;R='n'->IsAdm=false),
+createUser(Name, Email, Password, IsAdm):-
+    utils:timeNow(D),
     (\+ dataHandler:existsUserFile,!;dataHandler:notExistingUser(Email)),
     crypto_password_hash(Password, PasswordHash),
     U= userFull(Name, Email, PasswordHash, IsAdm, D),

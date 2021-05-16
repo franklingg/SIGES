@@ -12,15 +12,14 @@ screenListener('first', NextScreen):-
              Vamos configurar o primeiro administrador do sistema."),
     writeln("Qual seu nome?"),
     promptString(">> ", Name),
-    utils:emptyDict(N),
     writeln("Qual seu e-mail?"),
-    utils:getInputData(userHandler:checkValidEmail, Email, N, _),
+    utils:getInputData(userHandler:checkValidEmail, Email),
     writeln("Qual sua senha?"),
-    utils:getInputData(userHandler:checkValidPassword, Password, N, _),
+    utils:getInputData(userHandler:checkValidPassword, Password),
     userHandler:createUser(Name, Email, Password, "s"),
     loggedUserScreen(NextScreen).
 
-screenListener('start', _).
+screenListener('start', _):- retractall(dataHandler:user).
 
 screenListener('exit', _):- halt.
 
@@ -41,52 +40,85 @@ screenListener('admin', _).
 
 screenListener('register_user', NextScreen):-
     writeln("Qual o nome do usuário a ser criado?"),
-    utils:emptyDict(N),
-    utils:getInputData(userHandler:checkValidName, Name, N, _),
+    utils:getInputData(userHandler:checkValidName, Name),
     writeln("Qual o e-mail do usuário a ser criado?"),
-    utils:getInputData(userHandler:checkValidEmail, Email, N, _),
+    utils:getInputData(userHandler:checkValidEmail, Email),
     writeln("Qual a senha do usuário a ser criado?"),
-    utils:getInputData(userHandler:checkValidPassword, Password, N, _),
+    utils:getInputData(userHandler:checkValidPassword, Password),
     writeln("O usuário é administrador [S/N]?"),
-    utils:getInputData(utils:yesOrNo, IsAdm, N, _),
+    utils:getYesOrNo(IsAdm),
     userHandler:createUser(Name, Email, Password, IsAdm),
     loggedUserScreen(NextScreen).
 
 screenListener('delete_user', NextScreen):-
-    utils:emptyDict(N),
     writeln("Qual o e-mail do usuário a ser deletado?"),
-    utils:getInputData(userHandler:checkValidEmail, Email, N, _),
+    utils:getInputData(userHandler:checkValidEmail, Email),
     userHandler:deleteUser(Email),
     loggedUserScreen(NextScreen).
 
 screenListener('add_new_room', NextScreen):-
-    utils:emptyDict(N),
     writeln("Qual o nome/código da sala a ser criada?"),
-    utils:getInputData(roomsHandler:checkNewRoomCode, Code, N, _),
+    utils:getInputData(roomsHandler:checkNewRoomCode, Code),
     roomsHandler:printCategories,
-    utils:getInputData(dataHandler:checkCategory, Cat, N, _),
+    utils:getInputData(dataHandler:checkCategory, Cat),
     dataHandler:getCategory(Cat, Category),
     getResources(Resources),
     writeln("Qual a capacidade da sala a ser criada?"),
-    utils:getInputData(utils:checkNumber, Cap, N, _),
-    number_string(Capacity, Cap),
+    utils:getNumber(Capacity),
     writeln("Qual a localização da sala a ser criada?"),
-    utils:getInputData(utils:trivial, Localization, N, _),
+    utils:getInputData(utils:trivial, Localization),
     roomsHandler:createRoom(Code, Resources, Category, Capacity, Localization),
     waitInput("Sala criada! "),
     loggedUserScreen(NextScreen).
 
-screenListener('view', _).
+screenListener('view', NextScreen):-
+    screen('view',_,NextScreens),
+    promptChoice(NextScreens, Next),
+    (current_predicate(user/3),
+    Next = 'start',
+    loggedUserScreen(NextScreen),!;
+    NextScreen = Next).
 
-screenListener('view_user_screen', _).
+screenListener('view_user', NextScreen):-
+    user(UserName, _, _),
+    roomsHandler:searchRoomsRequester(UserName,Rooms),
+    (Rooms=[], string_concat("Sem dados de salas encontrados para ", UserName, Str),writeln(Str),!;
+    printRooms(Rooms)),
+    writeln("\nDeseja visualizar de outras formas/alguma sala específica [S/N]?"),
+    utils:getYesOrNo(Answer),
+    Answer, NextScreen='view',!;
+    loggedUserScreen(NextScreen).
 
-screenListener('view_room_screen', _).
+screenListener('view_room', NextScreen):-
+    writeln("Qual o código/nome da sala que você quer visualizar?"),
+    utils:getInputData(roomsHandler:checkRoomCode, Code),
+    roomsHandler:getRoom(Code, Room),
+    printRooms([Room]),
+    waitInput,
+    NextScreen='view'.
 
-screenListener('view_filter_screen', _).
+screenListener('view_filter', _).
 
-screenListener('report_room_screen', _).
+screenListener('report_room', NextScreen):-
+    writeln("Qual o código/nome da sala que você quer visualizar?"),
+    utils:getInputData(roomsHandler:checkRoomCode, Code),
+    roomsHandler:getRoom(Code, Room),
+    writeln("Qual o dia de ocupação você deseja ver [DD-MM-AAAA]?"),
+    utils:getDate(D,M,Y),
+    Day = date(Y,M,D),
+    roomsHandler:createReportForTheRoom(Day, Room, Report),
+    writeln(Report),
+    waitInput,
+    NextScreen='view'.
 
-screenListener('report_day_screen', _).
+screenListener('report_day', NextScreen):-
+    writeln("Qual o dia de ocupação você deseja ver [DD-MM-AAAA]?"),
+    utils:getDate(D,M,Y),
+    Day = date(Y,M,D),
+    roomsHandler:createReportForTheDay(Day, Report),
+    writeln(Report),
+    waitInput,
+    NextScreen='view'.
 
 screenListener('make_reservation', _).
 
@@ -104,18 +136,20 @@ getResources(Resources):-
     getResources([], Resources).
 
 getResources(Aux, Resources):-
-    utils:emptyDict(N),
     roomsHandler:printResources,
-    utils:getInputData(dataHandler:checkResource, K, N, _),
+    utils:getInputData(dataHandler:checkResource, K),
     dataHandler:getResource(K, Kind),
     writeln("Qual a quantidade desejada/existente do recurso?"),
-    utils:getInputData(utils:checkNumber, A, N, _),
-    number_string(Amount, A),
+    utils:getNumber(Amount),
     Resource = res(Kind, Amount),
     append(Aux, [Resource], I),
     writeln("Deseja buscar mais recursos [S/N]?"),
-    utils:getInputData(utils:yesOrNo, M, N, _),
-    string_upper(M, More),
-    More="N",Resources=I,!;
+    utils:getYesOrNo(More),
+    not(More), Resources=I,!;
     getResources(I, Resources).
 
+printRooms([]).
+printRooms([Head|Tail]):-
+    roomsHandler:showRoom(Head, Text),
+    writeln(Text),nl,
+    printRooms(Tail).

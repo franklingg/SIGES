@@ -33,11 +33,11 @@ checkCategory(CategoryStr):-
 
 getCategory(CategoryInit, Category):-
     string_upper(CategoryInit, Init),
-    (Init = "L"->Category=category('Laboratory'),!;
-     Init = "A"->Category=category('Auditorium'),!;
-     Init = "S"->Category=category('Classroom'),!;
-     Init = "E"->Category=category('Office'),!;
-     Init = "D"->Category=category('Warehouse')).
+    (Init = "L"->Category=dataHandler:category('Laboratory'),!;
+     Init = "A"->Category=dataHandler:category('Auditorium'),!;
+     Init = "S"->Category=dataHandler:category('Classroom'),!;
+     Init = "E"->Category=dataHandler:category('Office'),!;
+     Init = "D"->Category=dataHandler:category('Warehouse')).
 
 resourceKind('Projector').
 resourceKind('Microscope').
@@ -61,12 +61,12 @@ checkResource(ResourceStr):-
 
 getResource(ResourceInit, Resource):-
     string_upper(ResourceInit, Init),
-    (Init = "P"->Resource=resourceKind('Projector'),!;
-     Init = "M"->Resource=resourceKind('Microscope'),!;
-     Init = "B"->Resource=resourceKind('Desk'),!;
-     Init = "C"->Resource=resourceKind('Computer'),!;
-     Init = "Q"->Resource=resourceKind('Board'),!;
-     Init = "A"->Resource=resourceKind('AirConditioner')).
+    (Init = "P"->Resource=dataHandler:resourceKind('Projector'),!;
+     Init = "M"->Resource=dataHandler:resourceKind('Microscope'),!;
+     Init = "B"->Resource=dataHandler:resourceKind('Desk'),!;
+     Init = "C"->Resource=dataHandler:resourceKind('Computer'),!;
+     Init = "Q"->Resource=dataHandler:resourceKind('Board'),!;
+     Init = "A"->Resource=dataHandler:resourceKind('AirConditioner')).
 
 
 % HANDLER

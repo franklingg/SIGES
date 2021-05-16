@@ -33,3 +33,5 @@ promptError(13):- writeln("Não foi possível editar, informações incorretas. 
 promptError(14):- writeln("Apenas uma das opções acima. Tente novamente").
 
 promptError(15):- writeln("Valor inválido. Tente novamente").
+
+promptError(16):- writeln("Formato inválido (apenas DD-MM-AAAA). Tente novamente.").
