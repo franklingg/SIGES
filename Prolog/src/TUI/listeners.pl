@@ -136,16 +136,45 @@ screenListener('make_reservation', NextScreen):-
     End=date(Y,M,D,HourEnd,MinuteEnd,0,10800,-,-),
     writeln("Dê uma breve descrição sobre a reserva"),
     utils:getInputData(utils:trivial, Description),
-    dataHandler:user(Name, _, _),
-    roomsHandler:makeReservation(Code, Name, Description, Start, End),
-    utils:waitInput('Reserva criada! '),
+    dataHandler:user(Username, _, _),
+    roomsHandler:makeReservation(Code, Username, Description, Start, End),
+    utils:waitInput("Reserva criada! "),
     loggedUserScreen(NextScreen).
 
 
-screenListener('edit_reservation', _).
+screenListener('edit_reservation', NextScreen):-
+    writeln("Qual o código/nome da sala que você quer editar a reserva?"),
+    utils:getInputData(roomsHandler:checkRoomCode, Code),
+    writeln("Qual o dia da reserva feita [DD-MM-AAAA]?"),
+    utils:getDate(DayOld, MonthOld, YearOld),
+    writeln("Qual o horário de início da reserva feita [HH:MM]?"),
+    utils:getTime(HourOld, MinuteOld),
+    Old=date(YearOld,MonthOld,DayOld,HourOld,MinuteOld,0,10800,-,-),
+    writeln("Qual o novo dia da reserva [DD-MM-AAAA]?"),
+    utils:getDate(D, M, Y),
+    writeln("Qual o novo horário de início da reserva [HH:MM]?"),
+    utils:getTime(HourStart, MinuteStart),
+    writeln("Qual o novo horário de término da reserva [HH:MM]?"),
+    utils:getTime(HourEnd, MinuteEnd),
+    NewStart=date(Y,M,D,HourStart,MinuteStart,0,10800,-,-),
+    NewEnd=date(Y,M,D,HourEnd,MinuteEnd,0,10800,-,-),
+    dataHandler:user(Username, _, _),
+    roomsHandler:editReservation(Code, Username, Old, NewStart, NewEnd),
+    utils:waitInput("Reserva editada! "),
+    loggedUserScreen(NextScreen).
 
-screenListener('remove_reservation', _).
-
+screenListener('remove_reservation', NextScreen):-
+    writeln("Qual o código/nome da sala que você quer remover a reserva?"),
+    utils:getInputData(roomsHandler:checkRoomCode, Code),
+    writeln("Qual o dia da reserva feita [DD-MM-AAAA]?"),
+    utils:getDate(D, M, Y),
+    writeln("Qual o horário de início da reserva feita [HH:MM]?"),
+    utils:getTime(HourStart, MinuteStart),
+    Start=date(Y, M, D, HourStart, MinuteStart, 0, 10800, -, -),
+    dataHandler:user(Username, _, _),
+    roomsHandler:deleteReservation(Code, Username, Start),
+    utils:waitInput("Reserva removida! "),
+    loggedUserScreen(NextScreen).
 
 loggedUserScreen(Next):-
     dataHandler:user(_,_,IsAdm), 
