@@ -1,23 +1,24 @@
 :- module(userHandler, [createUser/4, checkValidEmail/1, checkValidPassword/1, 
                         checkValidName/1, login/2]).
 
+:- encoding(utf8).
+
 :- use_module(library(crypto)).
 
 :- use_module('./../utils.pl').
 :- use_module('./dataHandler.pl').
 
-createUser(Name, Email, Password, AdmChar):-
-    utils:timeNow(D),string_lower(AdmChar, L),atom_string(R,L),
-    (R='s'->IsAdm=true;R='n'->IsAdm=false),
+createUser(Name, Email, Password, IsAdm):-
+    utils:timeNow(D),
     (\+ dataHandler:existsUserFile,!;dataHandler:notExistingUser(Email)),
     crypto_password_hash(Password, PasswordHash),
-    U=dataHandler:userFull(Name, Email, PasswordHash, IsAdm, D),
+    U= userFull(Name, Email, PasswordHash, IsAdm, D),
     dataHandler:saveUser(U),
-    login(Email, Password);
+    login(Email, Password),!;
     errorHandler:promptError(7),fail.
 
 checkValidEmail(Email):-
-    wildcard_match('[a-z]*@[a-z]*.[a-z]*', Email, [case_sensitive(false)]),!;
+    wildcard_match("[a-z]*@[a-z]*.[a-z]*", Email, [case_sensitive(false)]),!;
     errorHandler:promptError(2),fail.
 
 checkValidPassword(Password):-
@@ -30,10 +31,11 @@ checkValidName(Name):-
     
 login(Email,Password):-
     dataHandler:readUsers,
-    bagof(_,dataHandler:userFull(Name,Email,PasswordHash,IsAdm,_),List),
+    bagof(_,dataHandler:userFull(Name,Email,Hash,IsAdm,_),List),
     dataHandler:cleanUsers,
-    List\=[],crypto_password_hash(Password,PasswordHash),!, 
-    assertz(dataHandler:user(Name,Email,IsAdm));
+    atom_string(PasswordHash, Hash),
+    List\=[],crypto_password_hash(Password,PasswordHash), 
+    assertz(dataHandler:user(Name,Email,IsAdm)),!;
     errorHandler:promptError(4),fail.
 
 deleteUser(Email):-

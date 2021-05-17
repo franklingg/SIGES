@@ -16,10 +16,10 @@ Na pasta Prolog, faça:
 > 
 
 
-Por fim, só resta rodar o programa ou testá-lo:
-> `start`
+Por fim, só resta rodar o programa ou testá-lo (não esqueça do ponto final!):
+> `start.`
 > 
-> `test`
+> `test.`
 >
 <!--
  ## Demonstração
