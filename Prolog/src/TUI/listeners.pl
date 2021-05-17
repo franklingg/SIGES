@@ -126,17 +126,16 @@ screenListener('report_day', NextScreen):-
 screenListener('make_reservation', NextScreen):-
     writeln("Qual código/nome da sala que você quer reservar?"),
     utils:getInputData(roomsHandler:checkRoomCode, Code),
-    roomsHandler:getRoom(Code, _),
     writeln("Qual o dia da reserva [DD-MM-AAAA]?"),
     utils:getDate(D, M, Y),
     writeln("Qual o horário de início [HH:MM]?"),
-    utils:getTime(InitHour, InitMin),
+    utils:getTime(HourStart, MinuteStart),
     writeln("Qual o horário de término [HH:MM]?"),
-    utils:getTime(EndHour, EndMin),
-    Start=date(Y,M,D,InitHour,InitMin, 0),
-    End=date(Y,M,D,EndHour,EndMin, 0),
+    utils:getTime(HourEnd, MinuteEnd),
+    Start=date(Y,M,D,HourStart,MinuteStart,0,10800,-,-),
+    End=date(Y,M,D,HourEnd,MinuteEnd,0,10800,-,-),
     writeln("Dê uma breve descrição sobre a reserva"),
-    promptString(">>", Description),
+    utils:getInputData(utils:trivial, Description),
     dataHandler:user(Name, _, _),
     roomsHandler:makeReservation(Code, Name, Description, Start, End),
     utils:waitInput('Reserva criada! '),
@@ -199,8 +198,8 @@ getRoomsFilter(Aux, Result):-
         utils:getTime(HourStart, MinStart),
         writeln("Qual o horário de término a ser buscado [HH:MM]?"),
         utils:getTime(HourEnd, MinEnd),
-        StartTime=date(Y,M,D,HourStart,MinStart, 0),
-        EndTime=date(Y,M,D,HourEnd,MinEnd, 0),
+        StartTime=date(Y,M,D,HourStart,MinStart, 0, 10800,-,-),
+        EndTime=date(Y,M,D,HourEnd,MinEnd, 0, 10800,-,-),
         roomsHandler:searchRoomsTime(StartTime, EndTime, Searched)
         ),!;
     Filter="4" -> (
