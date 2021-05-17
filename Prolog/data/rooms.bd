@@ -3,4 +3,5 @@
 
 :- dynamic room/6.
 
+room("SALAUM", [], ["C", ['Quantidade', 2]], "S", 30, "BlocoCAA").
 
