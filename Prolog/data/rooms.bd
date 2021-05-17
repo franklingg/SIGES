@@ -1,5 +1,5 @@
 :- dynamic room/6.
 
-room("CAA01", [], [res(dataHandler:resourceKind('AirConditioner'), 1)], dataHandler:category('Laboratory'), 100, "sjsdf").
 room("CAA02", [], [res(dataHandler:resourceKind('Board'), 2), res(dataHandler:resourceKind('Projector'), 2)], dataHandler:category('Laboratory'), 12, "sakdfjh").
+room("CAA01", [reservation("admin", "Vamos estudar!", date(2021, 5, 18, 14, 0, 0), date(2021, 5, 18, 16, 0, 0))], [res(dataHandler:resourceKind('AirConditioner'), 1)], dataHandler:category('Laboratory'), 100, "sjsdf").
 

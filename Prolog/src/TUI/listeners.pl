@@ -123,7 +123,25 @@ screenListener('report_day', NextScreen):-
     utils:waitInput,
     NextScreen='view'.
 
-screenListener('make_reservation', _).
+screenListener('make_reservation', NextScreen):-
+    writeln("Qual código/nome da sala que você quer reservar?"),
+    utils:getInputData(roomsHandler:checkRoomCode, Code),
+    roomsHandler:getRoom(Code, _),
+    writeln("Qual o dia da reserva [DD-MM-AAAA]?"),
+    utils:getDate(D, M, Y),
+    writeln("Qual o horário de início [HH:MM]?"),
+    utils:getTime(InitHour, InitMin),
+    writeln("Qual o horário de término [HH:MM]?"),
+    utils:getTime(EndHour, EndMin),
+    Start=date(Y,M,D,InitHour,InitMin, 0),
+    End=date(Y,M,D,EndHour,EndMin, 0),
+    writeln("Dê uma breve descrição sobre a reserva"),
+    promptString(">>", Description),
+    dataHandler:user(Name, _, _),
+    roomsHandler:makeReservation(Code, Name, Description, Start, End),
+    utils:waitInput('Reserva criada! '),
+    loggedUserScreen(NextScreen).
+
 
 screenListener('edit_reservation', _).
 
