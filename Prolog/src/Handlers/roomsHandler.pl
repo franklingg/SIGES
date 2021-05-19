@@ -11,9 +11,16 @@
 :- use_module("./../utils.pl").
 :- use_module("./dataHandler.pl").
 
-/*
-* Função que, dadas todas as informações de uma sala, a cria e a persiste no banco de dados.
-*/
+/**
+ * createRoom(+CodeStr:string, +Resources:compound, +Category:compound, +Capacity:int, +Localization:string) is semidet.
+ * 
+ * Recebe todas as informações pertinentes a uma sala e a cria com nenhuma reserva. Sala se a sala já estiver cadastrada no sistema.
+ * @param CodeStr O código da sala, não é case-sensitive.
+ * @param Resources Uma lista contendo todos os recursos oferecidos pela sala.
+ * @param Category A categoria da sala.
+ * @param Capacity A quantidade de pessoas comportadas pela sala.
+ * @param Localization Breve descrição da localização da sala.
+ */
 createRoom(CodeStr, Resources, Category, Capacity, Localization) :-
     string_upper(CodeStr, Code),
     dataHandler:notExistingRoom(Code),
@@ -21,9 +28,13 @@ createRoom(CodeStr, Resources, Category, Capacity, Localization) :-
     dataHandler:saveRoom(R), !;
     errorHandler:promptError(9), fail.
 
-/*
-* Função que considerará uma String, e retornará a sala cadastrada no sistema com o código igual a esta String, caso exista.
-*/
+/**
+ * getRoom(+CodeStr:string, -R:compound) is semidet.
+ * 
+ * Recebe o código de uma sala (não é case-sensitive) e retorna a sala correspondente cadastrada no sistema. Falha se a sala não existir.
+ * @param CodeStr O código da sala que se deseja buscar.
+ * @param R A sala consultada.
+ */
 getRoom(CodeStr, R) :-
     string_upper(CodeStr, Code),
     dataHandler:readRooms,
@@ -33,9 +44,12 @@ getRoom(CodeStr, R) :-
     R = room(Code, Schedule, Resources, Category, Capacity, Localization),!;
     errorHandler:promptError(10), fail.
 
-/*
-* Função que considera uma String, e caso ela corresponda ao código de uma das salas, a função eliminará a sala equivalente do sistema, retornando se a remoção pôde ser feita.
-*/
+/**
+ * deleteRoom(+CodeStr:string) is semidet.
+ * 
+ * Recebe um código (não case-sensitive) de uma sala e a remove do sistema. Falha se a sala não existir.
+ * @param CodeStr O código da sala que se deseja remover.
+ */
 deleteRoom(CodeStr):-
     string_upper(CodeStr, Code),
     dataHandler:readRooms, 
@@ -44,19 +58,30 @@ deleteRoom(CodeStr):-
     dataHandler:writeRooms,!;
     errorHandler:promptError(10), fail.
 
-/*
-* Função que verifica se esta sala estará livre neste horário.
-*/
+/**
+ * isFree(+Schedule:list, +StartTime:compound, +FinishTime:compound) is semidet.
+ * 
+ * Recebe a lista de reservas de uma sala e um horário de início e fim. Sucede caso nenhuma das reservas na lista chocarem com o intervalo de horário fornecido.
+ * @param Schedule A lista de reservas da sala.
+ * @param StartTime O date/9 representando o horário em que o intervalo consultado inicia.
+ * @param FinishTime O date/9 representando o horário em que o intervalo consultado acaba.
+ */
 isFree([], _, _).
-
 isFree([H|T], StartTime, FinishTime):-
     H = reservation(_, _, StartTimeRoom, FinishTimeRoom),
     utils:xor((StartTimeRoom @>= FinishTime), (FinishTimeRoom @=< StartTime )),
     isFree(T, StartTime, FinishTime).
 
-/*
-* Função que criará uma reserva em uma das salas, a partir do código da mesma, do nome do responsável pela reserva, e das tuplas especificando data e horário de finalização do evento.
-*/
+/**
+ * makeReservation(+CodeStr:string, +UserName:string, +Description:string, +StartTime:compound, +FinishTime:compound) is semidet.
+ * 
+ * Recebe o código (não case-sensitive) de uma sala e cria nela uma reserva com as outras informações fornecidas. Falha se a sala estiver ocupada no horário especificado.
+ * @param CodeStr O código da sala que se deseja reservar.
+ * @param UserName O nome do usuário responsável pela reserva.
+ * @param Description Breve descrição do evento ocorrendo na sala durante o horário reservado.
+ * @param StartTime O date/9 representando o horário de início da reserva.
+ * @param FinishTime O date/9 representando o horário de final da reserva.
+ */
 makeReservation(CodeStr, UserName, Description, StartTime, FinishTime) :-
     getRoom(CodeStr, R),
     R = room(Code, Schedule, Resources, Category, Capacity, Localization),
@@ -68,24 +93,37 @@ makeReservation(CodeStr, UserName, Description, StartTime, FinishTime) :-
     dataHandler:saveRoom(NewRoom),!;
     errorHandler:promptError(11), fail.
 
-/*
-* Função que checa se existe uma reserva em uma das salas.
-*/
+/**
+ * existsReservation(+Schedule:list, +UserName:string, +StartTime:compound) is semidet.
+ * 
+ * Recebe uma lista de reservas, um nome de usuário e um horário de início. Sucede se existe na lista uma reserva com estas informações.
+ * @param Schedule A lista de reservas de uma sala.
+ * @param Username O nome do usuário responsável pela reserva.
+ * @param StartTime O horário em que a reserva se inicia.
+ */
 existsReservation([], _, _) :- false.
-
 existsReservation([H|T], UserName, StartTime) :-
     H = reservation(UserName, _, StartTime, _),!;
     existsReservation(T, UserName, StartTime).
 
-/*
-* Função auxiliar que, dada uma tupla com um Integer para o ano e um Int para mes, dia, hora e minuto, respectivamente, cria um LocalTime.
-*/
+/**
+ * matchTime(+StartTime:compound, +Res:compound) is semidet.
+ * 
+ * Regra auxiliar. Recebe um horário e uma reserva e sucede se a reserva inicia no horário passado.
+ * @param StartTime O horário comparado.
+ * @param Res A reserva comparada.
+ */
 matchTime(StartTime, Res) :-
     Res = reservation(_, _, StartTime, _).
 
-/*
-* Esta função deletará uma reserva identificada pelo código da sala e nome do responsável, e pela horário de início do evento.
-*/
+/**
+ * deleteReservation(+CodeStr:string, +UserName:string, +StartTime:compound) is semidet.
+ * 
+ * Recebe as informações pertinentes e remove uma reserva do sistema. Falha se a reserva não existir.
+ * @param CodeStr O código (não case-sensitive) da sala onde está a reserva.
+ * @param UserName O nome do usuário responsável pela reserva.
+ * @param StartTime O date/9 representando o horário em que a reserva se inicia.
+ */
 deleteReservation(CodeStr, UserName, StartTime) :-
     getRoom(CodeStr, R),
     R = room(Code, Schedule, Resources, Category, Capacity, Localization),
@@ -97,18 +135,30 @@ deleteReservation(CodeStr, UserName, StartTime) :-
     dataHandler:saveRoom(NewRoom), !;
     errorHandler:promptError(12), fail.
 
-/*
-* Dada uma sala, identificada pelo seu código, um horário, esta função retornará a reserva com os dados equivalentes.
-*/
+/**
+ * findReservation(+CodeStr:string, +StartTime:compound, -Res:compound) is semidet
+ * 
+ * Recebe um código (não case-sensitive) de uma sala e um horário e retorna a reserva equivalente. Falha se a reserva não existir.
+ * @param O código da sala onde a reserva está.
+ * @param StartTime O date/9 representando o horario de início da reserva.
+ * @param Res A reserva buscada.
+ */
 findReservation(CodeStr, StartTime, Res) :-
     getRoom(CodeStr, R),
     R = room(_, Schedule, _, _, _, _),
     include(matchTime(StartTime), Schedule, Matching), Matching\=[],
     Matching = [Res|_].
 
-/*
-* Função que alterará o horário de uma reserva, identificada pelo código de sua sala, pelo seu responsável e horário de início). Caso não seja possível fazer a alteração, nada será feito. A função retornará um valor indicando se foi possível fazer a operação.
-*/
+/**
+ * editReservation(+CodeStr:String, +UserName:string, +CurrentStartTime:compound, +NewStartTime:compound, +NewFinishTime:compound) is semidet.
+ * 
+ * Recebe as informações de uma sala e reserva, e edita esta reserva para alterar o seu horário. Falha se o novo horário estiver ocupado ou se a reserva não existir.
+ * @param CodeStr O código (não case-sensitive) da sala onde a reserva foi feita.
+ * @param UserName O nome do usuário responsável pela reserva.
+ * @param CurrentStartTime O date/9 com o atual horário de início da reserva.
+ * @param NewStartTime O date/9 com o novo horário de início da reserva.
+ * @param NewFinishTime O date/9 com o novo horário de fim da reserva.
+ */
 editReservation(CodeStr, UserName, CurrentStartTime, NewStartTime, NewFinishTime) :-
     getRoom(CodeStr, R),
     R = room(Code, Schedule, Resources, Category, Capacity, Localization),
@@ -124,16 +174,24 @@ editReservation(CodeStr, UserName, CurrentStartTime, NewStartTime, NewFinishTime
     dataHandler:saveRoom(NewRoom),!;
     errorHandler:promptError(13), fail.
 
-/*
-* Função que retorna se o horário de final do evento já passou.
-*/
+/**
+ * hasPassed(+TimeNow:compound, +Res:compound) is semidet.
+ * 
+ * Regra auxiliar. Recebe o horário atual e uma reserva e sucede se a reserva acaba antes do horário atual.
+ * @param TimeNow O horário atual em formato date/9.
+ * @param Res A reserva verificada.
+ */
 hasPassed(TimeNow, Res) :-
     Res = reservation(_, _, _, FinishTime),
     TimeNow @>= FinishTime.
 
-/*
-* Dado um TimeNow para comparação, esta função irá retirar de uma determinada sala as reservas finalizadas antes deste horário.
-*/
+/**
+ * cleanReservations(+TimeNow:compound, +R:compound) is det.
+ * 
+ * Recebe O horário atual e uma sala e remove todas as reservas da sala cujo horário final é antes do horário atual.
+ * @param TimeNow o horário atual em date/9.
+ * @param R a sala.
+ */
 cleanReservations(TimeNow, R) :-
     R = room(Code, Schedule, Resources, Category, Capacity, Localization),
     exclude(hasPassed(TimeNow), Schedule, NewSchedule),
@@ -141,41 +199,63 @@ cleanReservations(TimeNow, R) :-
     deleteRoom(Code),
     dataHandler:saveRoom(NewRoom).
 
-/*
-* Função que removerá de todas as salas as reservas cujo horário de final do evento já passou.
-*/
+/**
+ * cleanAllReservationsAux(+Rooms:list, +TimeNow:compound) is det
+ * 
+ * Recursão auxiliar que recebe o horário atual e uma lista de salas e remove das salas na lista as reservas que acabam antes do horário passado.
+ * @param Rooms A lista de salas que se deve "limpar".
+ * @param TimeNow O horário de referência.
+ */
 cleanAllReservationsAux([], _).
 cleanAllReservationsAux([H|T], TimeNow) :-
     cleanReservations(TimeNow, H),
     cleanAllReservationsAux(T, TimeNow).
 
-/*
-* Função que removerá de todas as salas as reservas cujo horário de final do evento já passou.
-*/
+/**
+ * cleanAllReservations() is det.
+ * 
+ * Remove todas as reservas finalizadas de todas as salas do sistema.
+ */
 cleanAllReservations :-
     fetchRooms(Rooms),
     timeNow(TimeNow),
     cleanAllReservationsAux(Rooms, TimeNow).
 
-/*
-* Função que filtra todas as salas de acordo com a sua categoria.
-*/
+/**
+ * filterCategory(+Room:list, +Category:compound, +Aux:list, -List:list) is det.
+ * 
+ * Filtro auxiliar que filtra uma lista de salas para encontrar nela apenas aquelas que pertencem à categoria especificada.
+ * @param Rooms A lista de salas analisadas.
+ * @param Category A categoria que se deseja filtrar.
+ * @param Aux Lista auxiliar para se fazer a recursão. deve ser iniciada como uma lista vazia, preferencialmente.
+ * @param List A lista contendo todas as salas que passaram o filtro, ou seja, as que pertencem à categoria especificada.
+ */
 filterCategory([], _, Aux, Aux).
 filterCategory([H|T], Category, Aux, List):-
     H = room(_, _, _, Category, _, _),
     append(Aux, [H], Intermediate), filterCategory(T, Category, Intermediate, List), !;
     filterCategory(T, Category, Aux, List).
 
-/*
-* Com uma categoria especificada, esta função verificará o sistema e retornará a lista contendo todas as salas desta categoria.
-*/
+/**
+ * searchRoomsCategory(+Category:compound, -Rooms:list) is det.
+ * 
+ * Recebe uma categoria e retorna todas as salas do sistema que pertencem a esta categoria.
+ * @param Category A categoria que se deseja buscar.
+ * @param Rooms A lista com as salas do sistema que pertencem à categoria buscada.
+ */
 searchRoomsCategory(Category, Rooms) :-
     fetchRooms(Salas),
     filterCategory(Salas, Category, [], Rooms).
 
-/*
-* Função que filtra todas as salas de acordo com a sua capacidade.
-*/
+/**
+ * filterCapacity(+Room:list, +Capacity:int, +Aux:list, -List:list) is det.
+ * 
+ * Filtro auxiliar que filtra uma lista de salas para encontrar nela apenas aquelas cuja capacidade é igual ou maior do que a especificada.
+ * @param A lista de salas analisadas.
+ * @param Capacity A capacidade que se deseja filtrar.
+ * @param Aux Lista auxiliar para se fazer a recursão. deve ser iniciada como uma lista vazia, preferencialmente.
+ * @param List A lista contendo todas as salas que passaram no filtro, ou seja, aquelas com a capacidade suficiente.
+ */
 filterCapacity([], _, Aux, Aux).
 filterCapacity([H|T], Capacity, Aux, List):-
     H = room(_, _, _, _, Cap, _),
@@ -183,36 +263,54 @@ filterCapacity([H|T], Capacity, Aux, List):-
     append(Aux, [H], Intermediate), filterCapacity(T, Capacity, Intermediate, List), !;
     filterCapacity(T, Capacity, Aux, List).
 
-/*
-* Com uma capacidade especificada, esta função verificará o sistema e retornará a lista contendo todas as salas com esta capacidade ou mais.
-*/
+/**
+ * searchRoomsCapacity(+Capacity:int, -Rooms:list) is det.
+ * 
+ * Recebe um número inteiro e retorna a lista de todas as salas do sistema cuja capacidade é maior ou igual a este número.
+ * @param Capacity A capacidade que se deseja filtrar.
+ * @param Rooms A lista com as salas do sistema que comportam a quantidade pretendida de ocupantes.
+ */
 searchRoomsCapacity(Capacity, Rooms) :-
     fetchRooms(Salas),
     filterCapacity(Salas, Capacity, [], Rooms).
 
-/*
-* Função que monta todas as salas.
-*/
+/**
+ * mountRooms(+Informations:list, +Aux:list, -Rooms:list) is det.
+ * 
+ * Recebe uma lista de listas (cada uma destas contendo as informações de uma sala) e monta uma lista de salas.
+ * @param Informations Uma lista de listas, cada uma destas contendo as informações de uma sala.
+ * @param Aux Lista auxiliar usada como ponto de partida para a recursão, deve ser inicializada como uma lsta vazia.
+ * @param Rooms Lista contendo todas as salas cujas informações foram passadas.
+ */
 mountRooms([], Aux, Aux).
-
 mountRooms([H|T], Aux, Rooms) :-
     H = [Code, Schedule, Resources, Category, Capacity, Localization],
     Room = room(Code, Schedule, Resources, Category, Capacity, Localization),
     append(Aux, [Room], Intermediate),
     mountRooms(T, Intermediate, Rooms).    
 
-/*
-* Função que busca todas as salas.
-*/
+/**
+ * fetchRooms(-Rooms:list) is det.
+ * 
+ * Retorna uma lista com todas as salas do sistema.
+ * @param Rooms A lista com todas as salas do sistema.
+ */
 fetchRooms(Rooms) :-
     dataHandler:readRooms,
     findall([Code, Schedule, Resources, Category, Capacity, Localization], dataHandler:room(Code, Schedule, Resources, Category, Capacity, Localization), List),
     mountRooms(List, [], Rooms),
     dataHandler:cleanRooms.
 
-/*
-* Função que filtra todas as salas de acordo com seu horário.
-*/
+/**
+ * filterTime(+Rooms:list, +StartTime:compound, +FinishTime:compound, +Aux:list, -List:list) is det.
+ * 
+ * Filtro auxiliar que, dada uma lista de salas, encontra aquelas que têm um determinado horário livre e as retorna. 
+ * @param Rooms A lista de salas analisadas.
+ * @param StartTime O date/9 representando o início do horário a ser consultado.
+ * @param FinishTime O date/9 representando o fim do horário a ser consultado.
+ * @param Aux Lista auxiliar da recursão e usada como ponto inicial. deve ser inicializada como uma lista vazia.
+ * @param List Lista de rtorno com todas as salas analisadas que passaram o filtro, ou seja, aquelas que têm o horário consultado livre.
+ */
 filterTime([], _, _, Aux, Aux).
 filterTime([H|T], StartTime, FinishTime, Aux, List):-
     H = room(_, Schedule, _, _, _, _),
@@ -220,16 +318,25 @@ filterTime([H|T], StartTime, FinishTime, Aux, List):-
     append(Aux, [H], Intermediate), filterTime(T, StartTime, FinishTime, Intermediate, List), !;
     filterTime(T, StartTime, FinishTime, Aux, List).
 
-/*
-* Com um horário de início e fim especificado em forma de tupla, esta função verificará o sistema e retornará a lista contendo todas as salas que estejam livres neste horário.
-*/
+/**
+ * searchRoomsTime(+StartTime:compound, +FinishTime:compound, -Rooms: list) is det.
+ * 
+ * Recebe um horário de início e um de fim e retorna a lista de todas as salas que têm este intervalo de horário livre.
+ * @param StartTime O date/9 representando o horário de início do intervalo consultado.
+ * @param FinishTime O date/9 representando o horário de fim do intervalo consultado.
+ * @param Rooms A lista das salas do sistema que estão livres no horário especificado.
+ */
 searchRoomsTime(StartTime, FinishTime, Rooms):-
     fetchRooms(Salas),
     filterTime(Salas, StartTime, FinishTime, [], Rooms).
 
-/*
-* Função que confere a disponibilidade dos recursos nas salas.
-*/
+/**
+ * resourceIsEnough(+Resources:list, +Res:compound) is semidet.
+ * 
+ * Regra auxiliar. recebe uma lista de recursos oferecidos por uma sala e um recurso, e sucede se este recurso existe na sala na quantidade igual ou maior que a requerida.
+ * @param Resources A lista de recursos oferecidos por uma determinada sala.
+ * @param um recurso que se procura.
+ */
 resourceIsEnough([], _) :- fail.
 resourceIsEnough([H|T], Res) :-
     H = res(Kind, Amount),
@@ -238,18 +345,28 @@ resourceIsEnough([H|T], Res) :-
     Amount >= RequiredAmount, !;
     resourceIsEnough(T, Res).
 
-/*
-* Função que confere se a sala tem a disponibilidade dos recursos solicitados.
-*/
+/**
+ * containsAllResources(+Resources:list, +RequiredResults:list) is semidet.
+ * 
+ * Recebe uma lista de recursos de uma sala e uma lista de recursos requeridos. Sucede se a sala possuir todos os recursos requeridos e em quantidade igual ou maior que a necessária.
+ * @param Resources A lista de recursos da sala.
+ * @param RequiredResources A lista com tyodos os recursos que se deseja verificar se a sala oferece.
+ */
 containsAllResources(_, []).
 containsAllResources(Resources, [H|T]) :-
     resourceIsEnough(Resources, H),
     containsAllResources(Resources, T),!;
     fail.
 
-/*
-* Função que filtra todas as salas de acordo com seus recursos.
-*/
+/**
+ * filterResources(+Rooms:list, +RequiredResources:list, +Aux:list, -List:list) is det.
+ * 
+ * Filtro auxiliar que, dada uma lista de salas, encontra aquelas que oferecem os recursos pedidos e as retorna.
+ * @param Rooms A lista de salas analisadas.
+ * @param RequiredResources A lista de recursos que se deseja filtrar as salas.
+ * @param Aux A lista auxiliar para a recursão e usada como ponto de pártida. Deve ser inicializada como uma lista vazia.
+ * @param List A lista de retorno contendo todas as salas que passaram o filtro, ou seja, todas aquelas que possuem os recursos exigidos.
+ */
 filterResources([], _, Aux, Aux).
 filterResources([H|T], RequiredResources, Aux, List):-
     H = room(_, _, Resources, _, _, _),
@@ -257,16 +374,26 @@ filterResources([H|T], RequiredResources, Aux, List):-
     append(Aux, [H], Intermediate), filterResources(T, RequiredResources, Intermediate, List), !;
     filterResources(T, RequiredResources, Aux, List).
 
-/* 
-* Com uma lista de recursos especificada, esta função verificará o sistema e retornará a lista contendo todas as salas que supram esta demanda.
-*/
+/**
+ * searchRoomsResources(+RequiredResources:list, -Rooms:list) is det.
+ * 
+ * Recebe uma lista de recursos e retorna a lista com todas as salas que oferecem todos os recursos da lista e em quantidade suficiente.
+ * @param RequiredResources A lista contendo os recursos que se deseja buscar.
+ * @param Rooms A lista de retorno com todas as salas que possuem os recursos exigidos.
+ */
 searchRoomsResources(RequiredResources, Rooms) :-
     fetchRooms(Salas),
     filterResources(Salas, RequiredResources, [], Rooms).
 
-/*
-* Função que solicita os filtros.
-*/
+/**
+ * filterRequester(+Rooms:compound, +Requester:string, +Aux:list, -List:list) is det.
+ * 
+ * Filtro auxiliar que, dada uma lista de salas, retorna aquelas que possuem pelo menos uma reserva feita pelo usuário especificado.
+ * @param Rooms A lista de salas a ser analisadas.
+ * @param Requester O nome do usuário que se deve procurar entre os responsáveis por reservas de cada sala..
+ * @param Aux Lista auxiliar para a recursão usada como ponto inicial. deve ser inicializada como uma lista vazia.
+ * @param List Lista de retorno contendo todas as salas que passam o filtro, ou seja, aquelas que possuem alguma reserva feita pelo usuário especificado.
+ */
 filterRequester([], _, Aux, Aux).
 filterRequester([H|T], Requester, Aux, List):-
     H = room(_, Schedule, _, _, _, _),
@@ -274,29 +401,43 @@ filterRequester([H|T], Requester, Aux, List):-
     append(Aux, [H], Intermediate), filterRequester(T, Requester, Intermediate, List), !;
     filterRequester(T, Requester, Aux, List).
 
-/*
-* Função que verifica se existe alguma solicitação.
-*/
+/**
+ * hasRequester(+UserName:string, +Reservation:compound) is semidet.
+ * 
+ * Regra auxiliar. recebe um nome de usuário e uma reserva e sucede se a reserva foi feita pelo usuário.
+ * @param UserName O nome do usuário.
+ * @param Reservation A reserva verificada.
+ */
 hasRequester(UserName, Reservation) :-
     Reservation = reservation(UserName, _, _, _).
 
-/*
-* Função que verifica quem realizou a solicitação.
-*/
+/**
+ * wasReservedBy(+UserName:string, +Schedule:list) is semidet.
+ * 
+ * Regra auxiliar. Recebe um nome de usuário e uma lista de erservas e sucede se alguma das reservas da lista foi feita pelo usuário.
+ * @param UserName O nome do usuário.
+ * @param Schedule A lista de reservas que se deseja verificar.
+ */
 wasReservedBy(UserName, Schedule) :-
     include(hasRequester(UserName), Schedule, List),
     List \= [].
 
-/* 
-* Função que verificará o sistema e retornará a lista contendo todas as salas que um determinado usuario solicitou.
-*/
+/**
+ * searchRoomsRequester(+UserName:string, -Rooms:list) is det.
+ * 
+ * Recebe um nome de Usuário e retorna lista contendo todas as salas do sistema que possuem alguma reserva no nome deste usuário.
+ * @param UserName O nome do usuário cujas salas reservadas se busca.
+ * @param Rooms Lista de retorno contendo todas as salas que foram reservadas pelo usuário.
+ */
 searchRoomsRequester(UserName, Rooms) :-
     fetchRooms(Salas),
     filterRequester(Salas, UserName, [], Rooms).
 
-/*
-* Função que produzirá um texto contendo a lista de todas as categorias de sala suportadas pelo sistema.
-*/
+/**
+ * printCategories is det.
+ * 
+ * Imprime a lista de categorias de sala oferecidas pelo sistema.
+ */
 printCategories:-
     writeln("Qual categoria você deseja escolher?\n\c
             [L]aboratório\n\c
@@ -305,9 +446,11 @@ printCategories:-
             [E]scritório\n\c
             [D]epósito").
 
-/* 
-* Função que produzirá um texto listando todos os recursos oferecidos pelas salas do sistema.
-*/
+/**
+ * printResources is det.
+ * 
+ * Imprime a lista de todos os recursos oferecidos pelo sistema.
+ */
 printResources:-
     writeln("Qual recurso você deseja escolher?\n\c
             [P]rojetor\n\c
@@ -317,9 +460,14 @@ printResources:-
             [Q]uadro\n\c
             [A]r condicionado").
 
-/*
-* Função que mostra todos os recursos oferecidos pelas salas do sistema.
-*/
+/**
+ * showResList(+ResourcesList:list, +Aux:string, -Text:string) is det.
+ * 
+ * Recebe uma lista de recursos e retorna a string repesentando-os.
+ * @param ResourcesList Lista de recursos que se deseja representar em string.
+ * @param Aux String auxiliar usada na recursão e usada como ponto de partida. Deve ser inicializada como string vazia.
+ * @param Text A string representativa dos recursos da lista.
+ */
 showResList([], Aux, Aux).
 showResList([H|T], Aux, Text) :-
     H = res(dataHandler:resourceKind(R), Amount),
@@ -334,9 +482,13 @@ showResList([H|T], Aux, Text) :-
     string_concat(Aux, Line, Intermediate),
     showResList(T, Intermediate, Text).
 
-/*
-* Função que mostra as informações da sala do sistema.
-*/
+/**
+ * showRoom(+Room:compound, -Text:string) is det.
+ * 
+ * Recebe uma sala e retorna sua representação em string.
+ * @param Room A sala.
+ * @param a representação em string da sala.
+ */
 showRoom(Room, Text) :-
     Room = room(Code, _, Resources, Category, Capacity, Localization),
     Category = dataHandler:category(Cat),
@@ -352,9 +504,13 @@ showRoom(Room, Text) :-
 
     utils:stringBuilder([L1, "\n", L2, "\n", L3, "\n", L4, "\n", L5], "", Text).
 
-/*
-* Função que mostra a data.
-*/
+/**
+ * showDate(+Date:compound, -Text:string) is det.
+ * 
+ * Recebe um date/9 e retorna sua representação em string.
+ * @param Date O date/9 que se deseja formatar.
+ * @param Text A representação string da data.
+ */
 showDate(Date, Text) :-
     Date = date(Y,M,D,H,Mn,S,_,_,_),
     number_string(Y, Year),
@@ -366,9 +522,13 @@ showDate(Date, Text) :-
     
     utils:stringBuilder([Day, "/", Month, "/", Year, " ", Hour, ":", Minute, ":", Second], "", Text).
 
-/*
-* Função que mostra as informações da reserva da sala do sistema.
-*/
+/**
+ * showReservation(+Reservation:compound, -Text:string) is det.
+ * 
+ * Recebe uma reserva e retorna a sua representação em string.
+ * @param Reservation A reserva.
+ * @param Text A representação em string da reserva.
+ */
 showReservation(Reservation, Text) :-
     Reservation = reservation(Requester, Description, StartTime, FinishTime),
     showDate(StartTime, Start),
@@ -382,9 +542,14 @@ showReservation(Reservation, Text) :-
 
     utils:stringBuilder([L1, "\n", L2, "\n", L3, "\n", L4, "\n", L5], "", Text).
 
-/*
-* Função que mostra todos as reservas das salas do sistema.
-*/
+/**
+ * showReservationList(+Schedule:list, +Aux:string, -Text:string) is det.
+ * 
+ * Recebe uma lista de reservas e cria a sua representação em string.
+ * @param Schedule A lista de reservas que se deseja representar.
+ * @param Aux String auxiliar usada na recursão e como ponto inicial. deve ser inicializada como string vazia.
+ * @param Text A string de saída, com a representação textual da lista de reservas passada.
+ */
 showReservationList([], Aux, Aux).
 showReservationList([H|T], Aux, Text) :-
     showReservation(H, Str),
@@ -392,9 +557,15 @@ showReservationList([H|T], Aux, Text) :-
     string_concat(Aux, Part, Intermediate),
     showReservationList(T, Intermediate, Text).
 
-/*
-* Função que filtra todas as reservas das salas.
-*/
+/**
+ * filterReservations(+Schedule:list, +Day:compound, +Aux:list, -List:list) is det.
+ * 
+ * Filtro auxiliar que, dada uma lista de reservas e um dia, retorna as reservas que são para o dia especificado.
+ * @param Schedule A lista de reservas a ser analisadas.
+ * @param O date/3 contendo o dia que se deseja investigar.
+ * @param Aux A lista auxiliar usada na recursão e como ponto inicial. deve ser inicializada como lista vazia.
+ * @param List A lista de retorno, contendo todas as reservas que acontecem no dia especificado.
+ */
 filterReservations([], _, Aux, Aux).
 filterReservations([H|T], Day, Aux, List) :- %Day é um date/3, diferente do Start e FinishTime, que são date/9
     H = reservation(_, _, StartTime, _),
@@ -408,9 +579,13 @@ filterReservations([H|T], Day, Aux, List) :- %Day é um date/3, diferente do Sta
 
     filterReservations(T, Day, Intermediate, List).
 
-/*
-* Função que mostra o dia da reserva.
-*/
+/**
+ * showDay(+Date:compound, -Text:string)
+ * 
+ * Recebe um date/3 e retorna a sua representação em string.
+ * @param Date O date/3 que se deseja representar.
+ * @param Text String de retorno contendo a representação da data.
+ */
 showDay(Date, Text) :-
     Date = date(Y,M,D),
     number_string(Y, Year),
@@ -419,9 +594,14 @@ showDay(Date, Text) :-
     
     utils:stringBuilder([Day, "/", Month, "/", Year], "", Text).
 
-/*
-* Dado um dia, esta função criará um relatório em texto com todas as reservas que esta sala tem para o dia especificado.
-*/
+/**
+ * createReportsForTheRoom(+Day:compound, +Room:compound, -Text:string) is det.
+ * 
+ * Recebe uma sala e um dia e cria o relatório de ocupação daquela sala para o dia especificado.
+ * @param Day O date/3 com o dia que se deseja investigar.
+ * @param Room A sala cujo relatório se deseja criar.
+ * @param Text String de retorno, contendo o relatório de ocupação da sala para o dia especificado.
+ */
 createReportForTheRoom(Day, Room, Text):-
     Room = room(Code, Schedule, _, _, _, _),
     showDay(Day, D),
@@ -435,9 +615,15 @@ createReportForTheRoom(Day, Room, Text):-
     (L2="", string_concat(L1, "Sem reservas para mostrar\n", Text),!;
     string_concat(L1,L2,Text)).
 
-/*
-* Função que criará um relatório.
-*/
+/**
+ * createReports(+Day:compound, +Rooms:list, +Aux:string, -Text:string) is det.
+ * 
+ * Recebe um date/3, uma lista de salas e cria o relatório de ocupação para as salas na lista.
+ * @param Day O date/3 com o dia que se deseja investigar.
+ * @param Rooms A lista das salas cujos relatórios serão feitos.
+ * @param Aux String auxiliar para a recursão e usada como ponto inicial. deve ser inicializada como uma string vazia.
+ * @param Text String de saída com os relatórios de ocupação de cada sala da lista passada para o dia especificado.
+ */
 createReports(_, [], Aux, Aux).
 createReports(Day, [H|T], Aux, Text):-
     createReportForTheRoom(Day, H, Line),
@@ -445,14 +631,23 @@ createReports(Day, [H|T], Aux, Text):-
 
     createReports(Day, T, Intermediate, Text).
 
-/*
-* Dado um dia representado em uma tupla, esta função criará um relatório em texto para todas as reservas de todas as salas para o dia especificado.
-*/
+/**
+ * createReportForTheDay(+Day:compound, -Text:String) is det.
+ * 
+ * Recebe uma data e retorna o relatório de ocupação das salas do sistema para este dia.
+ * @param Day O date/3 contendo o dia pesquisado.
+ * @param Text String de saída contendo os relatórios de ocupação.
+ */
 createReportForTheDay(Day, Text) :-
     fetchRooms(Rooms),
     createReports(Day, Rooms, "", Text).
 
-
+/**
+ * checkNewRoomCode(+CodeStr:string) is semidet.
+ * 
+ * Regra que recebe um código (não case-sensitive) de sala e sucede se este código não se referir a nenhuma sala do sistema.
+ * @param CodeStr O código consultado.
+ */
 checkNewRoomCode(CodeStr):-
     string_upper(CodeStr, Code),
     dataHandler:readRooms,
@@ -461,5 +656,11 @@ checkNewRoomCode(CodeStr):-
     List=[],!;
     errorHandler:promptError(9),fail.
 
+/**
+ * checkRoomCode(+CodeStr:string) is semidet.
+ * 
+ * Recebe um código (não case-sensitive) de sala e sucede se o código refere-se a uma das salas do sistema.
+ * @param CodeStr O código consultado.
+ */
 checkRoomCode(CodeStr):-
     getRoom(CodeStr, _).
