@@ -1,3 +1,6 @@
+/** <module> Listeners
+* Description : Módulo que estabelece ações e lógica das telas e de leitura de dados no sistema SIGES.
+*/
 :- module(listeners, [screenListener/2]).
 :- encoding(utf8).
 
@@ -8,6 +11,9 @@
 :- use_module("./../Handlers/userHandler.pl").
 :- use_module("./../Handlers/roomsHandler.pl").
 
+/* 
+* Difinição das Regras de ScreenListener.
+*/
 screenListener('first', NextScreen):-
     writeln("Bem-vindo(a) ao SIGES! \n\c
              Vamos configurar o primeiro administrador do sistema."),
@@ -176,14 +182,23 @@ screenListener('remove_reservation', NextScreen):-
     utils:waitInput("Reserva removida! "),
     loggedUserScreen(NextScreen).
 
+/* 
+* Difinição das Regras de loggedUserScreen.
+*/
 loggedUserScreen(Next):-
     dataHandler:user(_,_,IsAdm), 
     IsAdm=true->Next='admin';
     Next='logged'.
 
+/* 
+* Função que retorna os recursos das salas. 
+*/
 getResources(Resources):-
     getResources([], Resources).
 
+/* 
+* Função auxiliar à função de filtro de salas. Esta função lerá da entrada recursos que o usuário deseja buscar e suas respectivas quantidades, e então produzirá uma lista de recursos com estas informações e a retornará.
+*/
 getResources(Aux, Resources):-
     roomsHandler:printResources,
     utils:getInputData(dataHandler:checkResource, K),
@@ -197,11 +212,17 @@ getResources(Aux, Resources):-
     not(More), Resources=NewAux,!;
     getResources(NewAux, Resources)).
 
+/* 
+* Função que checa os filtos das salas. 
+*/
 checkFilter(FilterStr):-
     string_length(FilterStr, L), L = 1,
     member(FilterStr, ["1", "2", "3", "4"]),!;
     errorHandler:promptError(14), fail.
 
+/* 
+* Função que retorna as salas filtradas das salas. 
+*/
 getRoomsFilter(Aux, Result):-
     writeln('Por qual critério você deseja filtrar?\n\c
              1 - Categoria\n\c
@@ -243,6 +264,9 @@ getRoomsFilter(Aux, Result):-
     (not(More), Result=NewAux,!;
     getRoomsFilter(NewAux, Result)).
 
+/* 
+* Função que as salas. 
+*/
 printRooms([]).
 printRooms([Head|Tail]):-
     roomsHandler:showRoom(Head, Text),
