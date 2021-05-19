@@ -1,13 +1,22 @@
+/** <module> Screens
+* Description : Módulo que estabelece ações e lógica das telas e de leitura de dados no sistema SIGES.
+*/
 :- module(screens, [systemStart/1, screen/3]).
 :- encoding(utf8).
 
-:- use_module('./../Handlers/DataHandler.pl').
+:- use_module('./../Handlers/dataHandler.pl').
 
+/* 
+* Função que inicia as screens do sistema.
+*/
 systemStart(T):-
         dataHandler:existsUserFile,
         T='start',!;
         T='first'.
 
+/* 
+* Difinição das Regras de Screen.
+*/
 screen('first',Content,_):-
         Content= '==========================\n\c
                 \r      PRIMEIRO ACESSO     \n\c

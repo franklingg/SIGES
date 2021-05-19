@@ -1,6 +1,13 @@
+/** <module> ErrorHandler
+* Description : Módulo contendo operações de verificação e tratamento de erros do sistema SIGES.
+*/
 :- module(errorHandler, [promptError/1]).
 
 :- encoding(utf8).
+
+/* 
+* Difinição das Regras de Error Handler.
+*/
 
 promptError(0).
 

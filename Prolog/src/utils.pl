@@ -1,3 +1,6 @@
+/** <module> Utils
+* Description : Módulo que reúne várias operações de importação necessárias aos demais módulos do sistema.
+*/
 :- module(utils, [emptyDict/1, promptNumber/2, promptString/2, promptChoice/2, cls/0,
                   waitInput/0, waitInput/1, searchDict/3, getInputData/4, getInputData/2,
                   getYesOrNo/1, getNumber/1, getDate/3, getTime/2, trivial/1, timeNow/1, 
