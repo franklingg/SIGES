@@ -81,7 +81,7 @@ promptChoice(Options, Value) :- promptString(">> ", S),
  * Recebe uma mensagem de teste e imprime com a coloração adequada.
  * @param Message Mensagem a ser impressa com uma fonte diferente
  */ 
-promptTest(Message):- ansi_format([bold,fg(yellow)], "~w", [Message]).
+promptTest(Message):- ansi_format([bold,fg(blue)], "~w", [Message]).
 
 /**
  * waitInput is det.
@@ -97,7 +97,9 @@ waitInput:-waitInput("").
  * @param S Mensagem a ser impressa antes de esperar a entrada
  */
 waitInput(S):-
-    write(S), write("Aperte qualquer tecla para continuar."),get_single_char(_),nl.
+    ansi_format([bold,fg(yellow)], "~w", [S]),
+    ansi_format([bold,fg(yellow)], "~w", ["Aperte qualquer tecla para continuar."]),
+    get_single_char(_),nl.
 
 /**
  * getInputData(+Checker:compound, -Value: string, NextScreens:dict, Next:string) is multi.

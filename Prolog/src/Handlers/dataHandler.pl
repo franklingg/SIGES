@@ -1,5 +1,5 @@
 /** <module> DataHandler
-* Description : Módulo contendo as operações de manipulação de dados e persistência do sistema SIGES.
+* Módulo contendo as operações de criação, manipulação e persistência de dados no sistema SIGES.
 */
 :- module(dataHandler, [saveUser/1, existsUserFile/0, cleanUsers/0, readUsers/0,
                         notExistingUser/1, writeUsers/0, saveRoom/1, existsRoomFile/0, 
@@ -16,33 +16,43 @@
 %:- dynamic res/2. % (name_of_resource, quantity)
 %:- dynamic reservation/4. % (requester, description, start_time, finish_time)
 
-/* 
-* Difinição das Regras de categoria das salas.
-*/
+/**
+ * Definição das categorias das salas.
+ */
 category('Laboratory').
 category('Auditorium').
 category('Classroom').
 category('Office').
 category('Warehouse').
-
+/**
+ * Definição das categorias das salas e sua respectiva tradução.
+ */
 category('Laboratory', "Laboratório").
 category('Auditorium', "Auditório").
 category('Classroom', "Sala de aula").
 category('Office', "Escritório").
 category('Warehouse', "Depósito").
 
-/*
-* Esta função considera uma String, e checa se a categoria da sala esta cadastrada no sistema, caso exista.
-*/
+/**
+ * checkCategory(+CategoryStr:string) is semidet.
+ * 
+ * Esta função considera uma String, e checa se a categoria da sala é uma das categorias possíveis,
+ * imprimido uma mensagem de erro caso contrário.
+ * @param CategoryStr String a ser verificada como categoria
+ */
 checkCategory(CategoryStr):-
     string_length(CategoryStr, L), L = 1,
     string_upper(CategoryStr, Category),
     member(Category, ["L","A","S","E","D"]),!;
     errorHandler:promptError(14),fail.
 
-/*
-* Esta função retorna a Categoria da sala cadastrada no sistema, caso exista.
-*/
+/**
+ * getCategory(+CategoryInit:string, -Category: compound) is semidet.
+ *
+ * Esta função retorna a categoria da sala cadastrada no sistema, caso exista.
+ * @param CategoryInit String com a inicial da categoria a ser buscada
+ * @param Category Categoria encontrada a ser retornada
+ */
 getCategory(CategoryInit, Category):-
     string_upper(CategoryInit, Init),
     (Init = "L"->Category=dataHandler:category('Laboratory'),!;
@@ -51,16 +61,18 @@ getCategory(CategoryInit, Category):-
      Init = "E"->Category=dataHandler:category('Office'),!;
      Init = "D"->Category=dataHandler:category('Warehouse')).
 
-/* 
-* Difinição das Regras dos Tipos de recursos disponiveis nas salas.
-*/
+/**
+ * Definição dos tipos de recursos disponiveis nas salas.
+ */
 resourceKind('Projector').
 resourceKind('Microscope').
 resourceKind('Desk').
 resourceKind('Computer').
 resourceKind('Board').
 resourceKind('AirConditioner').
-
+/**
+ * Definição dos tipos de recursos disponiveis nas salas e suas respectivas traduções.
+ */
 resourceKind('Projector', "Projetor").
 resourceKind('Microscope', "Microscópio").
 resourceKind('Desk', "Birô").
@@ -68,18 +80,26 @@ resourceKind('Computer', "Computador").
 resourceKind('Board', "Quadro").
 resourceKind('AirConditioner', "Ar Condicionado").
 
-/*
-* Esta função considera uma String, e checa os tipos de recursos disponiveis nas salas, caso exista.
-*/
+/**
+ * checkCategory(+ResourceStr:string) is semidet.
+ * 
+ * Esta função considera uma String, e checa se o recurso da sala é um dos recursos possíveis,
+ * imprimido uma mensagem de erro caso contrário.
+ * @param ResourceStr String a ser verificada como recurso
+ */
 checkResource(ResourceStr):-
     string_length(ResourceStr, L), L = 1,
     string_upper(ResourceStr, Resource),
     member(Resource, ["P","M","B","C","Q","A"]),!;
     errorHandler:promptError(14),fail.
 
-/*
-* Esta função retorna o tipo recurso da sala cadastrada no sistema, caso exista.
-*/
+/**
+ * getCategory(+ResourceInit:string, -Resource: compound) is semidet.
+ *
+ * Esta função retorna o recurso da sala cadastrada no sistema, caso exista.
+ * @param ResourceInit String com a inicial do recurso a ser buscada
+ * @param Resource Recurso encontrado a ser retornado
+ */
 getResource(ResourceInit, Resource):-
     string_upper(ResourceInit, Init),
     (Init = "P"->Resource=dataHandler:resourceKind('Projector'),!;
@@ -91,29 +111,44 @@ getResource(ResourceInit, Resource):-
 
 
 %HANDLER
+/**
+ * cleanUsers is det.
+ * 
+ * Limpa todos os usuários armazenados na memória.
+ */
 cleanUsers:- retractall(userFull/5).
 
-/*
-* Esta função verifica se existe o arquino dos usuários cadastrados no sistema.
-*/
+/**
+ * existsUserFile is det.
+ * 
+ * Verifica se existe o arquivo de persistência de usuários.
+ */
 existsUserFile :- exists_file('data/users.bd').
 
-/*
-* Esta função escreve no arquivo dos usuários cadastrados no sistema.
-*/
+/**
+ * writeUsers is det.
+ * 
+ * Exreve na persistência de usuários todos os usuários registrados na memória.
+ */
 writeUsers:- tell('data/users.bd'),
              listing(userFull/5),
              told,
              cleanUsers.
 
-/*
-* Esta função ler o arquivo dos usuários cadastrados no sistema.
-*/
+/**
+ * readUsers is det.
+ * 
+ * Consulta a persistência e armazena na memória todos os usuários registrados.
+ */
 readUsers:- consult('data/users.bd').
 
-/*
-* Esta função informa que o usuario não esta cadastrado no sistema.
-*/
+/**
+ * notExistingUser(+Email:string) is semidet.
+ * 
+ * Verifica se o usuário com o email fornecido é um usuário cadastrado no sistema,
+ * falhando caso contrário.
+ * @param Email Email do usuário a ser buscado
+ */
 notExistingUser(Email):-
     readUsers,
     findall(_,userFull(_,Email,_,_,_),List),
@@ -121,36 +156,53 @@ notExistingUser(Email):-
     List=[],!;
     fail.
 
-/*
-* Esta função salva um usuario no sistema, caso ele ainda não tenha sido cadastrado.
-*/
+/**
+ * saveUser(+U:compound) is det.
+ * 
+ * Salva o usuário fornecido na persistência.
+ * @param U Usuário a ser armazenado
+ */
 saveUser(U):- assertz(U), writeUsers.
 
 %ROOMS
-
+/**
+ * cleanRooms is det.
+ * 
+ * Limpa todas as salas armazenados na memória.
+ */
 cleanRooms:- retractall(room/6).
 
-/*
-* Esta função verifica se existe o arquino das salas cadastradas no sistema.
-*/
+/**
+ * existsRoomFile is det.
+ * 
+ * Verifica se existe o arquivo de persistência de salas.
+ */
 existsRoomFile:- exists_file('data/rooms.bd').
 
-/*
-* Esta função escreve no arquivo das salas cadastradas no sistema.
-*/
+/**
+ * writeRooms is det.
+ * 
+ * Exreve na persistência de salas todas as salas registrados na memória.
+ */
 writeRooms:- tell('data/rooms.bd'),
              listing(room),
              told,
              cleanRooms.
 
-/*
-* Esta função ler o arquivo das salas cadastradas no sistema.
-*/
+/**
+ * readRooms is det.
+ * 
+ * Consulta a persistência e armazena na memória todas as salas registrados.
+ */
 readRooms:- consult('data/rooms.bd').
 
-/*
-* Esta função informa que a sala não esta cadastrada no sistema.
-*/
+/**
+ * notExistingRoom(+Code:string) is semidet.
+ * 
+ * Verifica se a sala com o código fornecido é uma sala cadastrada no sistema,
+ * falhando caso contrário.
+ * @param Code Código da sala a ser buscada
+ */
 notExistingRoom(Code):-
     readRooms,
     findall(_, dataHandler:room(Code, _, _, _, _, _), List),
@@ -158,7 +210,10 @@ notExistingRoom(Code):-
     List = [], !;
     fail.
 
-/*
-* Esta função salva uma sala no sistema, caso ela ainda não tenha sido cadastrada.
-*/
+/**
+ * saveRoom(+R:compound) is det.
+ * 
+ * Salva a sala fornecida na persistência.
+ * @param R Sala a ser armazenado
+ */
 saveRoom(R):- assertz(R), writeRooms.

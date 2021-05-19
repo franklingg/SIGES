@@ -1,5 +1,5 @@
 /** <module> Screens
-* Description : Módulo que estabelece ações e lógica das telas e de leitura de dados no sistema SIGES.
+* Módulo que estabelece ações e lógica das telas e de leitura de dados no sistema SIGES.
 */
 :- module(screens, [systemStart/1, screen/3]).
 :- encoding(utf8).
