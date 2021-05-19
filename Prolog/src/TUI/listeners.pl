@@ -29,9 +29,10 @@ screenListener('first', NextScreen):-
     writeln("Qual sua senha?"),
     utils:getInputData(userHandler:checkValidPassword, Password),
     userHandler:createUser(Name, Email, Password, true),
+    utils:waitInput("Seja bem-vindo! "),
     loggedUserScreen(NextScreen).
 
-screenListener('start', _):- retractall(dataHandler:user).
+screenListener('start', _):- abolish(dataHandler:user/3).
 
 screenListener('exit', _):- halt.
 
@@ -60,12 +61,14 @@ screenListener('register_user', NextScreen):-
     writeln("O usuário é administrador [S/N]?"),
     utils:getYesOrNo(IsAdm),
     userHandler:createUser(Name, Email, Password, IsAdm),
+    utils:waitInput("Usuário criado! "),
     loggedUserScreen(NextScreen).
 
 screenListener('delete_user', NextScreen):-
     writeln("Qual o e-mail do usuário a ser deletado?"),
     utils:getInputData(userHandler:checkValidEmail, Email),
     userHandler:deleteUser(Email),
+    utils:waitInput("Usuário deletado! "),
     loggedUserScreen(NextScreen).
 
 screenListener('add_new_room', NextScreen):-
