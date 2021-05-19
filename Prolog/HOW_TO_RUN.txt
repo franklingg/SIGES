@@ -5,4 +5,4 @@ swipl -s main.pl -t start
 swipl -s main.pl -t test
 
 // CRIAR EXECUTAVEL
-swipl -o my_executable --stand_alone=true -g start -O -q -c main.pl
+swipl -o SIGES --stand_alone=true -g start -O -q -c main.pl

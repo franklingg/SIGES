@@ -9,6 +9,7 @@ start:- systemStart(S),
         main(S).
 
 main(Type):-
+    (current_prolog_flag(unix, _), utils:cls;true), % cls only works on unix systems
     screen(Type,Content,NextScreens),
     writeln(Content),
     screenListener(Type,Next),

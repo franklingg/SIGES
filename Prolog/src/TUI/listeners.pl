@@ -28,7 +28,7 @@ screenListener('first', NextScreen):-
     utils:getInputData(userHandler:checkValidEmail, Email),
     writeln("Qual sua senha?"),
     utils:getInputData(userHandler:checkValidPassword, Password),
-    userHandler:createUser(Name, Email, Password, "s"),
+    userHandler:createUser(Name, Email, Password, true),
     loggedUserScreen(NextScreen).
 
 screenListener('start', _):- retractall(dataHandler:user).
