@@ -21,7 +21,7 @@ Por fim, só resta rodar o programa ou testá-lo (não esqueça do ponto final!)
 > 
 > `test.`
 >
-<!--
- ## Demonstração
- A [demonstração em vídeo](https://www.youtube.com/watch?v=SQXOwC9G9Ho) do sistema, provê detalhamento da explicação de cada função do SIGES.
--->
+
+### Demonstração
+A [demonstração em vídeo](https://youtu.be/M722D3dWJkI) do sistema, provê detalhamento da explicação de cada funcionalidade do SIGES.
+
