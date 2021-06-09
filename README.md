@@ -4,7 +4,7 @@
 <div id="especificacao">
 <p>Neste projeto da disciplina Paradigmas de Linguagens de Programação, desenvolveremos uma aplicação nas linguagens:</p>
 <ul>
-  <li>Haskell - <a href="https://franklingg.github.io/SIGES/">Documentação</a></li>
+  <li>Haskell</li>
   <li>Prolog</li>
 </ul>
 
